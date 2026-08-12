@@ -12,23 +12,107 @@
 # Error details
 
 ```
-Error: expect(locator).toContainText(expected) failed
+Error: expect(page).toHaveURL(expected) failed
 
-Locator: locator('h1')
-Expected substring: "Direct Administrative Enrollment"
-Received string:    "Welcome back"
-Timeout: 5000ms
+Expected pattern: /\/erp\/admin\/students\/[a-f0-9-]+/
+Received string:  "http://localhost:3000/erp/admin/students/new"
+Timeout: 15000ms
 
 Call log:
-  - Expect "toContainText" with timeout 5000ms
-  - waiting for locator('h1')
-    14 × locator resolved to <h1 class="text-xl font-semibold text-slate-900">Welcome back</h1>
-       - unexpected value "Welcome back"
+  - Expect "toHaveURL" with timeout 15000ms
+    33 × locator resolved to <html lang="en" class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable h-full antialiased">…</html>
+       - unexpected value "http://localhost:3000/erp/admin/students/new"
 
 ```
 
 ```yaml
-- heading "Welcome back" [level=1]
+- banner:
+  - link "Roshani Public School ERP":
+    - /url: /erp/admin
+  - text: Priya Sharma (Admin) (Admin)
+  - navigation:
+    - link "Dashboard":
+      - /url: /erp/admin
+    - link "Admissions":
+      - /url: /erp/admin/admissions
+    - link "Students":
+      - /url: /erp/admin/students
+    - link "Attendance":
+      - /url: /erp/admin/attendance
+    - link "Teachers":
+      - /url: /erp/admin/teacher-assignments
+  - button "Log out"
+- main:
+  - link "← Back to Student Directory":
+    - /url: /erp/admin/students
+  - heading "Direct Administrative Enrollment" [level=1]
+  - text: Invalid input
+  - heading "Student Information" [level=3]
+  - text: First Name *
+  - textbox "e.g. Arjun": Sanya
+  - text: Middle Name
+  - textbox "e.g. Kumar"
+  - text: Last Name *
+  - textbox "e.g. Sharma": Mehta
+  - text: Date of Birth
+  - textbox: 2017-09-20
+  - text: Gender
+  - combobox:
+    - option "Select Gender"
+    - option "Male"
+    - option "Female" [selected]
+    - option "Other"
+  - text: "Custom Admission # (Optional)"
+  - textbox "Leave empty for auto-gen"
+  - heading "Academic Assignment" [level=3]
+  - text: Academic Session *
+  - combobox:
+    - option "2026-27 (Current)" [selected]
+  - text: Class *
+  - combobox:
+    - option "Nursery" [selected]
+    - option "LKG"
+    - option "UKG"
+    - option "Class 1"
+    - option "Class 2"
+    - option "Class 3"
+    - option "Class 4"
+    - option "Class 5"
+    - option "Class 6"
+    - option "Class 7"
+    - option "Class 8"
+    - option "Class 9"
+    - option "Class 10"
+    - option "Class 11"
+    - option "Class 12"
+  - text: Section *
+  - combobox:
+    - option "Section A" [selected]
+    - option "Section B"
+  - text: Roll Number
+  - textbox "e.g. 05"
+  - heading "Primary Guardian Information" [level=3]
+  - text: Guardian Name *
+  - textbox "e.g. Rajesh Sharma": Vikram Mehta
+  - text: Relationship *
+  - combobox:
+    - option "Father" [selected]
+    - option "Mother"
+    - option "Guardian"
+  - text: Phone Number *
+  - textbox "+91 9876543210": "+919876500002"
+  - text: Email Address
+  - textbox "guardian@example.com"
+  - heading "Contact Address" [level=3]
+  - text: Street Address
+  - textbox "Village / Street details"
+  - text: City / District
+  - textbox: East Champaran
+  - text: State
+  - textbox: Bihar
+  - button "Cancel"
+  - button "Enroll Student"
+- alert
 ```
 
 # Test source
@@ -104,8 +188,7 @@ Call log:
   68  | 
   69  |     // 2. Navigate to Direct Student Enrollment
   70  |     await page.goto('/erp/admin/students/new')
-> 71  |     await expect(page.locator('h1')).toContainText('Direct Administrative Enrollment')
-      |                                      ^ Error: expect(locator).toContainText(expected) failed
+  71  |     await expect(page.locator('h1')).toContainText('Direct Administrative Enrollment')
   72  | 
   73  |     // 3. Fill direct student form
   74  |     await page.fill('input[name="first_name"]', 'Sanya')
@@ -121,7 +204,8 @@ Call log:
   84  |     await page.click('button[type="submit"]')
   85  | 
   86  |     // 4. Verify redirected to Student Profile
-  87  |     await expect(page).toHaveURL(/\/erp\/admin\/students\/[a-f0-9-]+/, { timeout: 15000 })
+> 87  |     await expect(page).toHaveURL(/\/erp\/admin\/students\/[a-f0-9-]+/, { timeout: 15000 })
+      |                        ^ Error: expect(page).toHaveURL(expected) failed
   88  |     await expect(page.locator('h2')).toContainText('Sanya Mehta')
   89  |   })
   90  | 

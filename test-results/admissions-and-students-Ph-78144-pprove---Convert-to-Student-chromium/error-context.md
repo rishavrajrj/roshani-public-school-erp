@@ -12,89 +12,34 @@
 # Error details
 
 ```
-Error: expect(locator).toContainText(expected) failed
+Error: expect(page).toHaveURL(expected) failed
 
-Locator: locator('h2')
-Expected substring: "Kabir Verma"
-Timeout: 5000ms
-Error: element(s) not found
+Expected pattern: /\/erp\/(admin|select-role)/
+Received string:  "http://localhost:3000/login"
+Timeout: 15000ms
 
 Call log:
-  - Expect "toContainText" with timeout 5000ms
-  - waiting for locator('h2')
+  - Expect "toHaveURL" with timeout 15000ms
+    33 × locator resolved to <html lang="en" class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable h-full antialiased">…</html>
+       - unexpected value "http://localhost:3000/login"
 
 ```
 
 ```yaml
-- banner:
-  - link "Roshani Public School ERP":
-    - /url: /erp/admin
-  - text: Priya Sharma (Admin) (Admin)
-  - navigation:
-    - link "Dashboard":
-      - /url: /erp/admin
-    - link "Admissions":
-      - /url: /erp/admin/admissions
-    - link "Students":
-      - /url: /erp/admin/students
-  - button "Log out"
-- main:
-  - heading "Admission Applications" [level=1]
-  - paragraph: Manage student enquiries, application review workflow, and student conversion.
-  - link "+ New Application":
-    - /url: /erp/admin/admissions/new
-  - text: Search
-  - 'textbox "App #, Name, Phone..."'
-  - text: Status
-  - combobox:
-    - option "All Statuses" [selected]
-    - option "Draft"
-    - option "Submitted"
-    - option "Under Review"
-    - option "Approved"
-    - option "Rejected"
-    - option "Withdrawn"
-    - option "Converted to Student"
-  - text: Academic Session
-  - combobox:
-    - option "All Sessions" [selected]
-    - option "2026-27 (Current)"
-  - text: Applying Class
-  - combobox:
-    - option "All Classes" [selected]
-    - option "Nursery"
-    - option "LKG"
-    - option "UKG"
-    - option "Class 1"
-    - option "Class 2"
-    - option "Class 3"
-    - option "Class 4"
-    - option "Class 5"
-    - option "Class 6"
-    - option "Class 7"
-    - option "Class 8"
-    - option "Class 9"
-    - option "Class 10"
-    - option "Class 11"
-    - option "Class 12"
-  - button "Apply Filter"
-  - link "Clear":
-    - /url: /erp/admin/admissions
-  - table:
-    - rowgroup:
-      - 'row "Application # Applicant Name Class Guardian Details Session Status Submitted Date Actions"':
-        - 'columnheader "Application #"'
-        - columnheader "Applicant Name"
-        - columnheader "Class"
-        - columnheader "Guardian Details"
-        - columnheader "Session"
-        - columnheader "Status"
-        - columnheader "Submitted Date"
-        - columnheader "Actions"
-    - rowgroup:
-      - row "No admission applications found matching the selected criteria.":
-        - cell "No admission applications found matching the selected criteria."
-- alert: Admission Applications
+- heading "Roshani Public School" [level=2]
+- paragraph: ERP System
+- heading "Welcome back" [level=1]
+- paragraph: Please enter your details to sign in
+- text: Email
+- textbox "Enter your email": admin@roshanischool.com
+- text: Password
+- textbox "Enter your password": TestPass123!
+- button:
+  - img
+- link "Forgot password?":
+  - /url: /forgot-password
+- button "Log in"
+- alert
 ```
 
 # Test source
@@ -113,7 +58,8 @@ Call log:
   11  |     await page.fill('input[name="email"]', 'admin@roshanischool.com')
   12  |     await page.fill('input[name="password"]', PASSWORD)
   13  |     await page.click('button[type="submit"]')
-  14  |     await expect(page).toHaveURL(/\/erp\/(admin|select-role)/, { timeout: 15000 })
+> 14  |     await expect(page).toHaveURL(/\/erp\/(admin|select-role)/, { timeout: 15000 })
+      |                        ^ Error: expect(page).toHaveURL(expected) failed
   15  | 
   16  |     // 2. Navigate to New Admission Application
   17  |     await page.goto('/erp/admin/admissions/new')
@@ -136,8 +82,7 @@ Call log:
   34  | 
   35  |     // 4. Verify redirected to Application Detail view
   36  |     await expect(page).toHaveURL(/\/erp\/admin\/admissions\/[a-f0-9-]+/, { timeout: 15000 })
-> 37  |     await expect(page.locator('h2')).toContainText('Kabir Verma')
-      |                                      ^ Error: expect(locator).toContainText(expected) failed
+  37  |     await expect(page.locator('h2')).toContainText('Kabir Verma')
   38  |     await expect(page.locator('body')).toContainText('SUBMITTED')
   39  | 
   40  |     // 5. Start Review (submitted -> under_review)
@@ -215,10 +160,4 @@ Call log:
   112 |     await page.click('button[type="submit"]')
   113 |     await expect(page).toHaveURL(/\/erp\/accountant/)
   114 | 
-  115 |     // Attempt accessing New Student Creation
-  116 |     await page.goto('/erp/admin/students/new')
-  117 |     await expect(page).toHaveURL(/\/erp\/unauthorized/)
-  118 |   })
-  119 | })
-  120 | 
 ```

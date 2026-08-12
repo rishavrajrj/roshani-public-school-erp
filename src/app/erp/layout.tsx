@@ -28,9 +28,11 @@ export default async function ERPLayout({ children }: { children: React.ReactNod
   const user = isFullyAuthenticated ? authState.user : null
   const userName = user ? user.fullName : ''
   const roles = user ? user.roles.join(', ') : ''
-
   const isAdminOrSuper = user ? hasAnyRole(user, ['Super Admin', 'Admin']) : false
   const isPrincipal = user ? hasAnyRole(user, ['Principal']) : false
+  const isTeacher = user ? hasAnyRole(user, ['Teacher']) : false
+  const isParent = user ? hasAnyRole(user, ['Parent']) : false
+  const isStudent = user ? hasAnyRole(user, ['Student']) : false
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
@@ -56,6 +58,8 @@ export default async function ERPLayout({ children }: { children: React.ReactNod
                     <Link href="/erp/admin" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Dashboard</Link>
                     <Link href="/erp/admin/admissions" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Admissions</Link>
                     <Link href="/erp/admin/students" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Students</Link>
+                    <Link href="/erp/admin/attendance" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Attendance</Link>
+                    <Link href="/erp/admin/teacher-assignments" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Teachers</Link>
                   </>
                 )}
                 {isPrincipal && (
@@ -63,6 +67,25 @@ export default async function ERPLayout({ children }: { children: React.ReactNod
                     <Link href="/erp/principal" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Dashboard</Link>
                     <Link href="/erp/principal/admissions" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Admissions</Link>
                     <Link href="/erp/principal/students" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Students</Link>
+                    <Link href="/erp/principal/attendance" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Attendance</Link>
+                  </>
+                )}
+                {isTeacher && !isAdminOrSuper && (
+                  <>
+                    <Link href="/erp/teacher" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Dashboard</Link>
+                    <Link href="/erp/teacher/attendance" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Mark Attendance</Link>
+                  </>
+                )}
+                {isParent && (
+                  <>
+                    <Link href="/erp/parent" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Dashboard</Link>
+                    <Link href="/erp/parent/attendance" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Child Attendance</Link>
+                  </>
+                )}
+                {isStudent && (
+                  <>
+                    <Link href="/erp/student" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Dashboard</Link>
+                    <Link href="/erp/student/attendance" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">My Attendance</Link>
                   </>
                 )}
               </nav>

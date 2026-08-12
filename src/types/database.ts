@@ -925,6 +925,150 @@ export interface Database {
           }
         ]
       }
+      teacher_assignments: {
+        Row: {
+          id: string
+          school_id: string
+          teacher_profile_id: string
+          academic_session_id: string
+          class_id: string
+          section_id: string
+          assigned_at: string
+          assigned_by: string | null
+          active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          teacher_profile_id: string
+          academic_session_id: string
+          class_id: string
+          section_id: string
+          assigned_at?: string
+          assigned_by?: string | null
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          teacher_profile_id?: string
+          academic_session_id?: string
+          class_id?: string
+          section_id?: string
+          assigned_at?: string
+          assigned_by?: string | null
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      attendance_sessions: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          class_id: string
+          section_id: string
+          attendance_date: string
+          status: string
+          marked_by: string
+          marked_at: string
+          locked_at: string | null
+          locked_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          class_id: string
+          section_id: string
+          attendance_date: string
+          status?: string
+          marked_by: string
+          marked_at?: string
+          locked_at?: string | null
+          locked_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          class_id?: string
+          section_id?: string
+          attendance_date?: string
+          status?: string
+          marked_by?: string
+          marked_at?: string
+          locked_at?: string | null
+          locked_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      attendance_records: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          session_id: string
+          student_id: string
+          class_id: string
+          section_id: string
+          attendance_date: string
+          status: string
+          remarks: string | null
+          marked_by: string
+          marked_at: string
+          updated_by: string | null
+          updated_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          session_id: string
+          student_id: string
+          class_id: string
+          section_id: string
+          attendance_date: string
+          status: string
+          remarks?: string | null
+          marked_by: string
+          marked_at?: string
+          updated_by?: string | null
+          updated_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          session_id?: string
+          student_id?: string
+          class_id?: string
+          section_id?: string
+          attendance_date?: string
+          status?: string
+          remarks?: string | null
+          marked_by?: string
+          marked_at?: string
+          updated_by?: string | null
+          updated_at?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_current_profile_id: {
