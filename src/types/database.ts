@@ -1069,6 +1069,237 @@ export interface Database {
         }
         Relationships: []
       }
+      leave_types: {
+        Row: {
+          id: string
+          school_id: string
+          code: string
+          name: string
+          applicant_category: string
+          default_days_per_year: number
+          requires_document: boolean
+          active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          code: string
+          name: string
+          applicant_category?: string
+          default_days_per_year?: number
+          requires_document?: boolean
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          code?: string
+          name?: string
+          applicant_category?: string
+          default_days_per_year?: number
+          requires_document?: boolean
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leave_applications: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          applicant_profile_id: string
+          applicant_role: string
+          student_id: string | null
+          leave_type_id: string
+          start_date: string
+          end_date: string
+          duration_type: string
+          calculated_days: number
+          reason: string
+          status: string
+          document_path: string | null
+          submitted_at: string
+          reviewed_at: string | null
+          approved_at: string | null
+          cancelled_at: string | null
+          rejection_reason: string | null
+          cancellation_reason: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          applicant_profile_id: string
+          applicant_role: string
+          student_id?: string | null
+          leave_type_id: string
+          start_date: string
+          end_date: string
+          duration_type?: string
+          calculated_days: number
+          reason: string
+          status?: string
+          document_path?: string | null
+          submitted_at?: string
+          reviewed_at?: string | null
+          approved_at?: string | null
+          cancelled_at?: string | null
+          rejection_reason?: string | null
+          cancellation_reason?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          applicant_profile_id?: string
+          applicant_role?: string
+          student_id?: string | null
+          leave_type_id?: string
+          start_date?: string
+          end_date?: string
+          duration_type?: string
+          calculated_days?: number
+          reason?: string
+          status?: string
+          document_path?: string | null
+          submitted_at?: string
+          reviewed_at?: string | null
+          approved_at?: string | null
+          cancelled_at?: string | null
+          rejection_reason?: string | null
+          cancellation_reason?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leave_approvals: {
+        Row: {
+          id: string
+          school_id: string
+          leave_application_id: string
+          step_order: number
+          approver_profile_id: string
+          approver_role: string
+          status: string
+          comments: string | null
+          acted_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          leave_application_id: string
+          step_order?: number
+          approver_profile_id: string
+          approver_role: string
+          status?: string
+          comments?: string | null
+          acted_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          leave_application_id?: string
+          step_order?: number
+          approver_profile_id?: string
+          approver_role?: string
+          status?: string
+          comments?: string | null
+          acted_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      leave_entitlements: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          profile_id: string
+          leave_type_id: string
+          entitlement_days: number
+          used_days: number
+          remaining_days: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          profile_id: string
+          leave_type_id: string
+          entitlement_days?: number
+          used_days?: number
+          remaining_days?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          profile_id?: string
+          leave_type_id?: string
+          entitlement_days?: number
+          used_days?: number
+          remaining_days?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          id: string
+          school_id: string
+          recipient_profile_id: string
+          actor_profile_id: string | null
+          event_type: string
+          title: string
+          message: string
+          link_url: string | null
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          recipient_profile_id: string
+          actor_profile_id?: string | null
+          event_type: string
+          title: string
+          message: string
+          link_url?: string | null
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          recipient_profile_id?: string
+          actor_profile_id?: string | null
+          event_type?: string
+          title?: string
+          message?: string
+          link_url?: string | null
+          read_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_current_profile_id: {
