@@ -27,6 +27,7 @@ export type AuthState =
 export type AuthActionResult = {
   success: boolean
   error?: string
+  redirectUrl?: string
 }
 
 /** Login form data shape */

@@ -161,7 +161,7 @@ export function AdmissionDetailView({ application, userRoles }: Props) {
             </span>
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mt-2">
-            {application.applicant_first_name} {application.applicant_middle_name || ''} {application.applicant_last_name}
+            {[application.applicant_first_name, application.applicant_middle_name, application.applicant_last_name].filter(Boolean).join(' ')}
           </h2>
           <p className="text-slate-500 text-sm mt-0.5">
             Applying for <span className="font-semibold text-slate-700">{application.classes?.name || 'Class'}</span> ({application.academic_sessions?.name || 'Session'})

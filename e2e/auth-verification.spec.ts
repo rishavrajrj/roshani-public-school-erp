@@ -27,7 +27,10 @@ test.describe('Phase 2 Auth & Portal Access Verification', () => {
     await page.fill('input[name="password"]', PASSWORD)
     await page.click('button[type="submit"]')
 
-    await expect(page).toHaveURL(/\/erp\/admin/, { timeout: 10000 })
+    await expect(page).toHaveURL(/\/erp\/(admin|select-role)/, { timeout: 10000 })
+    if (page.url().includes('select-role')) {
+      await page.goto('/erp/admin')
+    }
     await expect(page.locator('h2')).toContainText('Admin Portal')
 
     const otherPortals = ['/erp/principal', '/erp/teacher', '/erp/accountant', '/erp/parent', '/erp/student']
@@ -113,7 +116,10 @@ test.describe('Phase 2 Auth & Portal Access Verification', () => {
     await page.fill('input[name="password"]', PASSWORD)
     await page.click('button[type="submit"]')
 
-    await expect(page).toHaveURL(/\/erp\/admin/, { timeout: 10000 })
+    await expect(page).toHaveURL(/\/erp\/(admin|select-role)/, { timeout: 10000 })
+    if (page.url().includes('select-role')) {
+      await page.goto('/erp/admin')
+    }
     await expect(page.locator('h2')).toContainText('Admin Portal')
   })
 
@@ -147,7 +153,10 @@ test.describe('Phase 2 Auth & Portal Access Verification', () => {
     await page.fill('input[name="password"]', PASSWORD)
     await page.click('button[type="submit"]')
 
-    await expect(page).toHaveURL(/\/erp\/admin/, { timeout: 10000 })
+    await expect(page).toHaveURL(/\/erp\/(admin|select-role)/, { timeout: 10000 })
+    if (page.url().includes('select-role')) {
+      await page.goto('/erp/admin')
+    }
 
     await page.click('button:has-text("Log out"), button:has-text("Sign Out"), button:has-text("Logout")')
     await expect(page).toHaveURL(/\/login/, { timeout: 5000 })

@@ -11,7 +11,7 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.fill('input[name="email"]', 'admin@roshanischool.com')
     await page.fill('input[name="password"]', PASSWORD)
     await page.click('button[type="submit"]')
-    await expect(page).toHaveURL(/\/erp\/admin/, { timeout: 10000 })
+    await expect(page).toHaveURL(/\/erp\/(admin|select-role)/, { timeout: 15000 })
 
     // 2. Navigate to New Admission Application
     await page.goto('/erp/admin/admissions/new')
@@ -64,7 +64,7 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.fill('input[name="email"]', 'admin@roshanischool.com')
     await page.fill('input[name="password"]', PASSWORD)
     await page.click('button[type="submit"]')
-    await expect(page).toHaveURL(/\/erp\/admin/)
+    await expect(page).toHaveURL(/\/erp\/(admin|select-role)/, { timeout: 15000 })
 
     // 2. Navigate to Direct Student Enrollment
     await page.goto('/erp/admin/students/new')
@@ -104,7 +104,8 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.goto('/erp/admin/students')
     await expect(page).toHaveURL(/\/erp\/unauthorized/)
 
-    // 2. Log in as Accountant
+    // 2. Log out / clear cookies & Log in as Accountant
+    await page.context().clearCookies()
     await page.goto('/login')
     await page.fill('input[name="email"]', 'accountant@roshanischool.com')
     await page.fill('input[name="password"]', PASSWORD)

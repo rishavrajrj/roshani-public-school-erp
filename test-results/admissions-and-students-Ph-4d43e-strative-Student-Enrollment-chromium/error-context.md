@@ -6,22 +6,22 @@
 
 # Test info
 
-- Name: admissions-and-students.spec.ts >> Phase 3 — Admissions & Student Management E2E >> 1. Full Admission Lifecycle: Create -> Review -> Approve -> Convert to Student
-- Location: e2e\admissions-and-students.spec.ts:8:7
+- Name: admissions-and-students.spec.ts >> Phase 3 — Admissions & Student Management E2E >> 2. Direct Administrative Student Enrollment
+- Location: e2e\admissions-and-students.spec.ts:61:7
 
 # Error details
 
 ```
-Error: expect(locator).toContainText(expected) failed
+Error: expect(page).toHaveURL(expected) failed
 
-Locator: locator('h2')
-Expected substring: "Kabir Verma"
-Timeout: 5000ms
-Error: element(s) not found
+Expected pattern: /\/erp\/admin\/students\/[a-f0-9-]+/
+Received string:  "http://localhost:3000/erp/admin/students/new"
+Timeout: 15000ms
 
 Call log:
-  - Expect "toContainText" with timeout 5000ms
-  - waiting for locator('h2')
+  - Expect "toHaveURL" with timeout 15000ms
+    33 × locator resolved to <html lang="en" class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable h-full antialiased">…</html>
+       - unexpected value "http://localhost:3000/erp/admin/students/new"
 
 ```
 
@@ -39,30 +39,34 @@ Call log:
       - /url: /erp/admin/students
   - button "Log out"
 - main:
-  - heading "Admission Applications" [level=1]
-  - paragraph: Manage student enquiries, application review workflow, and student conversion.
-  - link "+ New Application":
-    - /url: /erp/admin/admissions/new
-  - text: Search
-  - 'textbox "App #, Name, Phone..."'
-  - text: Status
+  - link "← Back to Student Directory":
+    - /url: /erp/admin/students
+  - heading "Direct Administrative Enrollment" [level=1]
+  - text: Invalid input
+  - heading "Student Information" [level=3]
+  - text: First Name *
+  - textbox "e.g. Arjun": Sanya
+  - text: Middle Name
+  - textbox "e.g. Kumar"
+  - text: Last Name *
+  - textbox "e.g. Sharma": Mehta
+  - text: Date of Birth
+  - textbox: 2017-09-20
+  - text: Gender
   - combobox:
-    - option "All Statuses" [selected]
-    - option "Draft"
-    - option "Submitted"
-    - option "Under Review"
-    - option "Approved"
-    - option "Rejected"
-    - option "Withdrawn"
-    - option "Converted to Student"
-  - text: Academic Session
+    - option "Select Gender"
+    - option "Male"
+    - option "Female" [selected]
+    - option "Other"
+  - text: "Custom Admission # (Optional)"
+  - textbox "Leave empty for auto-gen"
+  - heading "Academic Assignment" [level=3]
+  - text: Academic Session *
   - combobox:
-    - option "All Sessions" [selected]
-    - option "2026-27 (Current)"
-  - text: Applying Class
+    - option "2026-27 (Current)" [selected]
+  - text: Class *
   - combobox:
-    - option "All Classes" [selected]
-    - option "Nursery"
+    - option "Nursery" [selected]
     - option "LKG"
     - option "UKG"
     - option "Class 1"
@@ -77,24 +81,34 @@ Call log:
     - option "Class 10"
     - option "Class 11"
     - option "Class 12"
-  - button "Apply Filter"
-  - link "Clear":
-    - /url: /erp/admin/admissions
-  - table:
-    - rowgroup:
-      - 'row "Application # Applicant Name Class Guardian Details Session Status Submitted Date Actions"':
-        - 'columnheader "Application #"'
-        - columnheader "Applicant Name"
-        - columnheader "Class"
-        - columnheader "Guardian Details"
-        - columnheader "Session"
-        - columnheader "Status"
-        - columnheader "Submitted Date"
-        - columnheader "Actions"
-    - rowgroup:
-      - row "No admission applications found matching the selected criteria.":
-        - cell "No admission applications found matching the selected criteria."
-- alert: Admission Applications
+  - text: Section *
+  - combobox:
+    - option "Section A" [selected]
+    - option "Section B"
+  - text: Roll Number
+  - textbox "e.g. 05"
+  - heading "Primary Guardian Information" [level=3]
+  - text: Guardian Name *
+  - textbox "e.g. Rajesh Sharma": Vikram Mehta
+  - text: Relationship *
+  - combobox:
+    - option "Father" [selected]
+    - option "Mother"
+    - option "Guardian"
+  - text: Phone Number *
+  - textbox "+91 9876543210": "+919876500002"
+  - text: Email Address
+  - textbox "guardian@example.com"
+  - heading "Contact Address" [level=3]
+  - text: Street Address
+  - textbox "Village / Street details"
+  - text: City / District
+  - textbox: East Champaran
+  - text: State
+  - textbox: Bihar
+  - button "Cancel"
+  - button "Enroll Student"
+- alert
 ```
 
 # Test source
@@ -136,8 +150,7 @@ Call log:
   34  | 
   35  |     // 4. Verify redirected to Application Detail view
   36  |     await expect(page).toHaveURL(/\/erp\/admin\/admissions\/[a-f0-9-]+/, { timeout: 15000 })
-> 37  |     await expect(page.locator('h2')).toContainText('Kabir Verma')
-      |                                      ^ Error: expect(locator).toContainText(expected) failed
+  37  |     await expect(page.locator('h2')).toContainText('Kabir Verma')
   38  |     await expect(page.locator('body')).toContainText('SUBMITTED')
   39  | 
   40  |     // 5. Start Review (submitted -> under_review)
@@ -187,7 +200,8 @@ Call log:
   84  |     await page.click('button[type="submit"]')
   85  | 
   86  |     // 4. Verify redirected to Student Profile
-  87  |     await expect(page).toHaveURL(/\/erp\/admin\/students\/[a-f0-9-]+/, { timeout: 15000 })
+> 87  |     await expect(page).toHaveURL(/\/erp\/admin\/students\/[a-f0-9-]+/, { timeout: 15000 })
+      |                        ^ Error: expect(page).toHaveURL(expected) failed
   88  |     await expect(page.locator('h2')).toContainText('Sanya Mehta')
   89  |   })
   90  | 

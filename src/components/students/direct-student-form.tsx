@@ -102,7 +102,15 @@ export function DirectStudentForm({ sessions, classes }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        handleSubmit(e)
+      }}
+      action="javascript:void(0)"
+      className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6"
+    >
       {error && (
         <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium">
           {error}

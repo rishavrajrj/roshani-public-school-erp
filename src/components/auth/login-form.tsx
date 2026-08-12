@@ -1,15 +1,15 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginInput } from "@/lib/auth/schemas";
-import { loginAction } from "@/lib/auth/actions";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { loginSchema, type LoginInput } from '@/lib/auth/schemas'
+import { loginAction } from '@/lib/auth/actions'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export function LoginForm() {
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null)
 
   const {
     register,
@@ -17,20 +17,20 @@ export function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-  });
+  })
 
   const onSubmit = async (data: LoginInput) => {
-    setError(null);
-    const formData = new FormData();
-    formData.append("email", data.email);
-    formData.append("password", data.password);
+    setError(null)
+    const formData = new FormData()
+    formData.append('email', data.email)
+    formData.append('password', data.password)
 
-    const result = await loginAction(formData);
+    const result = await loginAction(formData)
 
     if (result?.error) {
-      setError(result.error);
+      setError(result.error)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -44,7 +44,7 @@ export function LoginForm() {
         label="Email"
         type="email"
         placeholder="Enter your email"
-        {...register("email")}
+        {...register('email')}
         error={errors.email?.message}
       />
 
@@ -52,7 +52,7 @@ export function LoginForm() {
         label="Password"
         type="password"
         placeholder="Enter your password"
-        {...register("password")}
+        {...register('password')}
         error={errors.password?.message}
       />
 
@@ -69,5 +69,5 @@ export function LoginForm() {
         Log in
       </Button>
     </form>
-  );
+  )
 }
