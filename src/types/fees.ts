@@ -9,7 +9,7 @@ export type InvoiceStatus =
   | 'cancelled'
   | 'adjusted'
 
-export type PaymentMethod = 'razorpay' | 'cash' | 'bank_transfer' | 'cheque'
+export type PaymentMethod = 'razorpay' | 'cash' | 'bank_transfer' | 'cheque' | 'upi' | 'pos'
 
 export type PaymentStatus =
   | 'pending'
@@ -29,6 +29,9 @@ export type LedgerTransactionType =
   | 'REFUND'
   | 'REVERSAL'
   | 'LATE_FEE'
+  | 'OVERPAYMENT_CREDIT'
+
+export type LedgerEntryType = 'DEBIT' | 'CREDIT'
 
 export type RefundStatus = 'requested' | 'approved' | 'processed' | 'rejected' | 'cancelled'
 
@@ -160,6 +163,9 @@ export interface FinancialLedgerEntry {
   description: string
   actorProfileId?: string | null
   actorName?: string | null
+  journalId?: string | null
+  entryType?: LedgerEntryType | null
+  accountName?: string | null
   createdAt: string
 }
 
@@ -176,6 +182,18 @@ export interface RefundRequest {
   requestedBy: string
   approvedBy?: string | null
   processedAt?: string | null
+  createdAt: string
+}
+
+export interface StudentCredit {
+  id: string
+  schoolId: string
+  academicSessionId: string
+  studentId: string
+  sourcePaymentId: string
+  amount: number
+  remainingAmount: number
+  description: string
   createdAt: string
 }
 
@@ -205,5 +223,7 @@ export interface FeeDashboardSummary {
     cash: number
     bank_transfer: number
     cheque: number
+    upi: number
+    pos: number
   }
 }

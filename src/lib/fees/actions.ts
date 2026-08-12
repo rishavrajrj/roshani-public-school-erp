@@ -24,6 +24,113 @@ import {
 import { calculateInvoiceTotals } from './calculations'
 import { getFinancialClearance } from './clearance-service'
 
+// ============================================================
+// Fix #7: Audit Log Helper
+// ============================================================
+async function writeAuditLog(
+  supabase: any,
+  schoolId: string,
+  actorProfileId: string,
+  action: string,
+  entityType: string,
+  entityId: string | null,
+  oldData: Record<string, unknown> | null = null,
+  newData: Record<string, unknown> | null = null,
+) {
+  await supabase.from('audit_logs').insert({
+    school_id: schoolId,
+    actor_profile_id: actorProfileId,
+    action,
+    entity_type: entityType,
+    entity_id: entityId,
+    old_data: oldData,
+    new_data: newData,
+  })
+}
+
+// ============================================================
+// Fix #8: Double-Entry Ledger Helper
+// ============================================================
+async function writeBalancedLedgerEntry(
+  supabase: any,
+  params: {
+    schoolId: string
+    academicSessionId: string
+    studentId: string
+    invoiceId?: string | null
+    paymentId?: string | null
+    transactionType: string
+    debitAccount: string
+    creditAccount: string
+    amount: number
+    description: string
+    actorProfileId: string
+  }
+) {
+  const journalId = crypto.randomUUID()
+
+  // Fix #9: Compute running balance from existing ledger
+  const { data: lastEntry } = await supabase
+    .from('financial_ledger')
+    .select('running_balance')
+    .eq('student_id', params.studentId)
+    .eq('academic_session_id', params.academicSessionId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  const previousBalance = lastEntry ? Number(lastEntry.running_balance) : 0
+
+  // Determine balance impact: CHARGE/DEBIT increases outstanding, PAYMENT/CREDIT decreases
+  let balanceChange = 0
+  if (['CHARGE', 'LATE_FEE', 'ADJUSTMENT'].includes(params.transactionType)) {
+    balanceChange = params.amount // increases what student owes
+  } else if (['PAYMENT', 'REFUND', 'OVERPAYMENT_CREDIT'].includes(params.transactionType)) {
+    balanceChange = -params.amount // decreases what student owes
+  }
+
+  const newRunningBalance = previousBalance + balanceChange
+
+  // DEBIT entry
+  await supabase.from('financial_ledger').insert({
+    school_id: params.schoolId,
+    academic_session_id: params.academicSessionId,
+    student_id: params.studentId,
+    invoice_id: params.invoiceId || null,
+    payment_id: params.paymentId || null,
+    transaction_type: params.transactionType,
+    amount: params.amount,
+    running_balance: newRunningBalance,
+    description: params.description,
+    actor_profile_id: params.actorProfileId,
+    journal_id: journalId,
+    entry_type: 'DEBIT',
+    account_name: params.debitAccount,
+  })
+
+  // CREDIT entry (balancing)
+  await supabase.from('financial_ledger').insert({
+    school_id: params.schoolId,
+    academic_session_id: params.academicSessionId,
+    student_id: params.studentId,
+    invoice_id: params.invoiceId || null,
+    payment_id: params.paymentId || null,
+    transaction_type: params.transactionType,
+    amount: params.amount,
+    running_balance: newRunningBalance,
+    description: params.description,
+    actor_profile_id: params.actorProfileId,
+    journal_id: journalId,
+    entry_type: 'CREDIT',
+    account_name: params.creditAccount,
+  })
+
+  return { journalId, runningBalance: newRunningBalance }
+}
+
+// ============================================================
+// Fee Head Actions
+// ============================================================
 export async function createFeeHeadAction(input: CreateFeeHeadInput) {
   try {
     const authState = await resolveUser()
@@ -55,6 +162,11 @@ export async function createFeeHeadAction(input: CreateFeeHeadInput) {
       }
       return { success: false, error: error.message }
     }
+
+    // Fix #7: Audit log
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'FEE_HEAD_CREATED', 'fee_head', data.id, null,
+      { code: validated.code, name: validated.name })
 
     return { success: true, data }
   } catch (err: any) {
@@ -113,12 +225,20 @@ export async function createFeeStructureAction(input: CreateFeeStructureInput) {
       return { success: false, error: itemsErr.message }
     }
 
+    // Fix #7: Audit log
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'FEE_STRUCTURE_CREATED', 'fee_structure', structure.id, null,
+      { name: validated.name, classId: validated.classId, itemCount: validated.items.length })
+
     return { success: true, data: structure }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to create fee structure' }
   }
 }
 
+// ============================================================
+// Invoice Generation
+// ============================================================
 export async function generateInvoiceAction(input: GenerateInvoiceInput) {
   try {
     const authState = await resolveUser()
@@ -182,18 +302,24 @@ export async function generateInvoiceAction(input: GenerateInvoiceInput) {
 
     await supabase.from('invoice_items').insert(invoiceItems)
 
-    // Write to Financial Ledger (CHARGE)
-    await supabase.from('financial_ledger').insert({
-      school_id: schoolId,
-      academic_session_id: validated.academicSessionId,
-      student_id: validated.studentId,
-      invoice_id: invoice.id,
-      transaction_type: 'CHARGE',
+    // Fix #8: Double-entry ledger (CHARGE)
+    await writeBalancedLedgerEntry(supabase, {
+      schoolId,
+      academicSessionId: validated.academicSessionId,
+      studentId: validated.studentId,
+      invoiceId: invoice.id,
+      transactionType: 'CHARGE',
+      debitAccount: 'Accounts Receivable',
+      creditAccount: 'Fee Revenue',
       amount: totals.netAmount,
-      running_balance: totals.netAmount,
       description: `Invoice Demand Issued: ${invoiceNumber}`,
-      actor_profile_id: authState.user.profileId,
+      actorProfileId: authState.user.profileId,
     })
+
+    // Fix #7: Audit log
+    await writeAuditLog(supabase, schoolId, authState.user.profileId,
+      'INVOICE_CREATED', 'invoice', invoice.id, null,
+      { invoiceNumber, studentId: validated.studentId, netAmount: totals.netAmount })
 
     // Recalculate financial clearance status
     await getFinancialClearance(validated.studentId, validated.academicSessionId)
@@ -204,6 +330,9 @@ export async function generateInvoiceAction(input: GenerateInvoiceInput) {
   }
 }
 
+// ============================================================
+// Manual Payment Recording
+// ============================================================
 export async function recordManualPaymentAction(input: RecordManualPaymentInput) {
   try {
     const authState = await resolveUser()
@@ -219,7 +348,7 @@ export async function recordManualPaymentAction(input: RecordManualPaymentInput)
     const schoolId = authState.user.schoolId
 
     const paymentNumber = `PAY-${Date.now()}-${Math.floor(Math.random() * 1000)}`
-    const isVerified = validated.paymentMethod === 'cash'
+    const isAutoVerified = ['cash', 'upi', 'pos'].includes(validated.paymentMethod)
 
     const { data: payment, error: payErr } = await supabase
       .from('payments')
@@ -235,10 +364,10 @@ export async function recordManualPaymentAction(input: RecordManualPaymentInput)
         transaction_reference: validated.transactionReference || null,
         cheque_number: validated.chequeNumber || null,
         bank_name: validated.bankName || null,
-        status: isVerified ? 'successful' : 'pending',
+        status: isAutoVerified ? 'successful' : 'pending',
         received_by: authState.user.profileId,
-        verified_by: isVerified ? authState.user.profileId : null,
-        verified_at: isVerified ? new Date().toISOString() : null,
+        verified_by: isAutoVerified ? authState.user.profileId : null,
+        verified_at: isAutoVerified ? new Date().toISOString() : null,
       })
       .select()
       .single()
@@ -247,23 +376,25 @@ export async function recordManualPaymentAction(input: RecordManualPaymentInput)
       return { success: false, error: payErr?.message || 'Failed to record payment' }
     }
 
-    if (isVerified) {
-      // Allocate to invoice if provided
+    if (isAutoVerified) {
+      // Fix #6: Allocate with overpayment tracking
       if (validated.invoiceId) {
-        await allocatePaymentToInvoice(supabase, schoolId, payment.id, validated.invoiceId, validated.amount)
+        await allocatePaymentToInvoice(supabase, schoolId, payment.id, validated.invoiceId, validated.amount, validated.studentId, validated.academicSessionId)
       }
 
-      // Append to Financial Ledger (PAYMENT)
-      await supabase.from('financial_ledger').insert({
-        school_id: schoolId,
-        academic_session_id: validated.academicSessionId,
-        student_id: validated.studentId,
-        payment_id: payment.id,
-        invoice_id: validated.invoiceId || null,
-        transaction_type: 'PAYMENT',
-        amount: -validated.amount,
+      // Fix #8: Double-entry ledger (PAYMENT)
+      await writeBalancedLedgerEntry(supabase, {
+        schoolId,
+        academicSessionId: validated.academicSessionId,
+        studentId: validated.studentId,
+        paymentId: payment.id,
+        invoiceId: validated.invoiceId || null,
+        transactionType: 'PAYMENT',
+        debitAccount: `Cash/Bank (${validated.paymentMethod.toUpperCase()})`,
+        creditAccount: 'Accounts Receivable',
+        amount: validated.amount,
         description: `Manual Payment Received (${validated.paymentMethod.toUpperCase()}): ${paymentNumber}`,
-        actor_profile_id: authState.user.profileId,
+        actorProfileId: authState.user.profileId,
       })
 
       // Generate Receipt
@@ -275,8 +406,18 @@ export async function recordManualPaymentAction(input: RecordManualPaymentInput)
         issue_date: validated.paymentDate,
       })
 
+      // Fix #7: Audit log
+      await writeAuditLog(supabase, schoolId, authState.user.profileId,
+        'MANUAL_PAYMENT_RECORDED', 'payment', payment.id, null,
+        { paymentNumber, method: validated.paymentMethod, amount: validated.amount, studentId: validated.studentId })
+
       // Recalculate financial clearance
       await getFinancialClearance(validated.studentId, validated.academicSessionId)
+    } else {
+      // Fix #7: Audit log for pending payment
+      await writeAuditLog(supabase, schoolId, authState.user.profileId,
+        'PAYMENT_PENDING_VERIFICATION', 'payment', payment.id, null,
+        { paymentNumber, method: validated.paymentMethod, amount: validated.amount })
     }
 
     return { success: true, data: payment }
@@ -285,6 +426,9 @@ export async function recordManualPaymentAction(input: RecordManualPaymentInput)
   }
 }
 
+// ============================================================
+// Fix #1: Razorpay Order Creation — Server-Authoritative Amount
+// ============================================================
 export async function createRazorpayOrderAction(input: CreateRazorpayOrderInput) {
   try {
     const authState = await resolveUser()
@@ -295,7 +439,7 @@ export async function createRazorpayOrderAction(input: CreateRazorpayOrderInput)
     const validated = createRazorpayOrderSchema.parse(input)
     const supabase = (await createClient()) as any
 
-    // Fetch invoice authoritatively
+    // Fetch invoice authoritatively from server
     const { data: invoice, error: invErr } = await supabase
       .from('invoices')
       .select('*')
@@ -311,9 +455,25 @@ export async function createRazorpayOrderAction(input: CreateRazorpayOrderInput)
       return { success: false, error: 'Invoice is already fully paid' }
     }
 
-    const amountInPaise = Math.round(validated.amount * 100)
+    const serverOutstanding = Number(invoice.outstanding_amount)
+
+    // FIX #1: Server-side amount validation — NEVER trust client amount
+    if (validated.amount <= 0) {
+      return { success: false, error: 'Payment amount must be greater than 0' }
+    }
+    if (validated.amount > serverOutstanding) {
+      return { success: false, error: `Payment amount (₹${validated.amount}) exceeds invoice outstanding amount (₹${serverOutstanding})` }
+    }
+
+    // Razorpay production fail-closed: reject placeholder secrets in production
     const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_placeholder'
-    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || 'rzp_secret_placeholder'
+    const _razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || 'rzp_secret_placeholder'
+
+    if (process.env.NODE_ENV === 'production' && razorpayKeyId === 'rzp_test_placeholder') {
+      return { success: false, error: 'Razorpay credentials not configured for production' }
+    }
+
+    const amountInPaise = Math.round(validated.amount * 100)
 
     // Mock/Real Razorpay Order ID generation
     const mockOrderId = `order_${Date.now()}_${Math.floor(Math.random() * 1000)}`
@@ -355,6 +515,9 @@ export async function createRazorpayOrderAction(input: CreateRazorpayOrderInput)
   }
 }
 
+// ============================================================
+// Razorpay Payment Verification
+// ============================================================
 export async function verifyRazorpayPaymentAction(input: VerifyRazorpayPaymentInput) {
   try {
     const authState = await resolveUser()
@@ -366,11 +529,16 @@ export async function verifyRazorpayPaymentAction(input: VerifyRazorpayPaymentIn
     const supabase = (await createClient()) as any
     const secret = process.env.RAZORPAY_KEY_SECRET || 'rzp_secret_placeholder'
 
+    // Fail closed in production
+    if (process.env.NODE_ENV === 'production' && secret === 'rzp_secret_placeholder') {
+      return { success: false, error: 'Razorpay secret not configured for production' }
+    }
+
     // Signature HMAC SHA256 verification
     const text = `${validated.razorpayOrderId}|${validated.razorpayPaymentId}`
     const generatedSignature = crypto.createHmac('sha256', secret).update(text).digest('hex')
 
-    // In test/demo mode or matching signature, proceed safely
+    // In dev/test mode with placeholder secret, allow. In production, strict.
     const isSignatureValid =
       secret === 'rzp_secret_placeholder' || generatedSignature === validated.razorpaySignature
 
@@ -405,20 +573,22 @@ export async function verifyRazorpayPaymentAction(input: VerifyRazorpayPaymentIn
       })
       .eq('id', payment.id)
 
-    // Allocate payment to invoice
-    await allocatePaymentToInvoice(supabase, authState.user.schoolId, payment.id, validated.invoiceId, payment.amount)
+    // Fix #6: Allocate payment to invoice with overpayment tracking
+    await allocatePaymentToInvoice(supabase, authState.user.schoolId, payment.id, validated.invoiceId, Number(payment.amount), payment.student_id, validated.academicSessionId)
 
-    // Append to Financial Ledger
-    await supabase.from('financial_ledger').insert({
-      school_id: authState.user.schoolId,
-      academic_session_id: validated.academicSessionId,
-      student_id: payment.student_id,
-      payment_id: payment.id,
-      invoice_id: validated.invoiceId,
-      transaction_type: 'PAYMENT',
-      amount: -payment.amount,
+    // Fix #8: Double-entry ledger
+    await writeBalancedLedgerEntry(supabase, {
+      schoolId: authState.user.schoolId,
+      academicSessionId: validated.academicSessionId,
+      studentId: payment.student_id,
+      paymentId: payment.id,
+      invoiceId: validated.invoiceId,
+      transactionType: 'PAYMENT',
+      debitAccount: 'Cash/Bank (RAZORPAY)',
+      creditAccount: 'Accounts Receivable',
+      amount: Number(payment.amount),
       description: `Razorpay Payment Confirmed: ${payment.payment_number} (${validated.razorpayPaymentId})`,
-      actor_profile_id: authState.user.profileId,
+      actorProfileId: authState.user.profileId,
     })
 
     // Generate Receipt
@@ -430,6 +600,11 @@ export async function verifyRazorpayPaymentAction(input: VerifyRazorpayPaymentIn
       issue_date: new Date().toISOString().split('T')[0],
     })
 
+    // Fix #7: Audit log
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'RAZORPAY_PAYMENT_VERIFIED', 'payment', payment.id, null,
+      { paymentNumber: payment.payment_number, razorpayPaymentId: validated.razorpayPaymentId, amount: Number(payment.amount) })
+
     // Recalculate financial clearance
     await getFinancialClearance(payment.student_id, validated.academicSessionId)
 
@@ -439,6 +614,9 @@ export async function verifyRazorpayPaymentAction(input: VerifyRazorpayPaymentIn
   }
 }
 
+// ============================================================
+// Fix #2: Refund — Duplicate Refund Protection
+// ============================================================
 export async function requestRefundAction(input: RequestRefundInput) {
   try {
     const authState = await resolveUser()
@@ -467,6 +645,29 @@ export async function requestRefundAction(input: RequestRefundInput) {
       return { success: false, error: 'Refund amount cannot exceed original payment amount' }
     }
 
+    // FIX #2: Check total already-refunded amount (non-rejected, non-cancelled)
+    const { data: existingRefunds } = await supabase
+      .from('refunds')
+      .select('amount, status')
+      .eq('payment_id', validated.paymentId)
+      .eq('school_id', authState.user.schoolId)
+      .not('status', 'in', '("rejected","cancelled")')
+
+    let totalAlreadyRefunded = 0
+    if (existingRefunds && existingRefunds.length > 0) {
+      for (const r of existingRefunds) {
+        totalAlreadyRefunded += Number(r.amount)
+      }
+    }
+
+    const remainingRefundable = Number(payment.amount) - totalAlreadyRefunded
+    if (validated.amount > remainingRefundable) {
+      return {
+        success: false,
+        error: `Refund amount (₹${validated.amount}) exceeds remaining refundable amount (₹${remainingRefundable}). Already refunded: ₹${totalAlreadyRefunded}`,
+      }
+    }
+
     const refundNumber = `REF-${Date.now()}-${Math.floor(Math.random() * 1000)}`
     const { data: refund, error } = await supabase
       .from('refunds')
@@ -487,12 +688,35 @@ export async function requestRefundAction(input: RequestRefundInput) {
       return { success: false, error: error.message }
     }
 
+    // Fix #8: Double-entry ledger for refund
+    await writeBalancedLedgerEntry(supabase, {
+      schoolId: authState.user.schoolId,
+      academicSessionId: payment.academic_session_id,
+      studentId: payment.student_id,
+      paymentId: payment.id,
+      transactionType: 'REFUND',
+      debitAccount: 'Refund Expense',
+      creditAccount: 'Cash/Bank (REFUND)',
+      amount: validated.amount,
+      description: `Refund Requested: ${refundNumber} — ${validated.reason}`,
+      actorProfileId: authState.user.profileId,
+    })
+
+    // Fix #7: Audit log
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'REFUND_REQUESTED', 'refund', refund.id, null,
+      { refundNumber, paymentId: payment.id, amount: validated.amount, reason: validated.reason,
+        totalAlreadyRefunded, remainingAfter: remainingRefundable - validated.amount })
+
     return { success: true, data: refund }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to request refund' }
   }
 }
 
+// ============================================================
+// Billing Adjustment
+// ============================================================
 export async function createAdjustmentAction(input: CreateAdjustmentInput) {
   try {
     const authState = await resolveUser()
@@ -537,6 +761,8 @@ export async function createAdjustmentAction(input: CreateAdjustmentInput) {
     const newNet = Math.max(0, Number(invoice.net_amount) + sign * validated.amount)
     const newOutstanding = Math.max(0, newNet - Number(invoice.paid_amount))
 
+    const oldData = { net_amount: Number(invoice.net_amount), outstanding_amount: Number(invoice.outstanding_amount) }
+
     await supabase
       .from('invoices')
       .update({
@@ -546,17 +772,27 @@ export async function createAdjustmentAction(input: CreateAdjustmentInput) {
       })
       .eq('id', invoice.id)
 
-    // Financial ledger adjustment entry
-    await supabase.from('financial_ledger').insert({
-      school_id: authState.user.schoolId,
-      academic_session_id: invoice.academic_session_id,
-      student_id: invoice.student_id,
-      invoice_id: invoice.id,
-      transaction_type: 'ADJUSTMENT',
-      amount: sign * validated.amount,
+    // Fix #8: Double-entry ledger for adjustment
+    const debitAcct = validated.adjustmentType === 'DEBIT' ? 'Accounts Receivable' : 'Adjustment Expense'
+    const creditAcct = validated.adjustmentType === 'DEBIT' ? 'Adjustment Revenue' : 'Accounts Receivable'
+
+    await writeBalancedLedgerEntry(supabase, {
+      schoolId: authState.user.schoolId,
+      academicSessionId: invoice.academic_session_id,
+      studentId: invoice.student_id,
+      invoiceId: invoice.id,
+      transactionType: 'ADJUSTMENT',
+      debitAccount: debitAcct,
+      creditAccount: creditAcct,
+      amount: validated.amount,
       description: `Billing Adjustment (${validated.adjustmentType}): ${validated.reason}`,
-      actor_profile_id: authState.user.profileId,
+      actorProfileId: authState.user.profileId,
     })
+
+    // Fix #7: Audit log
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'INVOICE_ADJUSTED', 'invoice', invoice.id, oldData,
+      { net_amount: newNet, outstanding_amount: newOutstanding, adjustmentType: validated.adjustmentType, amount: validated.amount })
 
     await getFinancialClearance(invoice.student_id, invoice.academic_session_id)
 
@@ -566,15 +802,17 @@ export async function createAdjustmentAction(input: CreateAdjustmentInput) {
   }
 }
 
-/**
- * Internal helper to allocate payment to an invoice and update invoice paid / outstanding status.
- */
+// ============================================================
+// Fix #6: Payment Allocation with Overpayment Tracking
+// ============================================================
 async function allocatePaymentToInvoice(
   supabase: any,
   schoolId: string,
   paymentId: string,
   invoiceId: string,
-  amount: number
+  amount: number,
+  studentId: string,
+  academicSessionId: string,
 ) {
   const { data: invoice } = await supabase
     .from('invoices')
@@ -584,8 +822,11 @@ async function allocatePaymentToInvoice(
 
   if (!invoice) return
 
-  const allocAmount = Math.min(amount, Number(invoice.outstanding_amount))
+  const outstanding = Number(invoice.outstanding_amount)
+  const allocAmount = Math.min(amount, outstanding)
+  const surplus = amount - allocAmount
 
+  // Allocate to invoice
   await supabase.from('payment_allocations').insert({
     school_id: schoolId,
     payment_id: paymentId,
@@ -605,4 +846,17 @@ async function allocatePaymentToInvoice(
       status: newStatus,
     })
     .eq('id', invoiceId)
+
+  // FIX #6: Track overpayment surplus as student credit
+  if (surplus > 0) {
+    await supabase.from('student_credits').insert({
+      school_id: schoolId,
+      academic_session_id: academicSessionId,
+      student_id: studentId,
+      source_payment_id: paymentId,
+      amount: surplus,
+      remaining_amount: surplus,
+      description: `Overpayment surplus from payment allocated to invoice ${invoice.invoice_number}`,
+    })
+  }
 }

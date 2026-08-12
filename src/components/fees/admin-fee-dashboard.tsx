@@ -286,9 +286,17 @@ export function AdminFeeDashboard({
                 <span className="font-medium text-slate-700">Bank Transfer</span>
                 <span className="font-bold text-slate-900">₹{summary.methodBreakdown.bank_transfer.toLocaleString('en-IN')}</span>
               </div>
-              <div className="flex justify-between items-center py-2">
+              <div className="flex justify-between items-center py-2 border-b border-slate-100">
                 <span className="font-medium text-slate-700">Cheque</span>
                 <span className="font-bold text-slate-900">₹{summary.methodBreakdown.cheque.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                <span className="font-medium text-slate-700">UPI</span>
+                <span className="font-bold text-slate-900">₹{summary.methodBreakdown.upi.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="font-medium text-slate-700">POS (Card Machine)</span>
+                <span className="font-bold text-slate-900">₹{summary.methodBreakdown.pos.toLocaleString('en-IN')}</span>
               </div>
             </div>
           </div>

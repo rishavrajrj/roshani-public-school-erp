@@ -9,6 +9,11 @@ export async function POST(req: Request) {
     const signature = req.headers.get('x-razorpay-signature')
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || 'rzp_webhook_secret_placeholder'
 
+    // Fail closed in production
+    if (process.env.NODE_ENV === 'production' && webhookSecret === 'rzp_webhook_secret_placeholder') {
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
+    }
+
     // Verify HMAC SHA256 Webhook Signature
     if (signature && webhookSecret !== 'rzp_webhook_secret_placeholder') {
       const expectedSignature = crypto
@@ -27,45 +32,76 @@ export async function POST(req: Request) {
 
     const supabase = (await createClient()) as any
 
+    // FIX #5: Derive school_id from the payment/order record, not hardcoded
+    const paymentEntity = event.payload?.payment?.entity
+    const orderId = paymentEntity?.order_id
+    const razorpayPaymentId = paymentEntity?.id
+
+    // Lookup the payment to derive school_id
+    let derivedSchoolId: string | null = null
+    let matchedPayment: any = null
+
+    if (orderId) {
+      const { data: payment } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('razorpay_order_id', orderId)
+        .single()
+
+      if (payment) {
+        derivedSchoolId = payment.school_id
+        matchedPayment = payment
+      }
+    }
+
+    // If we can't derive school_id, we can't process securely
+    if (!derivedSchoolId) {
+      // Still record the event for audit purposes with a sentinel
+      await supabase.from('payment_events').insert({
+        school_id: '00000000-0000-0000-0000-000000000000',
+        event_type: eventType,
+        external_event_id: eventId,
+        payload: event,
+      }).catch(() => {})
+      return NextResponse.json({ status: 'unmatched', message: 'No matching payment found for this webhook event' })
+    }
+
     // 1. Idempotency Check
     const { error: eventErr } = await supabase.from('payment_events').insert({
-      school_id: '11111111-1111-4111-8111-111111111111',
+      school_id: derivedSchoolId,
       event_type: eventType,
       external_event_id: eventId,
       payload: event,
     })
 
     if (eventErr && eventErr.code === '23505') {
-      // Duplicate event processed safely
       return NextResponse.json({ status: 'already_processed', message: 'Event ignored due to idempotency' })
     }
 
     // 2. Handle Payment Event
-    if (['payment.captured', 'payment.authorized'].includes(eventType)) {
-      const paymentEntity = event.payload?.payment?.entity
-      const orderId = paymentEntity?.order_id
-      const paymentId = paymentEntity?.id
-
-      if (orderId) {
-        const { data: payment } = await supabase
+    if (['payment.captured', 'payment.authorized'].includes(eventType) && matchedPayment) {
+      if (matchedPayment.status !== 'successful') {
+        await supabase
           .from('payments')
-          .select('*')
-          .eq('razorpay_order_id', orderId)
-          .single()
+          .update({
+            status: 'successful',
+            razorpay_payment_id: razorpayPaymentId,
+            verified_at: new Date().toISOString(),
+          })
+          .eq('id', matchedPayment.id)
 
-        if (payment && payment.status !== 'successful') {
-          await supabase
-            .from('payments')
-            .update({
-              status: 'successful',
-              razorpay_payment_id: paymentId,
-              verified_at: new Date().toISOString(),
-            })
-            .eq('id', payment.id)
+        // Audit log for webhook payment
+        await supabase.from('audit_logs').insert({
+          school_id: derivedSchoolId,
+          actor_profile_id: null,
+          action: 'WEBHOOK_PAYMENT_CONFIRMED',
+          entity_type: 'payment',
+          entity_id: matchedPayment.id,
+          new_data: { razorpayPaymentId, eventType, eventId },
+        })
 
-          // Recalculate clearance
-          await getFinancialClearance(payment.student_id, payment.academic_session_id)
-        }
+        // Recalculate clearance
+        await getFinancialClearance(matchedPayment.student_id, matchedPayment.academic_session_id)
       }
     }
 

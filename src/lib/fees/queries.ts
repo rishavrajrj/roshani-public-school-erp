@@ -213,6 +213,9 @@ export async function getFinancialLedger(studentId?: string): Promise<FinancialL
     description: item.description,
     actorProfileId: item.actor_profile_id,
     actorName: item.profiles?.full_name || 'System',
+    journalId: item.journal_id || null,
+    entryType: item.entry_type || null,
+    accountName: item.account_name || null,
     createdAt: item.created_at,
   }))
 }
@@ -258,7 +261,7 @@ export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
       todayCollection: 0,
       monthlyCollection: 0,
       pendingVerificationCount: 0,
-      methodBreakdown: { razorpay: 0, cash: 0, bank_transfer: 0, cheque: 0 },
+      methodBreakdown: { razorpay: 0, cash: 0, bank_transfer: 0, cheque: 0, upi: 0, pos: 0 },
     }
   }
 
@@ -293,7 +296,7 @@ export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
   let todayCollection = 0
   let monthlyCollection = 0
   let pendingVerificationCount = 0
-  const methodBreakdown = { razorpay: 0, cash: 0, bank_transfer: 0, cheque: 0 }
+  const methodBreakdown = { razorpay: 0, cash: 0, bank_transfer: 0, cheque: 0, upi: 0, pos: 0 }
 
   if (payData) {
     for (const p of payData) {
@@ -327,6 +330,8 @@ export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
       cash: Number(methodBreakdown.cash.toFixed(2)),
       bank_transfer: Number(methodBreakdown.bank_transfer.toFixed(2)),
       cheque: Number(methodBreakdown.cheque.toFixed(2)),
+      upi: Number(methodBreakdown.upi.toFixed(2)),
+      pos: Number(methodBreakdown.pos.toFixed(2)),
     },
   }
 }

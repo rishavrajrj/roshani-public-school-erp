@@ -58,11 +58,12 @@ export const generateInvoiceSchema = z.object({
   path: ['dueDate'],
 })
 
+// Fix #4: Added 'upi' and 'pos' payment methods
 export const recordManualPaymentSchema = z.object({
   academicSessionId: z.string().uuid(),
   studentId: z.string().uuid(),
   invoiceId: z.string().uuid().optional(),
-  paymentMethod: z.enum(['cash', 'bank_transfer', 'cheque']),
+  paymentMethod: z.enum(['cash', 'bank_transfer', 'cheque', 'upi', 'pos']),
   amount: z.number().positive('Payment amount must be greater than 0'),
   paymentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   transactionReference: z.string().trim().optional(),
