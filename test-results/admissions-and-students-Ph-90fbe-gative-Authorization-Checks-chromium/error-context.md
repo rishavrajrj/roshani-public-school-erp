@@ -6,29 +6,40 @@
 
 # Test info
 
-- Name: admissions-and-students.spec.ts >> Phase 3 — Admissions & Student Management E2E >> 2. Direct Administrative Student Enrollment
-- Location: e2e\admissions-and-students.spec.ts:61:7
+- Name: admissions-and-students.spec.ts >> Phase 3 — Admissions & Student Management E2E >> 3. Security Negative Authorization Checks
+- Location: e2e\admissions-and-students.spec.ts:91:7
 
 # Error details
 
 ```
-Error: expect(locator).toContainText(expected) failed
+Error: expect(page).toHaveURL(expected) failed
 
-Locator: locator('h1')
-Expected substring: "Direct Administrative Enrollment"
-Received string:    "Welcome back"
+Expected pattern: /\/erp\/teacher/
+Received string:  "http://localhost:3000/login"
 Timeout: 5000ms
 
 Call log:
-  - Expect "toContainText" with timeout 5000ms
-  - waiting for locator('h1')
-    14 × locator resolved to <h1 class="text-xl font-semibold text-slate-900">Welcome back</h1>
-       - unexpected value "Welcome back"
+  - Expect "toHaveURL" with timeout 5000ms
+    14 × locator resolved to <html lang="en" class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable h-full antialiased">…</html>
+       - unexpected value "http://localhost:3000/login"
 
 ```
 
 ```yaml
+- heading "Roshani Public School" [level=2]
+- paragraph: ERP System
 - heading "Welcome back" [level=1]
+- paragraph: Please enter your details to sign in
+- text: Email
+- textbox "Enter your email": teacher@roshanischool.com
+- text: Password
+- textbox "Enter your password": TestPass123!
+- button:
+  - img
+- link "Forgot password?":
+  - /url: /forgot-password
+- button "Log in"
+- alert
 ```
 
 # Test source
@@ -104,8 +115,7 @@ Call log:
   68  | 
   69  |     // 2. Navigate to Direct Student Enrollment
   70  |     await page.goto('/erp/admin/students/new')
-> 71  |     await expect(page.locator('h1')).toContainText('Direct Administrative Enrollment')
-      |                                      ^ Error: expect(locator).toContainText(expected) failed
+  71  |     await expect(page.locator('h1')).toContainText('Direct Administrative Enrollment')
   72  | 
   73  |     // 3. Fill direct student form
   74  |     await page.fill('input[name="first_name"]', 'Sanya')
@@ -131,7 +141,8 @@ Call log:
   94  |     await page.fill('input[name="email"]', 'teacher@roshanischool.com')
   95  |     await page.fill('input[name="password"]', PASSWORD)
   96  |     await page.click('button[type="submit"]')
-  97  |     await expect(page).toHaveURL(/\/erp\/teacher/)
+> 97  |     await expect(page).toHaveURL(/\/erp\/teacher/)
+      |                        ^ Error: expect(page).toHaveURL(expected) failed
   98  | 
   99  |     // Attempt accessing Admin Admissions
   100 |     await page.goto('/erp/admin/admissions')

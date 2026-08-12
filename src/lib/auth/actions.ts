@@ -6,7 +6,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { loginSchema, forgotPasswordSchema, resetPasswordSchema } from './schemas'
-import { resolveUser } from './resolve-user'
 import { ROLE_ROUTES } from './constants'
 import type { AuthActionResult, RoleName } from '@/types/auth'
 
@@ -30,38 +29,58 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
 
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: authData, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   })
 
-  if (error) {
-    // Safe error message — don't reveal whether email exists
+  if (error || !authData.user) {
     return { success: false, error: 'Invalid email or password' }
   }
 
-  // Resolve user state and redirect directly to appropriate route
-  const authState = await resolveUser()
+  // 1. Resolve profile directly using authenticated user ID
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id, school_id, status')
+    .eq('auth_user_id', authData.user.id)
+    .single()
 
-  if (authState.state === 'unprovisioned') {
+  if (!profile) {
     redirect('/erp/account-not-provisioned')
   }
 
-  if (authState.state === 'disabled') {
+  if ((profile as any).status !== 'active') {
     redirect('/erp/unauthorized')
   }
 
-  if (authState.state === 'authenticated') {
-    const roles = authState.user.roles
-    if (roles.length === 1) {
-      const targetRoute = ROLE_ROUTES[roles[0] as RoleName] || '/erp'
-      redirect(targetRoute)
-    } else if (roles.length > 1) {
-      redirect('/erp/select-role')
+  // 2. Resolve roles directly using profile ID
+  const p = profile as { id: string; school_id: string }
+  const { data: roleRecords } = await supabase
+    .from('user_roles')
+    .select('role_id, roles(name)')
+    .eq('profile_id', p.id)
+    .eq('school_id', p.school_id)
+
+  const roles: string[] = []
+  if (roleRecords) {
+    for (const record of roleRecords) {
+      const roleData = (record as Record<string, unknown>).roles as { name: string } | null
+      if (roleData?.name) {
+        roles.push(roleData.name)
+      }
     }
   }
 
-  redirect('/erp')
+  if (roles.length === 0) {
+    redirect('/erp/account-not-provisioned')
+  }
+
+  if (roles.length === 1) {
+    const targetRoute = ROLE_ROUTES[roles[0] as RoleName] || '/erp'
+    redirect(targetRoute)
+  } else {
+    redirect('/erp/select-role')
+  }
 }
 
 /**
@@ -76,8 +95,7 @@ export async function logoutAction(): Promise<void> {
 
 /**
  * Forgot password server action.
- * Sends a password reset email via Supabase Auth.
- * Always shows success to avoid revealing whether the email exists.
+ * Sends reset email via Supabase Auth.
  */
 export async function forgotPasswordAction(formData: FormData): Promise<AuthActionResult> {
   const rawData = {
@@ -86,23 +104,25 @@ export async function forgotPasswordAction(formData: FormData): Promise<AuthActi
 
   const parsed = forgotPasswordSchema.safeParse(rawData)
   if (!parsed.success) {
-    const firstError = parsed.error.issues[0]?.message ?? 'Invalid input'
+    const firstError = parsed.error.issues[0]?.message ?? 'Invalid email address'
     return { success: false, error: firstError }
   }
 
   const supabase = await createClient()
-
-  // Always return success regardless of whether email exists
-  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL ? '' : ''}${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/reset-password`,
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/reset-password`,
   })
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
 
   return { success: true }
 }
 
 /**
  * Reset password server action.
- * Updates the user's password after they've clicked the reset link.
+ * Updates password for current authenticated session.
  */
 export async function resetPasswordAction(formData: FormData): Promise<AuthActionResult> {
   const rawData = {
@@ -112,19 +132,18 @@ export async function resetPasswordAction(formData: FormData): Promise<AuthActio
 
   const parsed = resetPasswordSchema.safeParse(rawData)
   if (!parsed.success) {
-    const firstError = parsed.error.issues[0]?.message ?? 'Invalid input'
+    const firstError = parsed.error.issues[0]?.message ?? 'Invalid password'
     return { success: false, error: firstError }
   }
 
   const supabase = await createClient()
-
   const { error } = await supabase.auth.updateUser({
     password: parsed.data.password,
   })
 
   if (error) {
-    return { success: false, error: 'Failed to update password. Please try again.' }
+    return { success: false, error: error.message }
   }
 
-  return { success: true }
+  redirect('/login')
 }
