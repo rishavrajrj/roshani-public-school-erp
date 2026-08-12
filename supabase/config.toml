@@ -1,0 +1,5 @@
+# Roshani Public School ERP — Supabase Configuration
+# See: https://supabase.com/docs/guides/cli/config
+
+[project]
+id = "eiuoztgypawepqlvdpvu"

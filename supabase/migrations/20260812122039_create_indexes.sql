@@ -1,0 +1,37 @@
+-- Migration 009: Strategic Indexes
+
+CREATE INDEX IF NOT EXISTS idx_schools_code ON public.schools (code);
+CREATE INDEX IF NOT EXISTS idx_school_settings_school_id ON public.school_settings (school_id);
+CREATE INDEX IF NOT EXISTS idx_academic_sessions_school_id ON public.academic_sessions (school_id);
+CREATE INDEX IF NOT EXISTS idx_academic_sessions_status ON public.academic_sessions (school_id, status);
+CREATE INDEX IF NOT EXISTS idx_classes_school_id ON public.classes (school_id);
+CREATE INDEX IF NOT EXISTS idx_classes_display_order ON public.classes (school_id, display_order);
+CREATE INDEX IF NOT EXISTS idx_sections_school_id ON public.sections (school_id);
+CREATE INDEX IF NOT EXISTS idx_sections_class_id ON public.sections (class_id);
+CREATE INDEX IF NOT EXISTS idx_subjects_school_id ON public.subjects (school_id);
+CREATE INDEX IF NOT EXISTS idx_class_subjects_school_id ON public.class_subjects (school_id);
+CREATE INDEX IF NOT EXISTS idx_class_subjects_class_id ON public.class_subjects (class_id);
+CREATE INDEX IF NOT EXISTS idx_class_subjects_subject_id ON public.class_subjects (subject_id);
+CREATE INDEX IF NOT EXISTS idx_profiles_auth_user_id ON public.profiles (auth_user_id);
+CREATE INDEX IF NOT EXISTS idx_profiles_school_id ON public.profiles (school_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_profile_id ON public.user_roles (profile_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_role_id ON public.user_roles (role_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_school_id ON public.user_roles (school_id);
+CREATE INDEX IF NOT EXISTS idx_guardians_school_id ON public.guardians (school_id);
+CREATE INDEX IF NOT EXISTS idx_guardians_profile_id ON public.guardians (profile_id);
+CREATE INDEX IF NOT EXISTS idx_students_school_id ON public.students (school_id);
+CREATE INDEX IF NOT EXISTS idx_students_admission_number ON public.students (school_id, admission_number);
+CREATE INDEX IF NOT EXISTS idx_student_guardians_student_id ON public.student_guardians (student_id);
+CREATE INDEX IF NOT EXISTS idx_student_guardians_guardian_id ON public.student_guardians (guardian_id);
+CREATE INDEX IF NOT EXISTS idx_student_guardians_school_id ON public.student_guardians (school_id);
+CREATE INDEX IF NOT EXISTS idx_sah_student_id ON public.student_academic_history (student_id);
+CREATE INDEX IF NOT EXISTS idx_sah_session_id ON public.student_academic_history (academic_session_id);
+CREATE INDEX IF NOT EXISTS idx_sah_class_id ON public.student_academic_history (class_id);
+CREATE INDEX IF NOT EXISTS idx_sah_section_id ON public.student_academic_history (section_id);
+CREATE INDEX IF NOT EXISTS idx_sah_school_id ON public.student_academic_history (school_id);
+CREATE INDEX IF NOT EXISTS idx_student_documents_student_id ON public.student_documents (student_id);
+CREATE INDEX IF NOT EXISTS idx_student_documents_uploaded_by ON public.student_documents (uploaded_by);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_school_id ON public.audit_logs (school_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_actor_id ON public.audit_logs (actor_profile_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON public.audit_logs (entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON public.audit_logs (created_at);
