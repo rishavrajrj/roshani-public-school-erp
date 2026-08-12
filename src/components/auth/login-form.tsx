@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/lib/auth/schemas";
@@ -10,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export function LoginForm() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -31,8 +29,6 @@ export function LoginForm() {
 
     if (result?.error) {
       setError(result.error);
-    } else {
-      router.push("/erp");
     }
   };
 

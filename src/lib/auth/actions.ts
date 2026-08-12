@@ -6,12 +6,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { loginSchema, forgotPasswordSchema, resetPasswordSchema } from './schemas'
-import type { AuthActionResult } from '@/types/auth'
+import { resolveUser } from './resolve-user'
+import { ROLE_ROUTES } from './constants'
+import type { AuthActionResult, RoleName } from '@/types/auth'
 
 /**
  * Login server action.
- * Validates input with Zod, authenticates via Supabase Auth.
- * Never reveals whether a specific email exists.
+ * Validates input with Zod, authenticates via Supabase Auth,
+ * resolves user context, and redirects directly to target portal.
  */
 export async function loginAction(formData: FormData): Promise<AuthActionResult> {
   const rawData = {
@@ -38,7 +40,28 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
     return { success: false, error: 'Invalid email or password' }
   }
 
-  return { success: true }
+  // Resolve user state and redirect directly to appropriate route
+  const authState = await resolveUser()
+
+  if (authState.state === 'unprovisioned') {
+    redirect('/erp/account-not-provisioned')
+  }
+
+  if (authState.state === 'disabled') {
+    redirect('/erp/unauthorized')
+  }
+
+  if (authState.state === 'authenticated') {
+    const roles = authState.user.roles
+    if (roles.length === 1) {
+      const targetRoute = ROLE_ROUTES[roles[0] as RoleName] || '/erp'
+      redirect(targetRoute)
+    } else if (roles.length > 1) {
+      redirect('/erp/select-role')
+    }
+  }
+
+  redirect('/erp')
 }
 
 /**
