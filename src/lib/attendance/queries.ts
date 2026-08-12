@@ -10,7 +10,7 @@ export async function getTeacherAssignments(teacherProfileId?: string) {
   const user = authState.user
   const supabase = await createClient()
 
-  let query = supabase
+  let query = (supabase as any)
     .from('teacher_assignments')
     .select(`
       id,
@@ -72,7 +72,7 @@ export async function getSectionAttendanceSheet(
   const supabase = await createClient()
 
   // 1. Fetch section session state if exists
-  const { data: sessionData } = await supabase
+  const { data: sessionData } = await (supabase as any)
     .from('attendance_sessions')
     .select('id, status, marked_by, marked_at, locked_at, locked_by')
     .eq('school_id', user.schoolId)
@@ -84,12 +84,12 @@ export async function getSectionAttendanceSheet(
 
   const sessObj = sessionData as any
 
-  // 2. Fetch enrolled active students for this section
-  const { data: historyData, error: historyError } = await supabase
+  // 2. Fetch enrolled active students ONLY (students.status = 'active' AND sah.status = 'active')
+  const { data: historyData, error: historyError } = await (supabase as any)
     .from('student_academic_history')
     .select(`
       roll_number,
-      students (
+      students!inner (
         id,
         first_name,
         last_name,
@@ -102,17 +102,18 @@ export async function getSectionAttendanceSheet(
     .eq('class_id', classId)
     .eq('section_id', sectionId)
     .eq('status', 'active')
+    .eq('students.status', 'active')
 
   if (historyError || !historyData) {
     return null
   }
 
   // 3. Fetch existing attendance records if session exists
-  const recordsMap: Record<string, { id: string; status: AttendanceStatus; remarks: string | null }> = {}
+  const recordsMap: Record<string, { id: string; status: AttendanceStatus; remarks: string | null; correctionReason: string | null }> = {}
   if (sessObj) {
-    const { data: recData } = await supabase
+    const { data: recData } = await (supabase as any)
       .from('attendance_records')
-      .select('id, student_id, status, remarks')
+      .select('id, student_id, status, remarks, correction_reason')
       .eq('session_id', sessObj.id)
 
     if (recData) {
@@ -121,6 +122,7 @@ export async function getSectionAttendanceSheet(
           id: r.id,
           status: r.status as AttendanceStatus,
           remarks: r.remarks,
+          correctionReason: r.correction_reason,
         }
       }
     }
@@ -137,6 +139,7 @@ export async function getSectionAttendanceSheet(
       rollNumber: h.roll_number,
       status: existing ? existing.status : ('present' as AttendanceStatus),
       remarks: existing ? existing.remarks : null,
+      correctionReason: existing ? existing.correctionReason : null,
       recordId: existing ? existing.id : undefined,
     }
   })
@@ -166,7 +169,7 @@ export async function getAdminAttendanceOverview(academicSessionId: string, atte
   const supabase = await createClient()
 
   // Fetch all classes & sections for school
-  const { data: classesData } = await supabase
+  const { data: classesData } = await (supabase as any)
     .from('classes')
     .select(`
       id,
@@ -184,7 +187,7 @@ export async function getAdminAttendanceOverview(academicSessionId: string, atte
   if (!classesData) return []
 
   // Fetch attendance sessions for this date
-  const { data: sessionsData } = await supabase
+  const { data: sessionsData } = await (supabase as any)
     .from('attendance_sessions')
     .select('id, class_id, section_id, status, marked_at, locked_at')
     .eq('school_id', user.schoolId)
@@ -237,7 +240,7 @@ export async function getParentAttendanceData(studentId?: string) {
   const supabase = await createClient()
 
   // Fetch guardian profile
-  const { data: guardian } = await supabase
+  const { data: guardian } = await (supabase as any)
     .from('guardians')
     .select('id')
     .eq('profile_id', user.profileId)
@@ -247,7 +250,7 @@ export async function getParentAttendanceData(studentId?: string) {
   if (!guardianObj) return null
 
   // Fetch parent's linked children
-  const { data: sgData, error: sgError } = await supabase
+  const { data: sgData, error: sgError } = await (supabase as any)
     .from('student_guardians')
     .select(`
       student_id,
@@ -279,8 +282,8 @@ export async function getParentAttendanceData(studentId?: string) {
     return null
   }
 
-  // Fetch attendance records for target student
-  const { data: recordsData } = await supabase
+  // Fetch historical attendance records for target student
+  const { data: recordsData } = await (supabase as any)
     .from('attendance_records')
     .select(`
       id,
@@ -321,7 +324,7 @@ export async function getStudentSelfAttendanceData() {
   const supabase = await createClient()
 
   // Resolve student ID from profile_id
-  const { data: student } = await supabase
+  const { data: student } = await (supabase as any)
     .from('students')
     .select('id, first_name, last_name, admission_number')
     .eq('school_id', user.schoolId)
@@ -331,7 +334,7 @@ export async function getStudentSelfAttendanceData() {
   const studentObj = student as { id: string; first_name: string; last_name: string; admission_number: string } | null
   if (!studentObj) return null
 
-  const { data: recordsData } = await supabase
+  const { data: recordsData } = await (supabase as any)
     .from('attendance_records')
     .select(`
       id,

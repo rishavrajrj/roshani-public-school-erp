@@ -1,6 +1,8 @@
 export type AttendanceStatus = 'present' | 'absent' | 'late' | 'leave'
 export type AttendanceSessionStatus = 'draft' | 'submitted' | 'locked'
 
+export type LeavePolicy = 'exclude_from_eligible' | 'count_as_attended' | 'count_as_absent'
+
 export interface TeacherAssignment {
   id: string
   schoolId: string
@@ -25,7 +27,7 @@ export interface AttendanceSession {
   sectionId: string
   attendanceDate: string
   status: AttendanceSessionStatus
-  markedBy: string
+  markedBy: string | null
   markedAt: string
   lockedAt: string | null
   lockedBy: string | null
@@ -41,6 +43,7 @@ export interface StudentAttendanceItem {
   rollNumber: string | null
   status: AttendanceStatus
   remarks?: string | null
+  correctionReason?: string | null
   recordId?: string
 }
 
@@ -49,6 +52,7 @@ export interface SubmitAttendancePayload {
   classId: string
   sectionId: string
   attendanceDate: string
+  correctionReason?: string
   records: Array<{
     studentId: string
     status: AttendanceStatus
@@ -63,5 +67,6 @@ export interface AttendanceSummary {
   lateCount: number
   leaveCount: number
   attendedDays: number // present + late
-  attendancePercentage: number
+  eligibleDays: number
+  attendancePercentage: number | 'N/A'
 }

@@ -53,7 +53,7 @@ export async function submitAttendanceSessionAction(input: SubmitAttendanceInput
       }
     }
 
-    // 2. Check if session is already locked
+    // 2. Check existing session status
     const { data: existingSession } = await (supabase as any)
       .from('attendance_sessions')
       .select('id, status')
@@ -65,19 +65,34 @@ export async function submitAttendanceSessionAction(input: SubmitAttendanceInput
       .maybeSingle()
 
     const sessionObj = existingSession as { id: string; status: string } | null
+
     if (sessionObj && sessionObj.status === 'locked' && !isAdminOrSuper) {
       return { success: false, error: 'This attendance session is locked and cannot be modified.' }
     }
 
-    // 3. Verify completeness — all active enrolled students must be included
+    // MANDATORY CORRECTION REASON: If modifying an already submitted session, require a correction reason
+    if (sessionObj && sessionObj.status === 'submitted') {
+      if (!data.correctionReason || data.correctionReason.trim().length < 3) {
+        return {
+          success: false,
+          error: 'A non-empty correction reason (at least 3 characters) is required when modifying a submitted attendance session.',
+        }
+      }
+    }
+
+    // 3. Verify completeness — all currently active enrolled students must be included
     const { data: activeStudents, error: historyError } = await (supabase as any)
       .from('student_academic_history')
-      .select('student_id')
+      .select(`
+        student_id,
+        students!inner(status)
+      `)
       .eq('school_id', user.schoolId)
       .eq('academic_session_id', data.academicSessionId)
       .eq('class_id', data.classId)
       .eq('section_id', data.sectionId)
       .eq('status', 'active')
+      .eq('students.status', 'active')
 
     if (historyError || !activeStudents) {
       return { success: false, error: 'Failed to verify active class enrollment.' }
@@ -89,7 +104,7 @@ export async function submitAttendanceSessionAction(input: SubmitAttendanceInput
       if (!payloadStudentIds.has(st.student_id)) {
         return {
           success: false,
-          error: 'Attendance submission incomplete. All enrolled students must be marked.',
+          error: 'Attendance submission incomplete. All eligible enrolled students must be marked.',
         }
       }
     }
@@ -139,6 +154,7 @@ export async function submitAttendanceSessionAction(input: SubmitAttendanceInput
       attendance_date: data.attendanceDate,
       status: r.status,
       remarks: r.remarks || null,
+      correction_reason: sessionObj ? data.correctionReason || null : null,
       marked_by: user.profileId,
       marked_at: new Date().toISOString(),
       updated_by: user.profileId,
@@ -159,7 +175,7 @@ export async function submitAttendanceSessionAction(input: SubmitAttendanceInput
     await (supabase as any).from('audit_logs').insert({
       school_id: user.schoolId,
       actor_profile_id: user.profileId,
-      action: sessionObj ? 'Attendance edited' : 'Attendance marked',
+      action: sessionObj ? 'Attendance corrected' : 'Attendance marked',
       entity_type: 'attendance_sessions',
       entity_id: sessionId,
       new_data: {
@@ -167,6 +183,7 @@ export async function submitAttendanceSessionAction(input: SubmitAttendanceInput
         class_id: data.classId,
         section_id: data.sectionId,
         student_count: data.records.length,
+        correction_reason: data.correctionReason || null,
       },
     })
 
@@ -193,8 +210,13 @@ export async function lockAttendanceSessionAction(input: LockAttendanceInput) {
       return { success: false, error: parsed.error.issues[0]?.message || 'Invalid input' }
     }
 
-    const { sessionId, locked } = parsed.data
+    const { sessionId, locked, reason } = parsed.data
     const supabase = await createClient()
+
+    // MANDATORY UNLOCK REASON: Require reason when unlocking
+    if (!locked && (!reason || reason.trim().length < 3)) {
+      return { success: false, error: 'A non-empty reason is required when unlocking an attendance session.' }
+    }
 
     const newStatus = locked ? 'locked' : 'submitted'
     const { error: updateErr } = await (supabase as any)
@@ -219,7 +241,7 @@ export async function lockAttendanceSessionAction(input: LockAttendanceInput) {
       action: locked ? 'Attendance locked' : 'Attendance unlocked',
       entity_type: 'attendance_sessions',
       entity_id: sessionId,
-      new_data: { locked },
+      new_data: { locked, reason: reason || null },
     })
 
     return { success: true }

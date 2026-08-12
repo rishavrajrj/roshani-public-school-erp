@@ -1,13 +1,20 @@
-import type { AttendanceStatus, AttendanceSummary } from '@/types/attendance'
+import type { AttendanceStatus, AttendanceSummary, LeavePolicy } from '@/types/attendance'
 
 /**
  * Calculates attendance summary metrics given a list of record statuses.
- * Formula:
- * - Attended Days = Present + Late
- * - Attendance Percentage = (Attended Days / Total Days) * 100
- *   If Total Days is 0, defaults to 100.0%
+ * 
+ * Rules:
+ * - If totalSchoolDays === 0 or eligibleDays <= 0: attendancePercentage returns 'N/A'
+ * - LeavePolicy controls treatment of leave days:
+ *   - 'exclude_from_eligible' (DEFAULT): Leave is an excused absence.
+ *     Eligible Days = Total Days - Leave Days. Attended Days = Present + Late.
+ *   - 'count_as_attended': Leave is counted as attended.
+ *   - 'count_as_absent': Leave is counted as absent.
  */
-export function calculateAttendanceSummary(statuses: AttendanceStatus[]): AttendanceSummary {
+export function calculateAttendanceSummary(
+  statuses: AttendanceStatus[],
+  policy: LeavePolicy = 'exclude_from_eligible'
+): AttendanceSummary {
   const totalSchoolDays = statuses.length
 
   let presentCount = 0
@@ -32,8 +39,21 @@ export function calculateAttendanceSummary(statuses: AttendanceStatus[]): Attend
     }
   }
 
-  const attendedDays = presentCount + lateCount
-  const percentage = totalSchoolDays > 0 ? (attendedDays / totalSchoolDays) * 100 : 100.0
+  let attendedDays = presentCount + lateCount
+  let eligibleDays = totalSchoolDays
+
+  if (policy === 'exclude_from_eligible') {
+    eligibleDays = totalSchoolDays - leaveCount
+  } else if (policy === 'count_as_attended') {
+    attendedDays += leaveCount
+  }
+
+  let attendancePercentage: number | 'N/A' = 'N/A'
+
+  if (totalSchoolDays > 0 && eligibleDays > 0) {
+    const pct = (attendedDays / eligibleDays) * 100
+    attendancePercentage = Math.round(pct * 10) / 10
+  }
 
   return {
     totalSchoolDays,
@@ -42,6 +62,7 @@ export function calculateAttendanceSummary(statuses: AttendanceStatus[]): Attend
     lateCount,
     leaveCount,
     attendedDays,
-    attendancePercentage: Math.round(percentage * 10) / 10,
+    eligibleDays,
+    attendancePercentage,
   }
 }

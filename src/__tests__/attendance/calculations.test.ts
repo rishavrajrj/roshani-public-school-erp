@@ -2,46 +2,56 @@ import { describe, it, expect } from 'vitest'
 import { calculateAttendanceSummary } from '@/lib/attendance/calculations'
 import type { AttendanceStatus } from '@/types/attendance'
 
-describe('Attendance Calculation Helpers', () => {
-  it('handles empty list of statuses (0 days)', () => {
+describe('Attendance Calculation Logic', () => {
+  it('returns N/A when total school days = 0', () => {
     const summary = calculateAttendanceSummary([])
     expect(summary.totalSchoolDays).toBe(0)
-    expect(summary.attendedDays).toBe(0)
-    expect(summary.attendancePercentage).toBe(100.0)
+    expect(summary.attendancePercentage).toBe('N/A')
   })
 
-  it('correctly calculates 100% attendance when all present', () => {
-    const statuses: AttendanceStatus[] = ['present', 'present', 'present', 'present']
+  it('calculates standard percentage correctly (present + late)', () => {
+    const statuses: AttendanceStatus[] = ['present', 'present', 'late', 'absent']
     const summary = calculateAttendanceSummary(statuses)
     expect(summary.totalSchoolDays).toBe(4)
-    expect(summary.presentCount).toBe(4)
-    expect(summary.absentCount).toBe(0)
-    expect(summary.attendedDays).toBe(4)
-    expect(summary.attendancePercentage).toBe(100.0)
-  })
-
-  it('counts late as attended days in attendance percentage', () => {
-    // 8 present, 1 late, 1 absent = 9 attended out of 10 = 90.0%
-    const statuses: AttendanceStatus[] = [
-      'present', 'present', 'present', 'present',
-      'present', 'present', 'present', 'present',
-      'late', 'absent'
-    ]
-    const summary = calculateAttendanceSummary(statuses)
-    expect(summary.totalSchoolDays).toBe(10)
-    expect(summary.presentCount).toBe(8)
+    expect(summary.presentCount).toBe(2)
     expect(summary.lateCount).toBe(1)
     expect(summary.absentCount).toBe(1)
-    expect(summary.attendedDays).toBe(9)
-    expect(summary.attendancePercentage).toBe(90.0)
+    expect(summary.attendedDays).toBe(3)
+    expect(summary.eligibleDays).toBe(4)
+    expect(summary.attendancePercentage).toBe(75)
   })
 
-  it('handles leave days correctly', () => {
-    const statuses: AttendanceStatus[] = ['present', 'leave', 'absent']
-    const summary = calculateAttendanceSummary(statuses)
-    expect(summary.totalSchoolDays).toBe(3)
+  it('handles default leave policy (exclude_from_eligible)', () => {
+    const statuses: AttendanceStatus[] = ['present', 'present', 'leave', 'absent']
+    const summary = calculateAttendanceSummary(statuses, 'exclude_from_eligible')
+    expect(summary.totalSchoolDays).toBe(4)
     expect(summary.leaveCount).toBe(1)
-    expect(summary.attendedDays).toBe(1) // 1 present out of 3
-    expect(summary.attendancePercentage).toBe(33.3)
+    expect(summary.eligibleDays).toBe(3) // 4 total - 1 leave
+    expect(summary.attendedDays).toBe(2)
+    expect(summary.attendancePercentage).toBe(66.7)
+  })
+
+  it('handles count_as_attended leave policy', () => {
+    const statuses: AttendanceStatus[] = ['present', 'leave', 'absent', 'absent']
+    const summary = calculateAttendanceSummary(statuses, 'count_as_attended')
+    expect(summary.eligibleDays).toBe(4)
+    expect(summary.attendedDays).toBe(2) // 1 present + 1 leave
+    expect(summary.attendancePercentage).toBe(50)
+  })
+
+  it('handles count_as_absent leave policy', () => {
+    const statuses: AttendanceStatus[] = ['present', 'leave', 'absent', 'absent']
+    const summary = calculateAttendanceSummary(statuses, 'count_as_absent')
+    expect(summary.eligibleDays).toBe(4)
+    expect(summary.attendedDays).toBe(1) // only 1 present
+    expect(summary.attendancePercentage).toBe(25)
+  })
+
+  it('returns N/A if all days are excused leave under exclude_from_eligible policy', () => {
+    const statuses: AttendanceStatus[] = ['leave', 'leave']
+    const summary = calculateAttendanceSummary(statuses, 'exclude_from_eligible')
+    expect(summary.totalSchoolDays).toBe(2)
+    expect(summary.eligibleDays).toBe(0)
+    expect(summary.attendancePercentage).toBe('N/A')
   })
 })

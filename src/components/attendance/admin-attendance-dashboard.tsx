@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import type { AttendanceSessionStatus } from '@/types/attendance'
+import { lockAttendanceSessionAction } from '@/lib/attendance/actions'
 
 interface OverviewItem {
   classId: string
@@ -16,122 +16,251 @@ interface OverviewItem {
   lockedAt: string | null
 }
 
-interface Props {
+interface AdminAttendanceDashboardProps {
   academicSessionId: string
-  selectedDate: string
+  attendanceDate: string
   overview: OverviewItem[]
 }
 
-export function AdminAttendanceDashboard({ academicSessionId, selectedDate, overview }: Props) {
+export function AdminAttendanceDashboard({
+  academicSessionId,
+  attendanceDate,
+  overview,
+}: AdminAttendanceDashboardProps) {
   const router = useRouter()
-  const [date, setDate] = useState(selectedDate)
+  const [selectedDate, setSelectedDate] = useState(attendanceDate)
+  const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [unlockReasonModal, setUnlockReasonModal] = useState<{ sessionId: string } | null>(null)
+  const [unlockReason, setUnlockReason] = useState('')
 
-  const counts = overview.reduce(
-    (acc, curr) => {
-      acc[curr.status] = (acc[curr.status] || 0) + 1
-      return acc
-    },
-    { pending: 0, submitted: 0, locked: 0, draft: 0 } as Record<string, number>
-  )
-
-  const handleDateChange = (newDate: string) => {
-    setDate(newDate)
-    router.push(`/erp/admin/attendance?sessionId=${academicSessionId}&date=${newDate}`)
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = e.target.value
+    setSelectedDate(newDate)
+    router.push(`?date=${newDate}`)
   }
 
-  // Group section cards by class name
-  const groupedByClass: Record<string, OverviewItem[]> = {}
-  for (const item of overview) {
-    if (!groupedByClass[item.className]) {
-      groupedByClass[item.className] = []
+  const handleLockToggle = async (sessionId: string, currentStatus: string) => {
+    if (currentStatus === 'locked') {
+      // Opening unlock prompt
+      setUnlockReasonModal({ sessionId })
+      setUnlockReason('')
+      return
     }
-    groupedByClass[item.className].push(item)
+
+    setLoadingSessionId(sessionId)
+    setErrorMessage(null)
+
+    const result = await lockAttendanceSessionAction({
+      sessionId,
+      locked: true,
+    })
+
+    setLoadingSessionId(null)
+
+    if (!result.success) {
+      setErrorMessage(result.error || 'Failed to lock session.')
+    } else {
+      router.refresh()
+    }
   }
+
+  const handleConfirmUnlock = async () => {
+    if (!unlockReasonModal) return
+    if (unlockReason.trim().length < 3) {
+      setErrorMessage('A reason (at least 3 characters) is required to unlock a session.')
+      return
+    }
+
+    setLoadingSessionId(unlockReasonModal.sessionId)
+    setErrorMessage(null)
+
+    const result = await lockAttendanceSessionAction({
+      sessionId: unlockReasonModal.sessionId,
+      locked: false,
+      reason: unlockReason.trim(),
+    })
+
+    setLoadingSessionId(null)
+    setUnlockReasonModal(null)
+
+    if (!result.success) {
+      setErrorMessage(result.error || 'Failed to unlock session.')
+    } else {
+      router.refresh()
+    }
+  }
+
+  const handleMarkSheetNavigate = (classId: string, sectionId: string) => {
+    router.push(
+      `/erp/teacher/attendance/mark?sessionId=${academicSessionId}&classId=${classId}&sectionId=${sectionId}&date=${selectedDate}`
+    )
+  }
+
+  const totalSections = overview.length
+  const submittedCount = overview.filter((o) => o.status === 'submitted').length
+  const lockedCount = overview.filter((o) => o.status === 'locked').length
+  const pendingCount = overview.filter((o) => o.status === 'pending' || o.status === 'draft').length
 
   return (
     <div className="space-y-6">
-      {/* Date Filter & Metrics */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-wrap justify-between items-center gap-4">
+      {/* Header & Date Picker */}
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">Select Attendance Date</label>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">School Attendance Management</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Monitor, correct, and lock daily section attendance sheets.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <label htmlFor="attendanceDate" className="text-sm font-semibold text-slate-700">
+            Date:
+          </label>
           <input
+            id="attendanceDate"
             type="date"
-            value={date}
-            onChange={(e) => handleDateChange(e.target.value)}
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+            value={selectedDate}
+            onChange={handleDateChange}
+            className="px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg shadow-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
         </div>
+      </div>
 
-        <div className="flex flex-wrap gap-4 text-center">
-          <div className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-lg">
-            <div className="text-xs font-semibold text-slate-500 uppercase">Total Sections</div>
-            <div className="text-xl font-bold text-slate-900">{overview.length}</div>
-          </div>
-          <div className="bg-green-50 border border-green-200 px-4 py-2 rounded-lg">
-            <div className="text-xs font-semibold text-green-800 uppercase">Submitted</div>
-            <div className="text-xl font-bold text-green-900">{counts.submitted || 0}</div>
-          </div>
-          <div className="bg-rose-50 border border-rose-200 px-4 py-2 rounded-lg">
-            <div className="text-xs font-semibold text-rose-800 uppercase">Locked</div>
-            <div className="text-xl font-bold text-rose-900">{counts.locked || 0}</div>
-          </div>
-          <div className="bg-amber-50 border border-amber-200 px-4 py-2 rounded-lg">
-            <div className="text-xs font-semibold text-amber-800 uppercase">Pending</div>
-            <div className="text-xl font-bold text-amber-900">{counts.pending || 0}</div>
-          </div>
+      {/* Summary Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white border border-slate-200 rounded-xl p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Sections</p>
+          <p className="text-2xl font-bold text-slate-900 mt-1">{totalSections}</p>
+        </div>
+        <div className="bg-emerald-50/60 border border-emerald-200 rounded-xl p-4 text-emerald-900">
+          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Submitted</p>
+          <p className="text-2xl font-bold mt-1">{submittedCount}</p>
+        </div>
+        <div className="bg-rose-50/60 border border-rose-200 rounded-xl p-4 text-rose-900">
+          <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">Locked</p>
+          <p className="text-2xl font-bold mt-1">{lockedCount}</p>
+        </div>
+        <div className="bg-amber-50/60 border border-amber-200 rounded-xl p-4 text-amber-900">
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Pending / Draft</p>
+          <p className="text-2xl font-bold mt-1">{pendingCount}</p>
         </div>
       </div>
 
-      {/* Class/Section Grid */}
-      <div className="space-y-6">
-        {Object.entries(groupedByClass).map(([className, sections]) => (
-          <div key={className} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">{className}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {sections.map((sec) => {
-                let badgeClass = 'bg-amber-100 text-amber-800'
-                let label = 'Pending'
+      {errorMessage && (
+        <div className="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg text-sm">
+          {errorMessage}
+        </div>
+      )}
 
-                if (sec.status === 'submitted') {
-                  badgeClass = 'bg-green-100 text-green-800'
-                  label = 'Submitted'
-                } else if (sec.status === 'locked') {
-                  badgeClass = 'bg-rose-100 text-rose-800'
-                  label = 'Locked'
-                }
+      {/* Overview Table */}
+      <div className="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <th className="py-3.5 px-4">Class</th>
+                <th className="py-3.5 px-4">Section</th>
+                <th className="py-3.5 px-4">Status</th>
+                <th className="py-3.5 px-4">Last Marked</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 text-sm text-slate-700">
+              {overview.map((item) => (
+                <tr key={`${item.classId}_${item.sectionId}`} className="hover:bg-slate-50/50">
+                  <td className="py-3.5 px-4 font-semibold text-slate-900">{item.className}</td>
+                  <td className="py-3.5 px-4 font-medium text-slate-700">{item.sectionName}</td>
+                  <td className="py-3.5 px-4">
+                    {item.status === 'locked' ? (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-200">
+                        LOCKED
+                      </span>
+                    ) : item.status === 'submitted' ? (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        SUBMITTED
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+                        PENDING
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-3.5 px-4 text-xs text-slate-500">
+                    {item.markedAt ? new Date(item.markedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
+                  </td>
+                  <td className="py-3.5 px-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleMarkSheetNavigate(item.classId, item.sectionId)}
+                        className="px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition"
+                      >
+                        {item.status === 'locked' ? 'View Sheet' : 'Edit / Mark'}
+                      </button>
 
-                return (
-                  <div
-                    key={sec.sectionId}
-                    className="border border-slate-200 rounded-lg p-4 flex flex-col justify-between hover:border-slate-300 transition bg-slate-50"
-                  >
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-semibold text-slate-900 text-base">Section {sec.sectionName}</span>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${badgeClass}`}>
-                          {label}
-                        </span>
-                      </div>
-                      {sec.markedAt && (
-                        <p className="text-xs text-slate-500 mb-3">
-                          Marked: {new Date(sec.markedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </p>
+                      {item.sessionId && (
+                        <button
+                          type="button"
+                          disabled={loadingSessionId === item.sessionId}
+                          onClick={() => handleLockToggle(item.sessionId!, item.status)}
+                          className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition ${
+                            item.status === 'locked'
+                              ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+                              : 'bg-rose-50 text-rose-700 border-rose-300 hover:bg-rose-100'
+                          }`}
+                        >
+                          {loadingSessionId === item.sessionId
+                            ? '...'
+                            : item.status === 'locked'
+                            ? 'Unlock'
+                            : 'Lock'}
+                        </button>
                       )}
                     </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-                    <Link
-                      href={`/erp/teacher/attendance/mark?sessionId=${academicSessionId}&classId=${sec.classId}&sectionId=${sec.sectionId}&date=${date}`}
-                      className="w-full mt-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-center font-medium py-1.5 px-3 rounded text-xs transition"
-                    >
-                      {sec.status === 'pending' ? 'Mark Attendance' : 'View / Edit Sheet'}
-                    </Link>
-                  </div>
-                )
-              })}
+      {/* Unlock Reason Modal */}
+      {unlockReasonModal && (
+        <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl border border-slate-200">
+            <h3 className="text-lg font-bold text-slate-900">Unlock Attendance Session</h3>
+            <p className="text-sm text-slate-600">
+              Please provide a clear reason for unlocking this finalized attendance session. An audit log will be created.
+            </p>
+            <textarea
+              rows={3}
+              value={unlockReason}
+              onChange={(e) => setUnlockReason(e.target.value)}
+              placeholder="e.g. Principal approved correction for late arrival"
+              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setUnlockReasonModal(null)}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmUnlock}
+                className="px-4 py-2 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-lg"
+              >
+                Confirm Unlock
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

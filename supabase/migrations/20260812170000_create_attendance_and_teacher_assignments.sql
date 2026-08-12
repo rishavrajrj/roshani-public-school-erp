@@ -1,4 +1,4 @@
--- Migration 023: Create Attendance Management & Teacher Assignments
+-- Migration 023: Create Attendance Management & Teacher Assignments (Updated)
 
 -- 1. Teacher Assignments Table
 CREATE TABLE public.teacher_assignments (
@@ -39,7 +39,7 @@ CREATE TABLE public.attendance_sessions (
   section_id uuid NOT NULL REFERENCES public.sections(id) ON DELETE CASCADE,
   attendance_date date NOT NULL,
   status text NOT NULL DEFAULT 'submitted' CHECK (status IN ('draft', 'submitted', 'locked')),
-  marked_by uuid NOT NULL REFERENCES public.profiles(id),
+  marked_by uuid REFERENCES public.profiles(id), -- NULL if draft, populated upon submission
   marked_at timestamptz NOT NULL DEFAULT now(),
   locked_at timestamptz,
   locked_by uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
@@ -54,7 +54,7 @@ CREATE TABLE public.attendance_sessions (
 CREATE INDEX idx_attendance_sessions_lookup
   ON public.attendance_sessions (school_id, academic_session_id, class_id, section_id, attendance_date);
 
-COMMENT ON TABLE public.attendance_sessions IS 'Tracks daily logical attendance session state (submitted/locked) for a section.';
+COMMENT ON TABLE public.attendance_sessions IS 'Tracks daily logical attendance session state (draft/submitted/locked) for a section.';
 
 -- 3. Attendance Records Table
 CREATE TABLE public.attendance_records (
@@ -68,6 +68,7 @@ CREATE TABLE public.attendance_records (
   attendance_date date NOT NULL,
   status text NOT NULL CHECK (status IN ('present', 'absent', 'late', 'leave')),
   remarks text,
+  correction_reason text, -- Required when modifying a submitted record
   marked_by uuid NOT NULL REFERENCES public.profiles(id),
   marked_at timestamptz NOT NULL DEFAULT now(),
   updated_by uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
@@ -88,7 +89,7 @@ CREATE INDEX idx_attendance_records_section_date
 
 COMMENT ON TABLE public.attendance_records IS 'Daily student attendance status records.';
 
--- 4. Database Trigger: Student Class/Section Enrollment Validation
+-- 4. Database Trigger: Student Class/Section Enrollment & Active Status Validation
 CREATE OR REPLACE FUNCTION public.validate_student_attendance_enrollment()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -96,6 +97,17 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
+  -- Verify student's account status is active
+  IF NOT EXISTS (
+    SELECT 1 FROM public.students s
+    WHERE s.id = NEW.student_id
+      AND s.school_id = NEW.school_id
+      AND s.status = 'active'
+  ) THEN
+    RAISE EXCEPTION 'Student % is not active (exited, transferred, or inactive)', NEW.student_id;
+  END IF;
+
+  -- Verify active enrollment in academic history for the session/class/section
   IF NOT EXISTS (
     SELECT 1 FROM public.student_academic_history sah
     WHERE sah.student_id = NEW.student_id
@@ -108,6 +120,7 @@ BEGIN
     RAISE EXCEPTION 'Student % is not actively enrolled in class %, section % for session %',
       NEW.student_id, NEW.class_id, NEW.section_id, NEW.academic_session_id;
   END IF;
+
   RETURN NEW;
 END;
 $$;

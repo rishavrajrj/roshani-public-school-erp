@@ -63,9 +63,8 @@ export default async function MarkAttendancePage({ searchParams }: PageProps) {
         className={cls?.name || 'Class'}
         sectionName={sec?.name || 'Section'}
         attendanceDate={date}
-        initialStatus={sheetData.status}
-        students={sheetData.students}
-        isAdmin={isAdminOrSuper}
+        sessionStatus={sheetData.status}
+        initialStudents={sheetData.students}
       />
     </div>
   )

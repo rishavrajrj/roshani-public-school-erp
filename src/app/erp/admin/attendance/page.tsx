@@ -48,14 +48,9 @@ export default async function AdminAttendancePage({ searchParams }: PageProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">School Attendance Management</h1>
-        <p className="text-sm text-slate-600">Monitor, edit, correct, and audit daily section attendance across the school.</p>
-      </div>
-
       <AdminAttendanceDashboard
         academicSessionId={sessionId}
-        selectedDate={selectedDate}
+        attendanceDate={selectedDate}
         overview={overview}
       />
     </div>
