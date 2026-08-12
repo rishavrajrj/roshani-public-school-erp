@@ -46,11 +46,11 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
     .single()
 
   if (!profile) {
-    redirect('/erp/account-not-provisioned')
+    return { success: true, redirectUrl: '/erp/account-not-provisioned' }
   }
 
   if ((profile as any).status !== 'active') {
-    redirect('/erp/unauthorized')
+    return { success: true, redirectUrl: '/erp/unauthorized' }
   }
 
   // 2. Resolve roles directly using profile ID
@@ -72,14 +72,14 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
   }
 
   if (roles.length === 0) {
-    redirect('/erp/account-not-provisioned')
+    return { success: true, redirectUrl: '/erp/account-not-provisioned' }
   }
 
   if (roles.length === 1) {
     const targetRoute = ROLE_ROUTES[roles[0] as RoleName] || '/erp'
-    redirect(targetRoute)
+    return { success: true, redirectUrl: targetRoute }
   } else {
-    redirect('/erp/select-role')
+    return { success: true, redirectUrl: '/erp/select-role' }
   }
 }
 

@@ -1300,6 +1300,597 @@ export interface Database {
         }
         Relationships: []
       }
+      fee_heads: {
+        Row: {
+          id: string
+          school_id: string
+          code: string
+          name: string
+          description: string | null
+          active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          code: string
+          name: string
+          description?: string | null
+          active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          code?: string
+          name?: string
+          description?: string | null
+          active?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      fee_structures: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          class_id: string
+          section_id: string | null
+          name: string
+          description: string | null
+          version: number
+          is_active: boolean
+          effective_from: string
+          effective_to: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          class_id: string
+          section_id?: string | null
+          name: string
+          description?: string | null
+          version?: number
+          is_active?: boolean
+          effective_from: string
+          effective_to?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          class_id?: string
+          section_id?: string | null
+          name?: string
+          description?: string | null
+          version?: number
+          is_active?: boolean
+          effective_from?: string
+          effective_to?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      fee_structure_items: {
+        Row: {
+          id: string
+          school_id: string
+          fee_structure_id: string
+          fee_head_id: string
+          amount: number
+          frequency: string
+          due_day: number | null
+          is_mandatory: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          fee_structure_id: string
+          fee_head_id: string
+          amount: number
+          frequency: string
+          due_day?: number | null
+          is_mandatory?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          fee_structure_id?: string
+          fee_head_id?: string
+          amount?: number
+          frequency?: string
+          due_day?: number | null
+          is_mandatory?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      student_fee_assignments: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          fee_structure_id: string
+          assigned_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          fee_structure_id: string
+          assigned_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          student_id?: string
+          fee_structure_id?: string
+          assigned_at?: string
+        }
+        Relationships: []
+      }
+      student_concessions: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          fee_head_id: string | null
+          concession_type: string
+          value: number
+          reason: string
+          approved_by: string | null
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          fee_head_id?: string | null
+          concession_type: string
+          value: number
+          reason: string
+          approved_by?: string | null
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          student_id?: string
+          fee_head_id?: string | null
+          concession_type?: string
+          value?: number
+          reason?: string
+          approved_by?: string | null
+          status?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          invoice_number: string
+          issue_date: string
+          due_date: string
+          gross_amount: number
+          discount_amount: number
+          concession_amount: number
+          late_fee_amount: number
+          previous_balance_amount: number
+          net_amount: number
+          paid_amount: number
+          outstanding_amount: number
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          invoice_number: string
+          issue_date: string
+          due_date: string
+          gross_amount: number
+          discount_amount?: number
+          concession_amount?: number
+          late_fee_amount?: number
+          previous_balance_amount?: number
+          net_amount: number
+          paid_amount?: number
+          outstanding_amount: number
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          student_id?: string
+          invoice_number?: string
+          issue_date?: string
+          due_date?: string
+          gross_amount?: number
+          discount_amount?: number
+          concession_amount?: number
+          late_fee_amount?: number
+          previous_balance_amount?: number
+          net_amount?: number
+          paid_amount?: number
+          outstanding_amount?: number
+          status?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          id: string
+          school_id: string
+          invoice_id: string
+          fee_head_id: string
+          description: string
+          amount: number
+          discount_amount: number
+          net_amount: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          invoice_id: string
+          fee_head_id: string
+          description: string
+          amount: number
+          discount_amount?: number
+          net_amount: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          invoice_id?: string
+          fee_head_id?: string
+          description?: string
+          amount?: number
+          discount_amount?: number
+          net_amount?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          payment_number: string
+          payment_date: string
+          payment_method: string
+          amount: number
+          currency: string
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          razorpay_signature: string | null
+          transaction_reference: string | null
+          cheque_number: string | null
+          bank_name: string | null
+          status: string
+          received_by: string | null
+          verified_by: string | null
+          verified_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          payment_number: string
+          payment_date: string
+          payment_method: string
+          amount: number
+          currency?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          transaction_reference?: string | null
+          cheque_number?: string | null
+          bank_name?: string | null
+          status?: string
+          received_by?: string | null
+          verified_by?: string | null
+          verified_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          student_id?: string
+          payment_number?: string
+          payment_date?: string
+          payment_method?: string
+          amount?: number
+          currency?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          transaction_reference?: string | null
+          cheque_number?: string | null
+          bank_name?: string | null
+          status?: string
+          received_by?: string | null
+          verified_by?: string | null
+          verified_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      payment_allocations: {
+        Row: {
+          id: string
+          school_id: string
+          payment_id: string
+          invoice_id: string
+          amount: number
+          allocated_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          payment_id: string
+          invoice_id: string
+          amount: number
+          allocated_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          payment_id?: string
+          invoice_id?: string
+          amount?: number
+          allocated_at?: string
+        }
+        Relationships: []
+      }
+      financial_ledger: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          invoice_id: string | null
+          payment_id: string | null
+          transaction_type: string
+          amount: number
+          running_balance: number
+          description: string
+          actor_profile_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          invoice_id?: string | null
+          payment_id?: string | null
+          transaction_type: string
+          amount: number
+          running_balance?: number
+          description: string
+          actor_profile_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          student_id?: string
+          invoice_id?: string | null
+          payment_id?: string | null
+          transaction_type?: string
+          amount?: number
+          running_balance?: number
+          description?: string
+          actor_profile_id?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      refunds: {
+        Row: {
+          id: string
+          school_id: string
+          payment_id: string
+          student_id: string
+          refund_number: string
+          amount: number
+          reason: string
+          status: string
+          requested_by: string
+          approved_by: string | null
+          processed_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          payment_id: string
+          student_id: string
+          refund_number: string
+          amount: number
+          reason: string
+          status?: string
+          requested_by: string
+          approved_by?: string | null
+          processed_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          payment_id?: string
+          student_id?: string
+          refund_number?: string
+          amount?: number
+          reason?: string
+          status?: string
+          requested_by?: string
+          approved_by?: string | null
+          processed_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      adjustments: {
+        Row: {
+          id: string
+          school_id: string
+          invoice_id: string
+          student_id: string
+          adjustment_type: string
+          amount: number
+          reason: string
+          actor_profile_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          invoice_id: string
+          student_id: string
+          adjustment_type: string
+          amount: number
+          reason: string
+          actor_profile_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          invoice_id?: string
+          student_id?: string
+          adjustment_type?: string
+          amount?: number
+          reason?: string
+          actor_profile_id?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      receipts: {
+        Row: {
+          id: string
+          school_id: string
+          payment_id: string
+          receipt_number: string
+          issue_date: string
+          pdf_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          payment_id: string
+          receipt_number: string
+          issue_date: string
+          pdf_url?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          payment_id?: string
+          receipt_number?: string
+          issue_date?: string
+          pdf_url?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      financial_clearance: {
+        Row: {
+          id: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          status: string
+          total_outstanding: number
+          calculated_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          academic_session_id: string
+          student_id: string
+          status?: string
+          total_outstanding?: number
+          calculated_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          academic_session_id?: string
+          student_id?: string
+          status?: string
+          total_outstanding?: number
+          calculated_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payment_events: {
+        Row: {
+          id: string
+          school_id: string
+          event_type: string
+          external_event_id: string
+          payload: Json
+          processed_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          school_id: string
+          event_type: string
+          external_event_id: string
+          payload?: Json
+          processed_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          school_id?: string
+          event_type?: string
+          external_event_id?: string
+          payload?: Json
+          processed_at?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_current_profile_id: {

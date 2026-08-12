@@ -66,6 +66,7 @@ export default async function ERPLayout({ children }: { children: React.ReactNod
                     <Link href="/erp/admin/students" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Students</Link>
                     <Link href="/erp/admin/attendance" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Attendance</Link>
                     <Link href="/erp/admin/leave" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Leave</Link>
+                    <Link href="/erp/admin/fees" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Fees</Link>
                     <Link href="/erp/admin/teacher-assignments" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Teachers</Link>
                   </>
                 )}
@@ -90,6 +91,7 @@ export default async function ERPLayout({ children }: { children: React.ReactNod
                     <Link href="/erp/parent" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Dashboard</Link>
                     <Link href="/erp/parent/attendance" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Child Attendance</Link>
                     <Link href="/erp/parent/leave" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Apply Leave</Link>
+                    <Link href="/erp/parent/fees" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Fees & Online Pay</Link>
                   </>
                 )}
                 {isStudent && (
@@ -97,6 +99,7 @@ export default async function ERPLayout({ children }: { children: React.ReactNod
                     <Link href="/erp/student" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">Dashboard</Link>
                     <Link href="/erp/student/attendance" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">My Attendance</Link>
                     <Link href="/erp/student/leave" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">My Leave</Link>
+                    <Link href="/erp/student/fees" className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-200 hover:text-white transition">My Fees</Link>
                   </>
                 )}
               </nav>

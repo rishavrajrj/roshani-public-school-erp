@@ -22,7 +22,16 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.fill('input[name="applicant_last_name"]', 'Verma')
     await page.fill('input[name="date_of_birth"]', '2016-04-15')
     await page.selectOption('select[name="gender"]', 'male')
-    await page.selectOption('select[name="applying_for_class_id"]', { index: 1 }) // First available class
+    await page.waitForFunction(() => {
+      const sessSelect = document.querySelector('select[name="academic_session_id"]') as HTMLSelectElement
+      const classSelect = document.querySelector('select[name="applying_for_class_id"]') as HTMLSelectElement
+      return sessSelect && sessSelect.options.length > 1 && classSelect && classSelect.options.length > 1
+    })
+    const sessVal = await page.$eval('select[name="academic_session_id"] option:not([value=""])', (el: any) => el.value)
+    await page.selectOption('select[name="academic_session_id"]', sessVal)
+
+    const classVal = await page.$eval('select[name="applying_for_class_id"] option:not([value=""])', (el: any) => el.value)
+    await page.selectOption('select[name="applying_for_class_id"]', classVal)
 
     await page.fill('input[name="guardian_name"]', 'Suresh Verma')
     await page.fill('input[name="guardian_phone"]', '+919876500001')

@@ -65,12 +65,7 @@ export function AdmissionApplicationForm({ sessions, classes }: Props) {
 
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        handleSubmit(e)
-      }}
-      action="javascript:void(0)"
+      onSubmit={handleSubmit}
       className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6"
     >
       {error && (
