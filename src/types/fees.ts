@@ -30,10 +30,18 @@ export type LedgerTransactionType =
   | 'REVERSAL'
   | 'LATE_FEE'
   | 'OVERPAYMENT_CREDIT'
+  | 'CHEQUE_BOUNCE'
+  | 'CASH_MOVEMENT'
 
 export type LedgerEntryType = 'DEBIT' | 'CREDIT'
 
 export type RefundStatus = 'requested' | 'approved' | 'processed' | 'rejected' | 'cancelled'
+
+export type ChequeStatus = 'pending' | 'cleared' | 'bounced' | 'failed' | 'refunded'
+
+export type AccountType = 'ASSET' | 'LIABILITY' | 'REVENUE' | 'EXPENSE'
+
+export type ReconciliationStatus = 'draft' | 'submitted' | 'reviewed' | 'locked'
 
 export type FinancialClearanceStatus = 'CLEAR' | 'PARTIAL' | 'OUTSTANDING' | 'WAIVED' | 'ON_HOLD'
 
@@ -141,8 +149,11 @@ export interface Payment {
   transactionReference?: string | null
   chequeNumber?: string | null
   bankName?: string | null
+  chequeDate?: string | null
+  chequeStatus?: ChequeStatus | null
   status: PaymentStatus
   receivedBy?: string | null
+  receivedByName?: string | null
   verifiedBy?: string | null
   verifiedAt?: string | null
   createdAt: string
@@ -181,6 +192,7 @@ export interface RefundRequest {
   status: RefundStatus
   requestedBy: string
   approvedBy?: string | null
+  processedBy?: string | null
   processedAt?: string | null
   createdAt: string
 }
@@ -190,6 +202,7 @@ export interface StudentCredit {
   schoolId: string
   academicSessionId: string
   studentId: string
+  studentName?: string
   sourcePaymentId: string
   amount: number
   remainingAmount: number
@@ -226,4 +239,130 @@ export interface FeeDashboardSummary {
     upi: number
     pos: number
   }
+}
+
+// ============================================================
+// Phase 5.1 Types
+// ============================================================
+
+export interface FinancialAccount {
+  id: string
+  schoolId: string
+  code: string
+  name: string
+  accountType: AccountType
+  isSystem: boolean
+  active: boolean
+  createdAt: string
+}
+
+export interface CollectionRegisterEntry {
+  id: string
+  paymentNumber: string
+  paymentDate: string
+  paymentMethod: PaymentMethod
+  amount: number
+  status: PaymentStatus
+  transactionReference?: string | null
+  chequeNumber?: string | null
+  bankName?: string | null
+  chequeDate?: string | null
+  chequeStatus?: ChequeStatus | null
+  receivedByName?: string | null
+  receivedByRole?: string | null
+  studentName: string
+  admissionNumber: string
+  className?: string | null
+  sectionName?: string | null
+  receiptNumber?: string | null
+  invoiceNumber?: string | null
+  createdAt: string
+}
+
+export interface DateRangeCollectionReport {
+  totalCollection: number
+  cash: number
+  upi: number
+  bankTransfer: number
+  cheque: number
+  pos: number
+  razorpay: number
+  refunds: number
+  netCollection: number
+}
+
+export interface StaffCollectionEntry {
+  staffId: string
+  staffName: string
+  staffRole: string
+  cash: number
+  upi: number
+  bankTransfer: number
+  cheque: number
+  pos: number
+  razorpay: number
+  total: number
+}
+
+export interface PaymentModeReportEntry {
+  method: string
+  transactionCount: number
+  grossCollection: number
+  refunds: number
+  netCollection: number
+}
+
+export interface DailyReconciliation {
+  id: string
+  schoolId: string
+  reconciliationDate: string
+  openingBalance: number
+  cashReceived: number
+  cashRefunded: number
+  expectedCash: number
+  physicalCash: number
+  difference: number
+  reason?: string | null
+  preparedByName?: string | null
+  reviewedByName?: string | null
+  status: ReconciliationStatus
+  createdAt: string
+  reviewedAt?: string | null
+}
+
+export interface CashMovement {
+  id: string
+  schoolId: string
+  movementDate: string
+  sourceAccountCode: string
+  destinationAccountCode: string
+  amount: number
+  reason: string
+  reference?: string | null
+  actorName?: string | null
+  journalId?: string | null
+  createdAt: string
+}
+
+export interface CreditAllocation {
+  id: string
+  schoolId: string
+  studentCreditId: string
+  invoiceId: string
+  invoiceNumber?: string | null
+  amount: number
+  allocatedAt: string
+}
+
+export interface EnhancedDashboardSummary extends FeeDashboardSummary {
+  todayCashCollection: number
+  todayDigitalCollection: number
+  chequePendingCount: number
+  chequePendingAmount: number
+  totalStudentCredits: number
+  refundsThisMonth: number
+  collectionByStaff: Array<{
+    staffName: string
+    total: number
+  }>
 }

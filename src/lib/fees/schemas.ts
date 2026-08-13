@@ -69,6 +69,7 @@ export const recordManualPaymentSchema = z.object({
   transactionReference: z.string().trim().optional(),
   chequeNumber: z.string().trim().optional(),
   bankName: z.string().trim().optional(),
+  chequeDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 })
 
 export const createRazorpayOrderSchema = z.object({

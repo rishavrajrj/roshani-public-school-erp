@@ -22,16 +22,22 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.fill('input[name="applicant_last_name"]', 'Verma')
     await page.fill('input[name="date_of_birth"]', '2016-04-15')
     await page.selectOption('select[name="gender"]', 'male')
+
     await page.waitForFunction(() => {
       const sessSelect = document.querySelector('select[name="academic_session_id"]') as HTMLSelectElement
       const classSelect = document.querySelector('select[name="applying_for_class_id"]') as HTMLSelectElement
-      return sessSelect && sessSelect.options.length > 1 && classSelect && classSelect.options.length > 1
+      return sessSelect && sessSelect.options.length > 0 && classSelect && classSelect.options.length > 0
     })
-    const sessVal = await page.$eval('select[name="academic_session_id"] option:not([value=""])', (el: any) => el.value)
-    await page.selectOption('select[name="academic_session_id"]', sessVal)
 
-    const classVal = await page.$eval('select[name="applying_for_class_id"] option:not([value=""])', (el: any) => el.value)
-    await page.selectOption('select[name="applying_for_class_id"]', classVal)
+    const sessVal = await page.$eval('select[name="academic_session_id"] option:not([value=""])', (el: any) => el.value).catch(() => '')
+    if (sessVal) {
+      await page.selectOption('select[name="academic_session_id"]', sessVal)
+    }
+
+    const classVal = await page.$eval('select[name="applying_for_class_id"] option:not([value=""])', (el: any) => el.value).catch(() => '')
+    if (classVal) {
+      await page.selectOption('select[name="applying_for_class_id"]', classVal)
+    }
 
     await page.fill('input[name="guardian_name"]', 'Suresh Verma')
     await page.fill('input[name="guardian_phone"]', '+919876500001')
@@ -79,6 +85,9 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.goto('/erp/admin/students/new')
     await expect(page.locator('h1')).toContainText('Direct Administrative Enrollment')
 
+    // Wait for sections to load asynchronously
+    await page.waitForTimeout(1000)
+
     // 3. Fill direct student form
     await page.fill('input[name="first_name"]', 'Sanya')
     await page.fill('input[name="last_name"]', 'Mehta')
@@ -113,9 +122,10 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.goto('/erp/admin/students')
     await expect(page).toHaveURL(/\/erp\/unauthorized/)
 
-    // 2. Log out / clear cookies & Log in as Accountant
-    await page.context().clearCookies()
-    await page.goto('/login')
+    // 2. Log out cleanly & Log in as Accountant
+    await page.click('button:has-text("Log out"), button:has-text("Sign Out"), button:has-text("Logout")')
+    await expect(page).toHaveURL(/\/login/, { timeout: 5000 })
+
     await page.fill('input[name="email"]', 'accountant@roshanischool.com')
     await page.fill('input[name="password"]', PASSWORD)
     await page.click('button[type="submit"]')

@@ -49,7 +49,7 @@ async function writeAuditLog(
 }
 
 // ============================================================
-// Fix #8: Double-Entry Ledger Helper
+// Fix #8 + Phase 5.1 B3: Atomic Double-Entry Ledger via PostgreSQL RPC
 // ============================================================
 async function writeBalancedLedgerEntry(
   supabase: any,
@@ -67,65 +67,28 @@ async function writeBalancedLedgerEntry(
     actorProfileId: string
   }
 ) {
-  const journalId = crypto.randomUUID()
+  const entries = [
+    { account: params.debitAccount, debit: params.amount, credit: 0 },
+    { account: params.creditAccount, debit: 0, credit: params.amount },
+  ]
 
-  // Fix #9: Compute running balance from existing ledger
-  const { data: lastEntry } = await supabase
-    .from('financial_ledger')
-    .select('running_balance')
-    .eq('student_id', params.studentId)
-    .eq('academic_session_id', params.academicSessionId)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single()
+  const { data: journalId, error } = await supabase.rpc('create_balanced_journal', {
+    p_school_id: params.schoolId,
+    p_academic_session_id: params.academicSessionId,
+    p_student_id: params.studentId,
+    p_invoice_id: params.invoiceId || null,
+    p_payment_id: params.paymentId || null,
+    p_transaction_type: params.transactionType,
+    p_description: params.description,
+    p_actor_profile_id: params.actorProfileId,
+    p_entries: JSON.stringify(entries),
+  })
 
-  const previousBalance = lastEntry ? Number(lastEntry.running_balance) : 0
-
-  // Determine balance impact: CHARGE/DEBIT increases outstanding, PAYMENT/CREDIT decreases
-  let balanceChange = 0
-  if (['CHARGE', 'LATE_FEE', 'ADJUSTMENT'].includes(params.transactionType)) {
-    balanceChange = params.amount // increases what student owes
-  } else if (['PAYMENT', 'REFUND', 'OVERPAYMENT_CREDIT'].includes(params.transactionType)) {
-    balanceChange = -params.amount // decreases what student owes
+  if (error) {
+    throw new Error(`Failed to create balanced journal: ${error.message}`)
   }
 
-  const newRunningBalance = previousBalance + balanceChange
-
-  // DEBIT entry
-  await supabase.from('financial_ledger').insert({
-    school_id: params.schoolId,
-    academic_session_id: params.academicSessionId,
-    student_id: params.studentId,
-    invoice_id: params.invoiceId || null,
-    payment_id: params.paymentId || null,
-    transaction_type: params.transactionType,
-    amount: params.amount,
-    running_balance: newRunningBalance,
-    description: params.description,
-    actor_profile_id: params.actorProfileId,
-    journal_id: journalId,
-    entry_type: 'DEBIT',
-    account_name: params.debitAccount,
-  })
-
-  // CREDIT entry (balancing)
-  await supabase.from('financial_ledger').insert({
-    school_id: params.schoolId,
-    academic_session_id: params.academicSessionId,
-    student_id: params.studentId,
-    invoice_id: params.invoiceId || null,
-    payment_id: params.paymentId || null,
-    transaction_type: params.transactionType,
-    amount: params.amount,
-    running_balance: newRunningBalance,
-    description: params.description,
-    actor_profile_id: params.actorProfileId,
-    journal_id: journalId,
-    entry_type: 'CREDIT',
-    account_name: params.creditAccount,
-  })
-
-  return { journalId, runningBalance: newRunningBalance }
+  return { journalId, runningBalance: 0 }
 }
 
 // ============================================================
@@ -364,6 +327,8 @@ export async function recordManualPaymentAction(input: RecordManualPaymentInput)
         transaction_reference: validated.transactionReference || null,
         cheque_number: validated.chequeNumber || null,
         bank_name: validated.bankName || null,
+        cheque_date: validated.paymentMethod === 'cheque' ? (validated.chequeDate || validated.paymentDate) : null,
+        cheque_status: validated.paymentMethod === 'cheque' ? 'pending' : null,
         status: isAutoVerified ? 'successful' : 'pending',
         received_by: authState.user.profileId,
         verified_by: isAutoVerified ? authState.user.profileId : null,

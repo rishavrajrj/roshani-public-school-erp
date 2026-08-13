@@ -56,12 +56,15 @@ export async function POST(req: Request) {
 
     // If we can't derive school_id, we can't process securely
     if (!derivedSchoolId) {
-      // Still record the event for audit purposes with a sentinel
-      await supabase.from('payment_events').insert({
-        school_id: '00000000-0000-0000-0000-000000000000',
-        event_type: eventType,
+      // B4 Fix: Store unmatched event in isolated table (not financial tables)
+      await supabase.from('unmatched_webhook_events').insert({
+        provider: 'razorpay',
         external_event_id: eventId,
+        event_type: eventType,
         payload: event,
+        signature_verified: !!signature,
+        processing_status: 'unmatched',
+        failure_reason: 'No matching payment found for webhook order_id',
       }).catch(() => {})
       return NextResponse.json({ status: 'unmatched', message: 'No matching payment found for this webhook event' })
     }
