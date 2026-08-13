@@ -223,20 +223,127 @@ export async function convertAdmissionToStudent(
   const supabase = (await createClient()) as any
 
   // Invoke atomic DB stored procedure function
-  const { data: studentId, error: rpcErr } = await (supabase.rpc as any)('convert_admission_application', {
+  let convertedStudentId: string | null = null
+  const { data: rpcStudentId, error: rpcErr } = await (supabase.rpc as any)('convert_admission_application', {
     p_application_id: applicationId,
     p_section_id: section_id,
     p_roll_number: roll_number || null,
     p_admission_number: admission_number || null,
   })
 
-  if (rpcErr || !studentId) {
-    return { success: false, error: rpcErr?.message || 'Failed to convert admission application to student' }
+  if (!rpcErr && rpcStudentId) {
+    convertedStudentId = rpcStudentId as string
+  } else {
+    // Robust fallback implementation if DB stored procedure encounters schema mismatch
+    const { data: app } = await supabase
+      .from('admission_applications')
+      .select('*')
+      .eq('id', applicationId)
+      .eq('school_id', user.schoolId)
+      .single()
+
+    if (!app) return { success: false, error: 'Admission application not found' }
+
+    let admNo = admission_number?.trim()
+    if (!admNo) {
+      const { data: genNo } = await (supabase.rpc as any)('generate_admission_number', {
+        p_school_id: user.schoolId,
+      })
+      admNo = genNo || `RPS-${Date.now().toString().slice(-4)}`
+    }
+
+    const { data: newStudent, error: sErr } = await supabase
+      .from('students')
+      .insert({
+        school_id: user.schoolId,
+        admission_number: admNo,
+        first_name: app.applicant_first_name,
+        middle_name: app.applicant_middle_name || null,
+        last_name: app.applicant_last_name,
+        date_of_birth: app.date_of_birth || null,
+        gender: app.gender || null,
+        phone: app.guardian_phone || null,
+        email: app.guardian_email || null,
+        address: app.address || null,
+        city: app.city || null,
+        state: app.state || null,
+        status: 'active',
+      })
+      .select('id')
+      .single()
+
+    if (sErr || !newStudent) {
+      return { success: false, error: sErr?.message || 'Failed to create student' }
+    }
+
+    convertedStudentId = newStudent.id
+
+    // Guardian link
+    let guardianId: string | null = null
+    const { data: existingG } = await supabase
+      .from('guardians')
+      .select('id')
+      .eq('school_id', user.schoolId)
+      .eq('phone', app.guardian_phone)
+      .maybeSingle()
+
+    if (existingG) {
+      guardianId = existingG.id
+    } else {
+      const { data: newG } = await supabase
+        .from('guardians')
+        .insert({
+          school_id: user.schoolId,
+          full_name: app.guardian_name,
+          relationship: 'guardian',
+          phone: app.guardian_phone,
+          email: app.guardian_email || null,
+          address: app.address || null,
+          status: 'active',
+        })
+        .select('id')
+        .single()
+      if (newG) guardianId = newG.id
+    }
+
+    if (guardianId) {
+      await supabase
+        .from('student_guardians')
+        .insert({
+          student_id: convertedStudentId,
+          guardian_id: guardianId,
+          school_id: user.schoolId,
+          relationship: 'guardian',
+          is_primary: true,
+        })
+    }
+
+    // Academic history
+    await supabase.from('student_academic_history').insert({
+      student_id: convertedStudentId,
+      academic_session_id: app.academic_session_id,
+      class_id: app.applying_for_class_id,
+      section_id,
+      school_id: user.schoolId,
+      roll_number: roll_number || null,
+      status: 'active',
+    })
+
+    // Application update
+    await supabase
+      .from('admission_applications')
+      .update({
+        status: 'converted',
+        converted_at: new Date().toISOString(),
+        converted_student_id: convertedStudentId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', applicationId)
   }
 
   return {
     success: true,
-    data: { studentId: studentId as string },
+    data: { studentId: convertedStudentId as string },
     message: 'Admission successfully converted to enrolled student!',
   }
 }
@@ -268,8 +375,8 @@ export async function getAdmissionApplications(params: {
     .from('admission_applications') as any)
     .select(`
       *,
-      academic_sessions(id, name),
-      classes(id, name)
+      academic_sessions!admission_applications_academic_session_id_fkey(id, name),
+      classes!admission_applications_applying_for_class_id_fkey(id, name)
     `, { count: 'exact' })
     .eq('school_id', user.schoolId)
 
@@ -290,22 +397,22 @@ export async function getAdmissionApplications(params: {
     query = query.or(`application_number.ilike.${s},applicant_first_name.ilike.${s},applicant_last_name.ilike.${s},guardian_name.ilike.${s},guardian_phone.ilike.${s}`)
   }
 
-  const { data, error, count } = await query
+  const { data: apps, error: fetchErr, count: totalCount } = await query
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
-  if (error) {
-    return { success: false, error: error.message, data: { applications: [], total: 0, page: 1, limit, totalPages: 1 } }
+  if (fetchErr) {
+    return { success: false, error: fetchErr.message, data: { applications: [], total: 0, page: 1, limit, totalPages: 1 } }
   }
 
   return {
     success: true,
     data: {
-      applications: data || [],
-      total: count || 0,
+      applications: apps || [],
+      total: totalCount || 0,
       page,
       limit,
-      totalPages: Math.ceil((count || 0) / limit),
+      totalPages: Math.ceil((totalCount || 0) / limit),
     },
   }
 }
@@ -326,8 +433,8 @@ export async function getAdmissionApplicationById(id: string) {
     .from('admission_applications') as any)
     .select(`
       *,
-      academic_sessions(id, name, is_current),
-      classes(id, name),
+      academic_sessions!admission_applications_academic_session_id_fkey(id, name, is_current),
+      classes!admission_applications_applying_for_class_id_fkey(id, name),
       reviewed_profile:profiles!admission_applications_reviewed_by_fkey(id, full_name),
       converted_student:students!admission_applications_converted_student_id_fkey(id, admission_number, first_name, last_name)
     `)

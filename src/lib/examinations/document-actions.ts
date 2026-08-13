@@ -245,7 +245,7 @@ export async function publishReportCardAction(input: PublishReportCardInput) {
       .eq('examination_id', validated.examinationId)
       .eq('class_id', validated.classId)
       .eq('school_id', schoolId)
-      .in('status', ['generated', 'approved'])
+      .in('status', ['approved'])
       .select()
 
     if (error) return { success: false, error: error.message }

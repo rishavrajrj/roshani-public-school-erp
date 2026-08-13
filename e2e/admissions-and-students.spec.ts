@@ -23,20 +23,17 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.fill('input[name="date_of_birth"]', '2016-04-15')
     await page.selectOption('select[name="gender"]', 'male')
 
-    await page.waitForFunction(() => {
-      const sessSelect = document.querySelector('select[name="academic_session_id"]') as HTMLSelectElement
-      const classSelect = document.querySelector('select[name="applying_for_class_id"]') as HTMLSelectElement
-      return sessSelect && sessSelect.options.length > 0 && classSelect && classSelect.options.length > 0
-    })
+    await page.waitForSelector('select[name="academic_session_id"] option:not([value=""])', { state: 'attached', timeout: 15000 })
+    await page.waitForSelector('select[name="applying_for_class_id"] option:not([value=""])', { state: 'attached', timeout: 15000 })
 
-    const sessVal = await page.$eval('select[name="academic_session_id"] option:not([value=""])', (el: any) => el.value).catch(() => '')
-    if (sessVal) {
-      await page.selectOption('select[name="academic_session_id"]', sessVal)
+    const sessionOpts = await page.$$eval('select[name="academic_session_id"] option', (opts: any[]) => opts.map(o => o.value).filter(Boolean))
+    if (sessionOpts.length > 0) {
+      await page.selectOption('select[name="academic_session_id"]', sessionOpts[0])
     }
 
-    const classVal = await page.$eval('select[name="applying_for_class_id"] option:not([value=""])', (el: any) => el.value).catch(() => '')
-    if (classVal) {
-      await page.selectOption('select[name="applying_for_class_id"]', classVal)
+    const classOpts = await page.$$eval('select[name="applying_for_class_id"] option', (opts: any[]) => opts.map(o => o.value).filter(Boolean))
+    if (classOpts.length > 0) {
+      await page.selectOption('select[name="applying_for_class_id"]', classOpts[0])
     }
 
     await page.fill('input[name="guardian_name"]', 'Suresh Verma')
@@ -47,8 +44,8 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     // Submit application
     await page.click('button[type="submit"]')
 
-    // 4. Verify redirected to Application Detail view
-    await expect(page).toHaveURL(/\/erp\/admin\/admissions\/[a-f0-9-]+/, { timeout: 15000 })
+    // 4. Verify redirected to Application Detail view (strict UUID match)
+    await expect(page).toHaveURL(/\/erp\/admin\/admissions\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/, { timeout: 20000 })
     await expect(page.locator('h2')).toContainText('Kabir Verma')
     await expect(page.locator('body')).toContainText('SUBMITTED')
 
@@ -68,7 +65,7 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.click('button:has-text("Confirm Conversion")')
 
     // 8. Verify redirected to Student Profile
-    await expect(page).toHaveURL(/\/erp\/admin\/students\/[a-f0-9-]+/, { timeout: 15000 })
+    await expect(page).toHaveURL(/\/erp\/admin\/students\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/, { timeout: 20000 })
     await expect(page.locator('h2')).toContainText('Kabir Verma')
     await expect(page.locator('body')).toContainText('ACTIVE')
   })
@@ -85,8 +82,19 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.goto('/erp/admin/students/new')
     await expect(page.locator('h1')).toContainText('Direct Administrative Enrollment')
 
-    // Wait for sections to load asynchronously
-    await page.waitForTimeout(1000)
+    // Ensure session is explicitly selected
+    const sessionOpts = await page.$$eval('select[name="academic_session_id"] option', (opts: any[]) => opts.map(o => o.value).filter(Boolean))
+    if (sessionOpts.length > 0) {
+      await page.selectOption('select[name="academic_session_id"]', sessionOpts[0])
+    }
+
+    // Wait for async section options to load and select state to populate
+    await page.waitForFunction(() => {
+      const selects = Array.from(document.querySelectorAll('select'))
+      // Section select is disabled while loading sections
+      const secSelect = selects.find(s => !s.name && s.options.length > 0 && Array.from(s.options).some(o => o.text.includes('Section')))
+      return secSelect && !secSelect.disabled && secSelect.value !== ''
+    }, { timeout: 15000 }).catch(() => {})
 
     // 3. Fill direct student form
     await page.fill('input[name="first_name"]', 'Sanya')
@@ -102,7 +110,7 @@ test.describe('Phase 3 — Admissions & Student Management E2E', () => {
     await page.click('button[type="submit"]')
 
     // 4. Verify redirected to Student Profile
-    await expect(page).toHaveURL(/\/erp\/admin\/students\/[a-f0-9-]+/, { timeout: 15000 })
+    await expect(page).toHaveURL(/\/erp\/admin\/students\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/, { timeout: 20000 })
     await expect(page.locator('h2')).toContainText('Sanya Mehta')
   })
 

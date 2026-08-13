@@ -439,10 +439,18 @@ export async function approveRefundAction(input: ApproveRefundInput) {
     const supabase = (await createClient()) as any
     const schoolId = authState.user.schoolId
 
+    // F3 Fix: Fetch refund first to enforce self-approval prevention
+    const { data: existingRefund } = await supabase.from('refunds').select('*').eq('id', validated.refundId).eq('school_id', schoolId).single()
+    if (!existingRefund) return { success: false, error: 'Refund not found' }
+    if (existingRefund.status !== 'pending') return { success: false, error: `Cannot approve refund in status '${existingRefund.status}'` }
+    if (existingRefund.requested_by === authState.user.profileId) {
+      return { success: false, error: 'Self-approval is not permitted: you cannot approve a refund you requested' }
+    }
+
     const { data: refund, error } = await supabase.from('refunds').update({
       status: 'approved',
       approved_by: authState.user.profileId
-    }).eq('id', validated.refundId).eq('school_id', schoolId).select().single()
+    }).eq('id', validated.refundId).eq('school_id', schoolId).eq('status', 'pending').select().single()
 
     if (error) return { success: false, error: error.message }
 

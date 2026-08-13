@@ -566,7 +566,30 @@ export async function publishResultsAction(input: PublishResultsInput) {
       return { success: false, error: `Cannot publish results while examination status is '${exam.status}'. Examination must be completed.` }
     }
 
-    // Publish approved or override_released results
+    // F4 Fix: Fetch candidates and re-check financial clearance at publication time
+    const { data: candidates } = await supabase
+      .from('student_results')
+      .select('id, student_id, academic_session_id, status')
+      .eq('examination_id', validated.examinationId)
+      .eq('class_id', validated.classId)
+      .eq('school_id', schoolId)
+      .in('status', ['approved', 'override_released'])
+
+    if (candidates && candidates.length > 0) {
+      for (const cand of candidates) {
+        if (cand.status === 'approved') {
+          const clearance = await getFinancialClearance(cand.student_id, cand.academic_session_id)
+          if (clearance.status !== 'CLEAR' && clearance.status !== 'WAIVED') {
+            await supabase
+              .from('student_results')
+              .update({ status: 'withheld', updated_at: new Date().toISOString() })
+              .eq('id', cand.id)
+          }
+        }
+      }
+    }
+
+    // Publish approved (that passed clearance re-check) or override_released results
     const { data: updated, error } = await supabase
       .from('student_results')
       .update({

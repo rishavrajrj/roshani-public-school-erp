@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         signature_verified: !!signature,
         processing_status: 'unmatched',
         failure_reason: 'No matching payment found for webhook order_id',
-      }).catch(() => {})
+      })
       return NextResponse.json({ status: 'unmatched', message: 'No matching payment found for this webhook event' })
     }
 

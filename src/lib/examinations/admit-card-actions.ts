@@ -341,6 +341,21 @@ export async function publishAdmitCardAction(input: PublishAdmitCardInput) {
     if (card.status === 'revoked') return { success: false, error: 'Cannot publish a revoked Admit Card' }
     if (card.status === 'published') return { success: false, error: 'Admit Card is already published' }
 
+    // F4 Fix: Live Financial Clearance Re-check at publication time
+    if (card.status !== 'override_released') {
+      const clearance = await getFinancialClearance(card.student_id, card.academic_session_id)
+      if (clearance.status !== 'CLEAR' && clearance.status !== 'WAIVED') {
+        await supabase
+          .from('admit_cards')
+          .update({ status: 'blocked', updated_at: new Date().toISOString() })
+          .eq('id', card.id)
+        return {
+          success: false,
+          error: `Financial clearance check failed at publication time (Status: ${clearance.status}, Outstanding: ${clearance.totalOutstanding}). Admit Card status updated to blocked.`,
+        }
+      }
+    }
+
     const { data: updated, error } = await supabase
       .from('admit_cards')
       .update({

@@ -47,19 +47,19 @@ export async function getStudents(params: {
     .from('students') as any)
     .select(`
       *,
-      student_academic_history!inner(
+      student_academic_history!student_academic_history_student_id_fkey!inner(
         id,
         roll_number,
         status,
-        academic_sessions(id, name, is_current),
-        classes(id, name),
-        sections(id, name)
+        academic_sessions!student_academic_history_academic_session_id_fkey(id, name, is_current),
+        classes!student_academic_history_class_id_fkey(id, name),
+        sections!student_academic_history_section_id_fkey(id, name)
       ),
-      student_guardians(
+      student_guardians!student_guardians_student_id_fkey(
         id,
         relationship,
         is_primary,
-        guardians(id, full_name, phone, email)
+        guardians!student_guardians_guardian_id_fkey(id, full_name, phone, email)
       )
     `, { count: 'exact' })
     .eq('school_id', user.schoolId)
@@ -124,22 +124,22 @@ export async function getStudentById(id: string) {
     .from('students') as any)
     .select(`
       *,
-      student_academic_history(
+      student_academic_history!student_academic_history_student_id_fkey(
         id,
         roll_number,
         status,
         created_at,
-        academic_sessions(id, name, is_current, start_date, end_date),
-        classes(id, name, display_order),
-        sections(id, name)
+        academic_sessions!student_academic_history_academic_session_id_fkey(id, name, is_current, start_date, end_date),
+        classes!student_academic_history_class_id_fkey(id, name, display_order),
+        sections!student_academic_history_section_id_fkey(id, name)
       ),
-      student_guardians(
+      student_guardians!student_guardians_student_id_fkey(
         id,
         relationship,
         is_primary,
-        guardians(id, full_name, phone, alternate_phone, email, address, occupation)
+        guardians!student_guardians_guardian_id_fkey(id, full_name, phone, alternate_phone, email, address, occupation)
       ),
-      student_documents(
+      student_documents!student_documents_student_id_fkey(
         id,
         document_type,
         file_path,
@@ -175,6 +175,7 @@ export async function createDirectStudent(
 
   const parseResult = createDirectStudentSchema.safeParse(input)
   if (!parseResult.success) {
+    console.error('[createDirectStudent] Zod validation failed:', JSON.stringify(parseResult.error.issues, null, 2))
     return { success: false, error: parseResult.error.issues[0]?.message || 'Validation error' }
   }
 
@@ -250,7 +251,7 @@ export async function createDirectStudent(
     .select('id')
     .eq('school_id', user.schoolId)
     .eq('phone', validated.guardian_phone)
-    .single()
+    .maybeSingle()
 
   if (existingG) {
     guardianId = existingG.id

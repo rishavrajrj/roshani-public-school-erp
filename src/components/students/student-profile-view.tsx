@@ -166,7 +166,7 @@ export function StudentProfileView({ student, userRoles }: Props) {
               </span>
             </div>
             <h2 className="text-2xl font-bold text-slate-900 mt-1">
-              {student.first_name} {student.middle_name || ''} {student.last_name}
+              {[student.first_name, student.middle_name, student.last_name].filter(Boolean).join(' ')}
             </h2>
             <p className="text-sm text-slate-500">
               {activeAcademic
