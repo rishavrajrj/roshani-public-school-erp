@@ -35,7 +35,8 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
   })
 
   if (error || !authData.user) {
-    return { success: false, error: 'Invalid email or password' }
+    console.error('[loginAction] Supabase auth error:', error?.message || error)
+    return { success: false, error: error?.message || 'Invalid email or password' }
   }
 
   // 1. Resolve profile directly using authenticated user ID
