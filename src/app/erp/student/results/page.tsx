@@ -16,13 +16,16 @@ export default async function StudentResultsPage() {
   }
 
   const supabase = (await createClient()) as any
-  const { data: student } = await supabase
-    .from('students')
-    .select('id')
-    .eq('profile_id', authState.user.profileId)
-    .single()
+  const [studentRes, examinations] = await Promise.all([
+    supabase
+      .from('students')
+      .select('id')
+      .eq('profile_id', authState.user.profileId)
+      .single(),
+    getExaminations(),
+  ])
 
-  const examinations = await getExaminations()
+  const student = studentRes.data
   const latestExamId = examinations[0]?.id || ''
   const result = student && latestExamId ? await getStudentResult(student.id, latestExamId) : null
 

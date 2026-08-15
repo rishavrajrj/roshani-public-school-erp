@@ -75,40 +75,74 @@ export function ERPSidebar({
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/80 shrink-0">
+        <div
+          className={`h-18 flex items-center border-b border-slate-800/80 shrink-0 transition-all duration-300 ${
+            isCollapsed
+              ? 'px-2 justify-center'
+              : 'px-3.5 justify-between'
+          }`}
+        >
           <Link
             href="/erp"
-            className="flex items-center gap-3 overflow-hidden group"
+            className={`flex items-center gap-3 overflow-hidden group ${
+              isCollapsed ? 'justify-center' : 'min-w-0'
+            }`}
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition shrink-0">
-              <SchoolLogo className="w-6 h-6 object-contain" priority />
+            <div
+              className={`rounded-xl bg-white flex items-center justify-center shadow-md ring-1 ring-white/15 group-hover:scale-105 transition-transform shrink-0 ${
+                isCollapsed ? 'w-10 h-10 p-1' : 'w-11 h-11 p-1'
+              }`}
+            >
+              <SchoolLogo
+                className={isCollapsed ? 'w-8 h-8' : 'w-9 h-9'}
+                priority
+              />
             </div>
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
-                <span className="font-bold text-sm text-white tracking-tight leading-tight truncate">
-                  Roshani Public
+                <span className="font-semibold text-[13.5px] text-slate-100 group-hover:text-white tracking-tight leading-tight truncate transition-colors">
+                  Roshani Public School
                 </span>
-                <span className="text-[10px] font-semibold text-amber-400 tracking-wider uppercase">
-                  School ERP
-                </span>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider bg-blue-500/15 text-blue-400 border border-blue-500/30 uppercase font-mono leading-none">
+                    ERP
+                  </span>
+                  <span className="text-[11px] font-medium text-slate-400 tracking-tight">
+                    Portal
+                  </span>
+                </div>
               </div>
             )}
           </Link>
 
           {/* Desktop Collapse Toggle */}
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-            title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-          >
-            {isCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
-            ) : (
+          {!isCollapsed && (
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0 ml-1"
+              title="Collapse Sidebar"
+              aria-label="Collapse Sidebar"
+            >
               <ChevronLeft className="w-4 h-4" />
-            )}
-          </button>
+            </button>
+          )}
         </div>
+
+        {/* Collapsed expand button below header */}
+        {isCollapsed && (
+          <div className="hidden lg:flex justify-center pt-2 pb-1">
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              title="Expand Sidebar"
+              aria-label="Expand Sidebar"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Role Badge Indicator */}
         {!isCollapsed && (

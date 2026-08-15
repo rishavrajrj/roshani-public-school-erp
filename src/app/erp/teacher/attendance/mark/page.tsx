@@ -38,14 +38,15 @@ export default async function MarkAttendancePage({ searchParams }: PageProps) {
 
   const supabase = await createClient()
 
-  // Fetch Class and Section names
-  const { data: clsData } = await supabase.from('classes').select('name').eq('id', classId).single()
-  const { data: secData } = await supabase.from('sections').select('name').eq('id', sectionId).single()
+  // Fetch Class, Section names and attendance sheet concurrently
+  const [clsRes, secRes, sheetData] = await Promise.all([
+    supabase.from('classes').select('name').eq('id', classId).single(),
+    supabase.from('sections').select('name').eq('id', sectionId).single(),
+    getSectionAttendanceSheet(sessionId, classId, sectionId, date),
+  ])
 
-  const cls = clsData as { name: string } | null
-  const sec = secData as { name: string } | null
-
-  const sheetData = await getSectionAttendanceSheet(sessionId, classId, sectionId, date)
+  const cls = clsRes.data as { name: string } | null
+  const sec = secRes.data as { name: string } | null
 
   if (!sheetData) {
     return (

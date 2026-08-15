@@ -18,51 +18,50 @@ export default async function TeacherAssignmentsPage() {
 
   const supabase = await createClient()
 
-  // Fetch active session
-  const { data: sessionData } = await supabase
-    .from('academic_sessions')
-    .select('id, name')
-    .eq('school_id', user.schoolId)
-    .eq('is_current', true)
-    .single()
-
-  const session = sessionData as { id: string; name: string } | null
-
-  // Fetch teachers (profiles with Teacher role)
-  const { data: teacherRoles } = await supabase
-    .from('user_roles')
-    .select(`
-      profile_id,
-      profiles (
+  // Fetch session, teacher roles, classes/sections, and assignments concurrently
+  const [sessionRes, teacherRolesRes, classesRes, assignments] = await Promise.all([
+    supabase
+      .from('academic_sessions')
+      .select('id, name')
+      .eq('school_id', user.schoolId)
+      .eq('is_current', true)
+      .single(),
+    supabase
+      .from('user_roles')
+      .select(`
+        profile_id,
+        profiles (
+          id,
+          full_name,
+          status
+        ),
+        roles!inner(name)
+      `)
+      .eq('school_id', user.schoolId)
+      .eq('roles.name', 'Teacher'),
+    supabase
+      .from('classes')
+      .select(`
         id,
-        full_name,
-        status
-      ),
-      roles!inner(name)
-    `)
-    .eq('school_id', user.schoolId)
-    .eq('roles.name', 'Teacher')
+        name,
+        sections (
+          id,
+          name
+        )
+      `)
+      .eq('school_id', user.schoolId)
+      .eq('status', 'active')
+      .order('display_order'),
+    getTeacherAssignments(),
+  ])
 
-  const teachers = (teacherRoles || [])
+  const session = sessionRes.data as { id: string; name: string } | null
+  const teacherRoles = teacherRolesRes.data || []
+  const teachers = teacherRoles
     .map((tr: any) => tr.profiles)
     .filter((p: any) => p && p.status === 'active')
 
-  // Fetch classes and sections
-  const { data: classesData } = await supabase
-    .from('classes')
-    .select(`
-      id,
-      name,
-      sections (
-        id,
-        name
-      )
-    `)
-    .eq('school_id', user.schoolId)
-    .eq('status', 'active')
-    .order('display_order')
-
-  const assignments = await getTeacherAssignments()
+  const classesData = classesRes.data || []
 
   return (
     <div className="space-y-6 w-full">

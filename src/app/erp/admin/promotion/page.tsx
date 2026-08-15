@@ -17,14 +17,17 @@ export default async function AdminPromotionPage() {
   }
 
   const supabase = (await createClient()) as any
-  const { data: sessionsData } = await supabase.from('academic_sessions').select('id, name').eq('school_id', authState.user.schoolId).order('start_date', { ascending: false })
-
-  const [classesRes, examinations] = await Promise.all([
+  const [sessionsRes, classesRes, examinations] = await Promise.all([
+    supabase
+      .from('academic_sessions')
+      .select('id, name')
+      .eq('school_id', authState.user.schoolId)
+      .order('start_date', { ascending: false }),
     getClasses(),
     getExaminations(),
   ])
 
-  const sessions = sessionsData || []
+  const sessions = sessionsRes.data || []
   const classes: Array<{ id: string; name: string }> = classesRes.success ? classesRes.data : []
 
   const sourceSessionId = sessions[0]?.id || ''

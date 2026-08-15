@@ -16,16 +16,19 @@ export default async function ParentResultsPage() {
   }
 
   const supabase = (await createClient()) as any
-  const { data: psm } = await supabase
-    .from('parent_student_map')
-    .select('student_id, students(first_name, last_name)')
-    .eq('parent_profile_id', authState.user.profileId)
-    .maybeSingle()
+  const [psmRes, examinations] = await Promise.all([
+    supabase
+      .from('parent_student_map')
+      .select('student_id, students(first_name, last_name)')
+      .eq('parent_profile_id', authState.user.profileId)
+      .maybeSingle(),
+    getExaminations(),
+  ])
 
+  const psm = psmRes.data
   const studentId = psm?.student_id
   const childName = psm?.students ? `${psm.students.first_name || ''} ${psm.students.last_name || ''}`.trim() : 'Ward'
 
-  const examinations = await getExaminations()
   const latestExamId = examinations[0]?.id || ''
   const result = studentId && latestExamId ? await getStudentResult(studentId, latestExamId) : null
 
