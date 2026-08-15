@@ -67,7 +67,7 @@ export function ERPAppShell({
       {/* Main Layout Area */}
       <div
         className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${
-          isCollapsed ? 'lg:pl-20' : 'lg:pl-64'
+          isCollapsed ? 'lg:pl-20' : 'lg:pl-[270px]'
         }`}
       >
         {/* Sticky Header */}

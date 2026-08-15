@@ -38,7 +38,7 @@ export default async function ParentResultsPage() {
         title={`Academic Grade &amp; Report Card — ${childName}`}
         description="Official subject scores, grading distribution, aggregate percentage, and faculty remarks."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Parent ERP Portal', href: '/erp/parent' },
           { label: 'Report Card' },
         ]}
       />

@@ -35,7 +35,7 @@ export default async function StudentAdmitCardsPage() {
         title="Examination Admit Card"
         description="Download and print your official examination hall ticket with security QR token and verified exam roll number."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/student' },
+          { label: 'Student Portal', href: '/erp/student' },
           { label: 'Admit Card' },
         ]}
       />

@@ -1,8 +1,9 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import type { ExamType, Examination, ExamSchedule } from '@/types/examination'
 
-export async function getExamTypes(): Promise<ExamType[]> {
+export const getExamTypes = cache(async function getExamTypes(): Promise<ExamType[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -26,9 +27,9 @@ export async function getExamTypes(): Promise<ExamType[]> {
     createdAt: d.created_at,
     updatedAt: d.updated_at,
   }))
-}
+})
 
-export async function getExaminations(filters?: { academicSessionId?: string; status?: string }): Promise<Examination[]> {
+export const getExaminations = cache(async function getExaminations(filters?: { academicSessionId?: string; status?: string }): Promise<Examination[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -81,7 +82,7 @@ export async function getExaminations(filters?: { academicSessionId?: string; st
       createdAt: ec.created_at,
     })),
   }))
-}
+})
 
 export async function getExaminationById(examinationId: string): Promise<Examination | null> {
   const authState = await resolveUser()
@@ -206,7 +207,7 @@ export async function getExamSchedules(filters?: { examinationId?: string; class
   }))
 }
 
-export async function getTeacherExamSchedule(): Promise<ExamSchedule[]> {
+export const getTeacherExamSchedule = cache(async function getTeacherExamSchedule(): Promise<ExamSchedule[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
   if (!hasAnyRole(authState.user, ['Teacher', 'Admin', 'Super Admin', 'Principal'])) return []
@@ -259,7 +260,7 @@ export async function getTeacherExamSchedule(): Promise<ExamSchedule[]> {
     createdAt: d.created_at,
     updatedAt: d.updated_at,
   }))
-}
+})
 
 export async function getAvailableInvigilators(): Promise<Array<{ id: string; name: string; email: string }>> {
   const authState = await resolveUser()

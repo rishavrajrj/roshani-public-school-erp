@@ -51,8 +51,8 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
           title={`Welcome, ${user.fullName}`}
           description="Parent Portal — family academic tracking, fees, and examination records."
           breadcrumbs={[
-            { label: 'ERP Portal', href: '/erp' },
-            { label: 'Parent Dashboard' },
+            { label: 'Parent ERP Portal', href: '/erp/parent' },
+            { label: 'Overview' },
           ]}
         />
         <EmptyState
@@ -74,8 +74,8 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
         title={`Welcome, ${user.fullName}`}
         description="Monitor your children's live attendance, examination hall tickets, term report cards, and fee payment ledger."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp' },
-          { label: 'Parent Dashboard' },
+          { label: 'Parent ERP Portal', href: '/erp/parent' },
+          { label: 'Overview' },
         ]}
       />
 

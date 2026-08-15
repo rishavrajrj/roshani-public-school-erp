@@ -12,7 +12,7 @@ export default async function StudentLeavePage() {
         title="Apply for Leave"
         description="Submit leave requests to your class teacher, upload supporting medical slips, and monitor approval status."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/student' },
+          { label: 'Student Portal', href: '/erp/student' },
           { label: 'Apply Leave' },
         ]}
       />

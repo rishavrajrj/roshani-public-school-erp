@@ -21,7 +21,7 @@ export default async function TeacherExaminationsPage() {
         title="Examination Invigilation Schedule"
         description="Assigned examination rooms, subject timings, and candidate supervision schedules."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Teacher ERP Portal', href: '/erp/teacher' },
           { label: 'Exam Schedule' },
         ]}
       />

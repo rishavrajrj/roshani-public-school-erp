@@ -31,8 +31,8 @@ export default async function StudentPromotionPage() {
         title="Session Promotion Status"
         description="Current academic grade level, promotion outcome, and historical session progression record."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/student' },
-          { label: 'Promotion' },
+          { label: 'Student Portal', href: '/erp/student' },
+          { label: 'Promotion Status' },
         ]}
       />
 

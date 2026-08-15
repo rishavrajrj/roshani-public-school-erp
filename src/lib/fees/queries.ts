@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser } from '@/lib/auth/resolve-user'
 import type {
@@ -10,7 +11,7 @@ import type {
   FeeDashboardSummary,
 } from '@/types/fees'
 
-export async function getFeeHeads(): Promise<FeeHead[]> {
+export const getFeeHeads = cache(async function getFeeHeads(): Promise<FeeHead[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -32,9 +33,9 @@ export async function getFeeHeads(): Promise<FeeHead[]> {
     active: item.active,
     createdAt: item.created_at,
   }))
-}
+})
 
-export async function getFeeStructures(classId?: string): Promise<FeeStructure[]> {
+export const getFeeStructures = cache(async function getFeeStructures(classId?: string): Promise<FeeStructure[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -84,7 +85,7 @@ export async function getFeeStructures(classId?: string): Promise<FeeStructure[]
       createdAt: it.created_at,
     })),
   }))
-}
+})
 
 const DEFAULT_TEST_INVOICES: Record<string, Invoice[]> = {
   'f200bc99-0001-4ef8-bb6d-6bb9bd380a11': [
@@ -234,7 +235,7 @@ export function markTestInvoicePaid(invoiceId: string) {
   }
 }
 
-export async function getInvoices(studentId?: string, limit?: number): Promise<Invoice[]> {
+export const getInvoices = cache(async function getInvoices(studentId?: string, limit?: number): Promise<Invoice[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -294,9 +295,9 @@ export async function getInvoices(studentId?: string, limit?: number): Promise<I
       createdAt: it.created_at,
     })),
   }))
-}
+})
 
-export async function getPayments(studentId?: string, limit?: number): Promise<Payment[]> {
+export const getPayments = cache(async function getPayments(studentId?: string, limit?: number): Promise<Payment[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -345,16 +346,16 @@ export async function getPayments(studentId?: string, limit?: number): Promise<P
       allocatedAt: alloc.allocated_at,
     })),
   }))
-}
+})
 
-export async function getFinancialLedger(studentId?: string, limit?: number): Promise<FinancialLedgerEntry[]> {
+export const getFinancialLedger = cache(async function getFinancialLedger(studentId?: string, limit?: number): Promise<FinancialLedgerEntry[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
   const supabase = (await createClient()) as any
   let query = supabase
     .from('financial_ledger')
-    .select('*, students(first_name, last_name), profiles(full_name)')
+    .select('*, students(first_name, last_name)')
     .eq('school_id', authState.user.schoolId)
 
   if (studentId) {
@@ -378,15 +379,15 @@ export async function getFinancialLedger(studentId?: string, limit?: number): Pr
     runningBalance: Number(item.running_balance),
     description: item.description,
     actorProfileId: item.actor_profile_id,
-    actorName: item.profiles?.full_name || 'System',
+    actorName: item.actor_profile_id === authState.user.profileId ? authState.user.fullName : 'System / Staff',
     journalId: item.journal_id || null,
     entryType: item.entry_type || null,
     accountName: item.account_name || null,
     createdAt: item.created_at,
   }))
-}
+})
 
-export async function getRefundRequests(): Promise<RefundRequest[]> {
+export const getRefundRequests = cache(async function getRefundRequests(): Promise<RefundRequest[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -414,9 +415,9 @@ export async function getRefundRequests(): Promise<RefundRequest[]> {
     processedAt: item.processed_at,
     createdAt: item.created_at,
   }))
-}
+})
 
-export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
+export const getFeeDashboardSummary = cache(async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') {
     return {
@@ -435,8 +436,16 @@ export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
   const schoolId = authState.user.schoolId
 
   const [{ data: invData }, { data: payData }] = await Promise.all([
-    supabase.from('invoices').select('net_amount, paid_amount, outstanding_amount, status, due_date').eq('school_id', schoolId).neq('status', 'cancelled'),
-    supabase.from('payments').select('amount, payment_method, status, payment_date, verified_by').eq('school_id', schoolId).in('status', ['successful', 'pending']),
+    supabase
+      .from('invoices')
+      .select('net_amount, outstanding_amount, due_date, status')
+      .eq('school_id', schoolId)
+      .in('status', ['issued', 'partially_paid', 'overdue', 'paid']),
+    supabase
+      .from('payments')
+      .select('amount, payment_method, status, payment_date')
+      .eq('school_id', schoolId)
+      .in('status', ['successful', 'pending']),
   ])
 
   let totalBilled = 0
@@ -447,13 +456,11 @@ export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
 
   if (invData) {
     for (const inv of invData) {
-      if (inv.status !== 'cancelled') {
-        totalBilled += Number(inv.net_amount) || 0
-        const out = Number(inv.outstanding_amount) || 0
-        totalOutstanding += out
-        if (inv.due_date < todayStr && out > 0) {
-          totalOverdue += out
-        }
+      totalBilled += Number(inv.net_amount) || 0
+      const out = Number(inv.outstanding_amount) || 0
+      totalOutstanding += out
+      if (inv.due_date < todayStr && out > 0) {
+        totalOverdue += out
       }
     }
   }
@@ -471,7 +478,7 @@ export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
         totalCollected += amt
 
         if (p.payment_date === todayStr) todayCollection += amt
-        if (p.payment_date.startsWith(currentMonthStr)) monthlyCollection += amt
+        if (p.payment_date?.startsWith(currentMonthStr)) monthlyCollection += amt
 
         const method = p.payment_method as keyof typeof methodBreakdown
         if (methodBreakdown[method] !== undefined) {
@@ -500,4 +507,4 @@ export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
       pos: Number(methodBreakdown.pos.toFixed(2)),
     },
   }
-}
+})

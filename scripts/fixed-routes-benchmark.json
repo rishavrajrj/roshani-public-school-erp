@@ -1,0 +1,940 @@
+[
+  {
+    "route": "/erp/teacher/attendance",
+    "label": "Teacher Attendance Overview",
+    "role": "Teacher",
+    "coldUsable": {
+      "min": 2258.7,
+      "max": 3777.4,
+      "avg": 2815.9,
+      "median": 2411.7
+    },
+    "coldTtfb": {
+      "min": 1848.3,
+      "max": 3367.8,
+      "avg": 2382.5,
+      "median": 1931.4
+    },
+    "coldFcp": {
+      "min": 2088,
+      "max": 3600,
+      "avg": 2640,
+      "median": 2232
+    },
+    "coldLcp": {
+      "min": 2088,
+      "max": 3600,
+      "avg": 2640,
+      "median": 2232
+    },
+    "warmUsable": {
+      "min": 1461.4,
+      "max": 1931.8,
+      "avg": 1659.5,
+      "median": 1618
+    },
+    "warmTtfb": {
+      "min": 1186.4,
+      "max": 1529.3,
+      "avg": 1359.8,
+      "median": 1354
+    },
+    "warmFcp": {
+      "min": 1432,
+      "max": 1776,
+      "avg": 1590.4,
+      "median": 1596
+    },
+    "warmLcp": {
+      "min": 1432,
+      "max": 1776,
+      "avg": 1590.4,
+      "median": 1596
+    },
+    "navUsable": {
+      "min": 1285.3,
+      "max": 3559.6,
+      "avg": 1913.5,
+      "median": 1476.3
+    },
+    "coldRuns": [
+      {
+        "ttfb": 1931.4,
+        "fcp": 2232,
+        "lcp": 2232,
+        "usable": 2411.7,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1848.3,
+        "fcp": 2088,
+        "lcp": 2088,
+        "usable": 2258.7,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 3367.8,
+        "fcp": 3600,
+        "lcp": 3600,
+        "usable": 3777.4,
+        "totalBytes": 66381,
+        "requestCount": 17
+      }
+    ],
+    "warmRuns": [
+      {
+        "ttfb": 1186.4,
+        "fcp": 1432,
+        "lcp": 1432,
+        "usable": 1461.4,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1327.9,
+        "fcp": 1508,
+        "lcp": 1508,
+        "usable": 1618,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1529.3,
+        "fcp": 1776,
+        "lcp": 1776,
+        "usable": 1931.8,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1354,
+        "fcp": 1596,
+        "lcp": 1596,
+        "usable": 1616.1,
+        "totalBytes": 66381,
+        "requestCount": 13
+      },
+      {
+        "ttfb": 1401.3,
+        "fcp": 1640,
+        "lcp": 1640,
+        "usable": 1670.4,
+        "totalBytes": 66381,
+        "requestCount": 17
+      }
+    ],
+    "navRuns": [
+      1285.3,
+      1476.3,
+      3559.6,
+      1440.1,
+      1806.2
+    ]
+  },
+  {
+    "route": "/erp/parent/leave",
+    "label": "Parent Leave Application",
+    "role": "Parent",
+    "coldUsable": {
+      "min": 2252.3,
+      "max": 3068.8,
+      "avg": 2748.5,
+      "median": 2924.4
+    },
+    "coldTtfb": {
+      "min": 1141,
+      "max": 1839.5,
+      "avg": 1410.7,
+      "median": 1251.6
+    },
+    "coldFcp": {
+      "min": 1432,
+      "max": 2052,
+      "avg": 1717.3,
+      "median": 1668
+    },
+    "coldLcp": {
+      "min": 1432,
+      "max": 2052,
+      "avg": 1717.3,
+      "median": 1668
+    },
+    "warmUsable": {
+      "min": 2355.6,
+      "max": 3229.1,
+      "avg": 2628.4,
+      "median": 2498.6
+    },
+    "warmTtfb": {
+      "min": 1007.4,
+      "max": 1417.7,
+      "avg": 1166.6,
+      "median": 1152.9
+    },
+    "warmFcp": {
+      "min": 1172,
+      "max": 1648,
+      "avg": 1396.8,
+      "median": 1392
+    },
+    "warmLcp": {
+      "min": 1172,
+      "max": 1648,
+      "avg": 1396.8,
+      "median": 1392
+    },
+    "navUsable": {
+      "min": 2924.9,
+      "max": 3629.6,
+      "avg": 3230.1,
+      "median": 3103
+    },
+    "coldRuns": [
+      {
+        "ttfb": 1839.5,
+        "fcp": 2052,
+        "lcp": 2052,
+        "usable": 3068.8,
+        "totalBytes": 78669,
+        "requestCount": 27
+      },
+      {
+        "ttfb": 1141,
+        "fcp": 1432,
+        "lcp": 1432,
+        "usable": 2252.3,
+        "totalBytes": 76621,
+        "requestCount": 27
+      },
+      {
+        "ttfb": 1251.6,
+        "fcp": 1668,
+        "lcp": 1668,
+        "usable": 2924.4,
+        "totalBytes": 80717,
+        "requestCount": 27
+      }
+    ],
+    "warmRuns": [
+      {
+        "ttfb": 1152.9,
+        "fcp": 1392,
+        "lcp": 1392,
+        "usable": 2355.6,
+        "totalBytes": 79693,
+        "requestCount": 27
+      },
+      {
+        "ttfb": 1007.4,
+        "fcp": 1172,
+        "lcp": 1172,
+        "usable": 2498.6,
+        "totalBytes": 80717,
+        "requestCount": 27
+      },
+      {
+        "ttfb": 1417.7,
+        "fcp": 1648,
+        "lcp": 1648,
+        "usable": 2465.2,
+        "totalBytes": 76621,
+        "requestCount": 27
+      },
+      {
+        "ttfb": 1083.5,
+        "fcp": 1332,
+        "lcp": 1332,
+        "usable": 2593.5,
+        "totalBytes": 79693,
+        "requestCount": 27
+      },
+      {
+        "ttfb": 1171.3,
+        "fcp": 1440,
+        "lcp": 1440,
+        "usable": 3229.1,
+        "totalBytes": 77645,
+        "requestCount": 27
+      }
+    ],
+    "navRuns": [
+      3547.5,
+      2924.9,
+      3103,
+      2945.4,
+      3629.6
+    ]
+  },
+  {
+    "route": "/erp/accountant/fees",
+    "label": "Fee Collection Window",
+    "role": "Accountant",
+    "coldUsable": {
+      "min": 1809.8,
+      "max": 2299.2,
+      "avg": 2064.3,
+      "median": 2083.8
+    },
+    "coldTtfb": {
+      "min": 1493.5,
+      "max": 1936.4,
+      "avg": 1717.3,
+      "median": 1722
+    },
+    "coldFcp": {
+      "min": 1672,
+      "max": 2140,
+      "avg": 1914.7,
+      "median": 1932
+    },
+    "coldLcp": {
+      "min": 1672,
+      "max": 2140,
+      "avg": 1914.7,
+      "median": 1932
+    },
+    "warmUsable": {
+      "min": 1493.4,
+      "max": 3933,
+      "avg": 2018.3,
+      "median": 1518.5
+    },
+    "warmTtfb": {
+      "min": 1166.8,
+      "max": 3513.3,
+      "avg": 1675.6,
+      "median": 1214
+    },
+    "warmFcp": {
+      "min": 1456,
+      "max": 3780,
+      "avg": 1949.6,
+      "median": 1480
+    },
+    "warmLcp": {
+      "min": 1456,
+      "max": 3780,
+      "avg": 1949.6,
+      "median": 1480
+    },
+    "navUsable": {
+      "min": 1435.3,
+      "max": 1749.2,
+      "avg": 1610.4,
+      "median": 1647.9
+    },
+    "coldRuns": [
+      {
+        "ttfb": 1722,
+        "fcp": 1932,
+        "lcp": 1932,
+        "usable": 2083.8,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1936.4,
+        "fcp": 2140,
+        "lcp": 2140,
+        "usable": 2299.2,
+        "totalBytes": 83945,
+        "requestCount": 19
+      },
+      {
+        "ttfb": 1493.5,
+        "fcp": 1672,
+        "lcp": 1672,
+        "usable": 1809.8,
+        "totalBytes": 67405,
+        "requestCount": 18
+      }
+    ],
+    "warmRuns": [
+      {
+        "ttfb": 3513.3,
+        "fcp": 3780,
+        "lcp": 3780,
+        "usable": 3933,
+        "totalBytes": 83945,
+        "requestCount": 19
+      },
+      {
+        "ttfb": 1311.7,
+        "fcp": 1572,
+        "lcp": 1572,
+        "usable": 1634.2,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1214,
+        "fcp": 1460,
+        "lcp": 1460,
+        "usable": 1518.5,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1166.8,
+        "fcp": 1456,
+        "lcp": 1456,
+        "usable": 1493.4,
+        "totalBytes": 83945,
+        "requestCount": 19
+      },
+      {
+        "ttfb": 1172.3,
+        "fcp": 1480,
+        "lcp": 1480,
+        "usable": 1512.6,
+        "totalBytes": 83945,
+        "requestCount": 19
+      }
+    ],
+    "navRuns": [
+      1490.9,
+      1647.9,
+      1728.7,
+      1435.3,
+      1749.2
+    ]
+  },
+  {
+    "route": "/erp/teacher",
+    "label": "Teacher Dashboard",
+    "role": "Teacher",
+    "coldUsable": {
+      "min": 1643.9,
+      "max": 1829.3,
+      "avg": 1710.1,
+      "median": 1657
+    },
+    "coldTtfb": {
+      "min": 1300.8,
+      "max": 1499.4,
+      "avg": 1381.1,
+      "median": 1343.1
+    },
+    "coldFcp": {
+      "min": 1536,
+      "max": 1672,
+      "avg": 1597.3,
+      "median": 1584
+    },
+    "coldLcp": {
+      "min": 1536,
+      "max": 1672,
+      "avg": 1597.3,
+      "median": 1584
+    },
+    "warmUsable": {
+      "min": 1393.5,
+      "max": 1763.6,
+      "avg": 1609.1,
+      "median": 1641.3
+    },
+    "warmTtfb": {
+      "min": 1061.9,
+      "max": 1474.1,
+      "avg": 1329.3,
+      "median": 1364.7
+    },
+    "warmFcp": {
+      "min": 1328,
+      "max": 1704,
+      "avg": 1554.4,
+      "median": 1588
+    },
+    "warmLcp": {
+      "min": 1328,
+      "max": 1704,
+      "avg": 1554.4,
+      "median": 1588
+    },
+    "navUsable": {
+      "min": 1521.4,
+      "max": 2008.5,
+      "avg": 1674.9,
+      "median": 1551.3
+    },
+    "coldRuns": [
+      {
+        "ttfb": 1499.4,
+        "fcp": 1672,
+        "lcp": 1672,
+        "usable": 1829.3,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1300.8,
+        "fcp": 1584,
+        "lcp": 1584,
+        "usable": 1643.9,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1343.1,
+        "fcp": 1536,
+        "lcp": 1536,
+        "usable": 1657,
+        "totalBytes": 66381,
+        "requestCount": 17
+      }
+    ],
+    "warmRuns": [
+      {
+        "ttfb": 1061.9,
+        "fcp": 1328,
+        "lcp": 1328,
+        "usable": 1393.5,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1474.1,
+        "fcp": 1704,
+        "lcp": 1704,
+        "usable": 1763.6,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1364.7,
+        "fcp": 1616,
+        "lcp": 1616,
+        "usable": 1641.3,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1429.7,
+        "fcp": 1588,
+        "lcp": 1588,
+        "usable": 1687.7,
+        "totalBytes": 66381,
+        "requestCount": 17
+      },
+      {
+        "ttfb": 1316.2,
+        "fcp": 1536,
+        "lcp": 1536,
+        "usable": 1559.6,
+        "totalBytes": 66381,
+        "requestCount": 17
+      }
+    ],
+    "navRuns": [
+      1745.4,
+      1521.4,
+      1548.1,
+      2008.5,
+      1551.3
+    ]
+  },
+  {
+    "route": "/erp/teacher/marks",
+    "label": "Marks Entry Sheet",
+    "role": "Teacher",
+    "coldUsable": {
+      "min": 1405.4,
+      "max": 2087,
+      "avg": 1647.9,
+      "median": 1451.4
+    },
+    "coldTtfb": {
+      "min": 1052.1,
+      "max": 1641,
+      "avg": 1270,
+      "median": 1116.8
+    },
+    "coldFcp": {
+      "min": 1288,
+      "max": 1888,
+      "avg": 1534.7,
+      "median": 1428
+    },
+    "coldLcp": {
+      "min": 1288,
+      "max": 1888,
+      "avg": 1534.7,
+      "median": 1428
+    },
+    "warmUsable": {
+      "min": 1387.7,
+      "max": 1641.8,
+      "avg": 1525.4,
+      "median": 1522.4
+    },
+    "warmTtfb": {
+      "min": 1104,
+      "max": 1341.8,
+      "avg": 1217,
+      "median": 1192.7
+    },
+    "warmFcp": {
+      "min": 1300,
+      "max": 1552,
+      "avg": 1465.6,
+      "median": 1476
+    },
+    "warmLcp": {
+      "min": 1300,
+      "max": 1552,
+      "avg": 1465.6,
+      "median": 1476
+    },
+    "navUsable": {
+      "min": 1357.1,
+      "max": 2456.1,
+      "avg": 1640.6,
+      "median": 1392.9
+    },
+    "coldRuns": [
+      {
+        "ttfb": 1641,
+        "fcp": 1888,
+        "lcp": 1888,
+        "usable": 2087,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1116.8,
+        "fcp": 1428,
+        "lcp": 1428,
+        "usable": 1451.4,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1052.1,
+        "fcp": 1288,
+        "lcp": 1288,
+        "usable": 1405.4,
+        "totalBytes": 67405,
+        "requestCount": 18
+      }
+    ],
+    "warmRuns": [
+      {
+        "ttfb": 1192.7,
+        "fcp": 1456,
+        "lcp": 1456,
+        "usable": 1522.4,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1190.5,
+        "fcp": 1476,
+        "lcp": 1476,
+        "usable": 1510.5,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1256.1,
+        "fcp": 1544,
+        "lcp": 1544,
+        "usable": 1564.7,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1341.8,
+        "fcp": 1552,
+        "lcp": 1552,
+        "usable": 1641.8,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1104,
+        "fcp": 1300,
+        "lcp": 1300,
+        "usable": 1387.7,
+        "totalBytes": 67405,
+        "requestCount": 18
+      }
+    ],
+    "navRuns": [
+      1634.5,
+      1362.4,
+      1392.9,
+      1357.1,
+      2456.1
+    ]
+  },
+  {
+    "route": "/erp/teacher/leave/approvals",
+    "label": "Teacher Student Leave Approvals",
+    "role": "Teacher",
+    "coldUsable": {
+      "min": 1336.6,
+      "max": 1642.8,
+      "avg": 1491.7,
+      "median": 1495.8
+    },
+    "coldTtfb": {
+      "min": 1027.9,
+      "max": 1363.5,
+      "avg": 1193.9,
+      "median": 1190.3
+    },
+    "coldFcp": {
+      "min": 1296,
+      "max": 1528,
+      "avg": 1402.7,
+      "median": 1384
+    },
+    "coldLcp": {
+      "min": 1296,
+      "max": 1528,
+      "avg": 1402.7,
+      "median": 1384
+    },
+    "warmUsable": {
+      "min": 1352.4,
+      "max": 2645.2,
+      "avg": 1768.6,
+      "median": 1562.3
+    },
+    "warmTtfb": {
+      "min": 1093.4,
+      "max": 2284.6,
+      "avg": 1471.7,
+      "median": 1316.9
+    },
+    "warmFcp": {
+      "min": 1312,
+      "max": 2468,
+      "avg": 1661.6,
+      "median": 1472
+    },
+    "warmLcp": {
+      "min": 1312,
+      "max": 2468,
+      "avg": 1661.6,
+      "median": 1472
+    },
+    "navUsable": {
+      "min": 1375.5,
+      "max": 1557,
+      "avg": 1438.7,
+      "median": 1401.4
+    },
+    "coldRuns": [
+      {
+        "ttfb": 1190.3,
+        "fcp": 1384,
+        "lcp": 1384,
+        "usable": 1495.8,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1027.9,
+        "fcp": 1296,
+        "lcp": 1296,
+        "usable": 1336.6,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1363.5,
+        "fcp": 1528,
+        "lcp": 1528,
+        "usable": 1642.8,
+        "totalBytes": 67405,
+        "requestCount": 18
+      }
+    ],
+    "warmRuns": [
+      {
+        "ttfb": 1316.9,
+        "fcp": 1472,
+        "lcp": 1472,
+        "usable": 1562.3,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1093.4,
+        "fcp": 1332,
+        "lcp": 1332,
+        "usable": 1352.4,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 2284.6,
+        "fcp": 2468,
+        "lcp": 2468,
+        "usable": 2645.2,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1506.8,
+        "fcp": 1724,
+        "lcp": 1724,
+        "usable": 1878.1,
+        "totalBytes": 67405,
+        "requestCount": 18
+      },
+      {
+        "ttfb": 1156.7,
+        "fcp": 1312,
+        "lcp": 1312,
+        "usable": 1405.1,
+        "totalBytes": 67405,
+        "requestCount": 18
+      }
+    ],
+    "navRuns": [
+      1470.5,
+      1389.2,
+      1375.5,
+      1401.4,
+      1557
+    ]
+  },
+  {
+    "route": "/erp/parent",
+    "label": "Parent Dashboard",
+    "role": "Parent",
+    "coldUsable": {
+      "min": 2007.7,
+      "max": 2770.2,
+      "avg": 2513.5,
+      "median": 2762.5
+    },
+    "coldTtfb": {
+      "min": 1292.8,
+      "max": 1938.5,
+      "avg": 1675,
+      "median": 1793.7
+    },
+    "coldFcp": {
+      "min": 1476,
+      "max": 2160,
+      "avg": 1881.3,
+      "median": 2008
+    },
+    "coldLcp": {
+      "min": 1476,
+      "max": 2160,
+      "avg": 1881.3,
+      "median": 2008
+    },
+    "warmUsable": {
+      "min": 1951.7,
+      "max": 3965.6,
+      "avg": 2621.2,
+      "median": 2025.3
+    },
+    "warmTtfb": {
+      "min": 1174.8,
+      "max": 3139,
+      "avg": 1745.8,
+      "median": 1329.5
+    },
+    "warmFcp": {
+      "min": 1424,
+      "max": 3320,
+      "avg": 1980.8,
+      "median": 1632
+    },
+    "warmLcp": {
+      "min": 1424,
+      "max": 3320,
+      "avg": 1980.8,
+      "median": 1632
+    },
+    "navUsable": {
+      "min": 1905.1,
+      "max": 4328,
+      "avg": 2495.6,
+      "median": 1967
+    },
+    "coldRuns": [
+      {
+        "ttfb": 1793.7,
+        "fcp": 2008,
+        "lcp": 2008,
+        "usable": 2770.2,
+        "totalBytes": 70477,
+        "requestCount": 21
+      },
+      {
+        "ttfb": 1938.5,
+        "fcp": 2160,
+        "lcp": 2160,
+        "usable": 2762.5,
+        "totalBytes": 70477,
+        "requestCount": 21
+      },
+      {
+        "ttfb": 1292.8,
+        "fcp": 1476,
+        "lcp": 1476,
+        "usable": 2007.7,
+        "totalBytes": 70477,
+        "requestCount": 21
+      }
+    ],
+    "warmRuns": [
+      {
+        "ttfb": 3139,
+        "fcp": 3320,
+        "lcp": 3320,
+        "usable": 3965.6,
+        "totalBytes": 70477,
+        "requestCount": 21
+      },
+      {
+        "ttfb": 1329.5,
+        "fcp": 1632,
+        "lcp": 1632,
+        "usable": 2025.3,
+        "totalBytes": 70477,
+        "requestCount": 21
+      },
+      {
+        "ttfb": 1254.9,
+        "fcp": 1512,
+        "lcp": 1512,
+        "usable": 1951.7,
+        "totalBytes": 70477,
+        "requestCount": 21
+      },
+      {
+        "ttfb": 1174.8,
+        "fcp": 1424,
+        "lcp": 1424,
+        "usable": 1995.7,
+        "totalBytes": 70477,
+        "requestCount": 21
+      },
+      {
+        "ttfb": 1830.8,
+        "fcp": 2016,
+        "lcp": 2016,
+        "usable": 3167.8,
+        "totalBytes": 70477,
+        "requestCount": 21
+      }
+    ],
+    "navRuns": [
+      2336.5,
+      1941.2,
+      4328,
+      1905.1,
+      1967
+    ]
+  }
+]

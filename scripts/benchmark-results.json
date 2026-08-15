@@ -1,0 +1,3729 @@
+{
+  "timestamp": "2026-08-15T11:01:04.125Z",
+  "environment": "Production (next build + next start)",
+  "browser": "Chromium 124.0 (Playwright)",
+  "serverPort": 3009,
+  "loginFlows": {
+    "Admin": {
+      "authMs": 260,
+      "roleResolutionMs": 42.1,
+      "redirectMs": 6773.2,
+      "dashboardFcpMs": 1704,
+      "dashboardLcpMs": 1704,
+      "dashboardUsableMs": 1637.4,
+      "totalLoginToUsableMs": 8670.5
+    },
+    "Principal": {
+      "authMs": 260,
+      "roleResolutionMs": 42.1,
+      "redirectMs": 1850.6,
+      "dashboardFcpMs": 224,
+      "dashboardLcpMs": 224,
+      "dashboardUsableMs": 66.8,
+      "totalLoginToUsableMs": 2177.4
+    },
+    "Teacher": {
+      "authMs": 260,
+      "roleResolutionMs": 42.1,
+      "redirectMs": 2181.6,
+      "dashboardFcpMs": 212,
+      "dashboardLcpMs": 212,
+      "dashboardUsableMs": 113.5,
+      "totalLoginToUsableMs": 2555
+    },
+    "Accountant": {
+      "authMs": 260,
+      "roleResolutionMs": 42.1,
+      "redirectMs": 2543.4,
+      "dashboardFcpMs": 224,
+      "dashboardLcpMs": 224,
+      "dashboardUsableMs": 65.9,
+      "totalLoginToUsableMs": 2869.2
+    },
+    "Student": {
+      "authMs": 260,
+      "roleResolutionMs": 42.1,
+      "redirectMs": 2333.3,
+      "dashboardFcpMs": 236,
+      "dashboardLcpMs": 236,
+      "dashboardUsableMs": 69.9,
+      "totalLoginToUsableMs": 2663.2
+    },
+    "Parent": {
+      "authMs": 260,
+      "roleResolutionMs": 42.1,
+      "redirectMs": 2243.4,
+      "dashboardFcpMs": 224,
+      "dashboardLcpMs": 224,
+      "dashboardUsableMs": 78.7,
+      "totalLoginToUsableMs": 2582.1
+    }
+  },
+  "parallelValidation": {
+    "sequentialMs": 4044.9,
+    "parallelMs": 468,
+    "speedup": 8.64,
+    "breakdown": [
+      {
+        "name": "academic_sessions",
+        "sequentialMs": 1662.9,
+        "parallelMs": 468
+      },
+      {
+        "name": "classes",
+        "sequentialMs": 609.3,
+        "parallelMs": 468
+      },
+      {
+        "name": "students",
+        "sequentialMs": 1189.9,
+        "parallelMs": 468
+      },
+      {
+        "name": "fee_structures",
+        "sequentialMs": 311,
+        "parallelMs": 468
+      },
+      {
+        "name": "examinations",
+        "sequentialMs": 271.8,
+        "parallelMs": 468
+      }
+    ]
+  },
+  "throttling": {
+    "desktopNormal": {
+      "ttfb": 4.2,
+      "fcp": 136,
+      "lcp": 136,
+      "inp": 12.4,
+      "cls": 0,
+      "usable": 175.8,
+      "settled": 700.7,
+      "requestCount": 21,
+      "totalBytes": 143013,
+      "jsBytes": 12288,
+      "cssBytes": 1024,
+      "rscBytes": 2048,
+      "imageBytes": 74233,
+      "fontBytes": 52396,
+      "slowestRequest": {
+        "url": "009/_next/static/chunks/224ipm--yod3x.js",
+        "duration": 110
+      },
+      "largestRequest": {
+        "url": "http://localhost:3009/_next/image",
+        "size": 69235
+      }
+    },
+    "desktopFast4G": {
+      "ttfb": 3,
+      "fcp": 868,
+      "lcp": 868,
+      "inp": 12.4,
+      "cls": 0,
+      "usable": 818.5,
+      "settled": 3381.7,
+      "requestCount": 0,
+      "totalBytes": 0,
+      "jsBytes": 0,
+      "cssBytes": 0,
+      "rscBytes": 0,
+      "imageBytes": 0,
+      "fontBytes": 0,
+      "slowestRequest": {
+        "url": "",
+        "duration": 0
+      },
+      "largestRequest": {
+        "url": "",
+        "size": 0
+      }
+    },
+    "mobileFast4G": {
+      "ttfb": 2.8,
+      "fcp": 904,
+      "lcp": 904,
+      "inp": 12.4,
+      "cls": 0,
+      "usable": 829.4,
+      "settled": 3133.9,
+      "requestCount": 0,
+      "totalBytes": 0,
+      "jsBytes": 0,
+      "cssBytes": 0,
+      "rscBytes": 0,
+      "imageBytes": 0,
+      "fontBytes": 0,
+      "slowestRequest": {
+        "url": "",
+        "duration": 0
+      },
+      "largestRequest": {
+        "url": "",
+        "size": 0
+      }
+    },
+    "mobileSlow4G": {
+      "ttfb": 2.8,
+      "fcp": 2024,
+      "lcp": 2024,
+      "inp": 12.4,
+      "cls": 0,
+      "usable": 2034.8,
+      "settled": 7040.8,
+      "requestCount": 0,
+      "totalBytes": 0,
+      "jsBytes": 0,
+      "cssBytes": 0,
+      "rscBytes": 0,
+      "imageBytes": 0,
+      "fontBytes": 0,
+      "slowestRequest": {
+        "url": "",
+        "duration": 0
+      },
+      "largestRequest": {
+        "url": "",
+        "size": 0
+      }
+    }
+  },
+  "routes": [
+    {
+      "portal": "Public",
+      "route": "/login",
+      "label": "Login Form",
+      "cold": {
+        "ttfb": 8.3,
+        "fcp": 208,
+        "lcp": 208,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 346.4,
+        "settled": 936.2,
+        "requestCount": 21,
+        "totalBytes": 143013,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 158
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 8.3,
+        "fcp": 204,
+        "lcp": 204,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 337.1,
+        "settled": 911.1,
+        "requestCount": 21,
+        "totalBytes": 143013,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 156
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Public",
+      "route": "/forgot-password",
+      "label": "Forgot Password",
+      "cold": {
+        "ttfb": 6.1,
+        "fcp": 124,
+        "lcp": 124,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 287.8,
+        "settled": 843.5,
+        "requestCount": 19,
+        "totalBytes": 71799,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 3019,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 108
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 7.4,
+        "fcp": 128,
+        "lcp": 128,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 304.3,
+        "settled": 862,
+        "requestCount": 19,
+        "totalBytes": 71799,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 3019,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 107
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Public",
+      "route": "/reset-password",
+      "label": "Reset Password",
+      "cold": {
+        "ttfb": 18,
+        "fcp": 152,
+        "lcp": 152,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 282.9,
+        "settled": 730.2,
+        "requestCount": 15,
+        "totalBytes": 67703,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 0,
+        "imageBytes": 3019,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/224ipm--yod3x.js",
+          "duration": 111
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 11,
+        "fcp": 128,
+        "lcp": 128,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 283.9,
+        "settled": 650.2,
+        "requestCount": 15,
+        "totalBytes": 67703,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 0,
+        "imageBytes": 3019,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 97
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Public",
+      "route": "/verify/certificate/sample-token",
+      "label": "Certificate Verification",
+      "cold": {
+        "ttfb": 502.6,
+        "fcp": 700,
+        "lcp": 700,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 733.3,
+        "settled": 1099.3,
+        "requestCount": 12,
+        "totalBytes": 62636,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 0,
+        "imageBytes": 0,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ost:3009/verify/certificate/sample-token",
+          "duration": 508
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 400.9,
+        "fcp": 628,
+        "lcp": 628,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 679.1,
+        "settled": 1030.7,
+        "requestCount": 12,
+        "totalBytes": 62636,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 0,
+        "imageBytes": 0,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ost:3009/verify/certificate/sample-token",
+          "duration": 406
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Public",
+      "route": "/verify/admit-card/sample-token",
+      "label": "Admit Card Verification",
+      "cold": {
+        "ttfb": 266.4,
+        "fcp": 452,
+        "lcp": 452,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 589.9,
+        "settled": 929.7,
+        "requestCount": 12,
+        "totalBytes": 62636,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 0,
+        "imageBytes": 0,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "host:3009/verify/admit-card/sample-token",
+          "duration": 272
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 386,
+        "fcp": 508,
+        "lcp": 508,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 628.3,
+        "settled": 1031.5,
+        "requestCount": 12,
+        "totalBytes": 62636,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 0,
+        "imageBytes": 0,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "host:3009/verify/admit-card/sample-token",
+          "duration": 391
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Public",
+      "route": "/verify/report-card/sample-token",
+      "label": "Report Card Verification",
+      "cold": {
+        "ttfb": 276,
+        "fcp": 452,
+        "lcp": 452,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 482.8,
+        "settled": 878.8,
+        "requestCount": 12,
+        "totalBytes": 62636,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 0,
+        "imageBytes": 0,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ost:3009/verify/report-card/sample-token",
+          "duration": 280
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 359.9,
+        "fcp": 516,
+        "lcp": 516,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 571.3,
+        "settled": 930.7,
+        "requestCount": 12,
+        "totalBytes": 62636,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 0,
+        "imageBytes": 0,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ost:3009/verify/report-card/sample-token",
+          "duration": 364
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "ERP",
+      "route": "/erp",
+      "label": "ERP Router Hub",
+      "cold": {
+        "ttfb": 1601,
+        "fcp": 1712,
+        "lcp": 1712,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3200,
+        "settled": 8215.4,
+        "requestCount": 91,
+        "totalBytes": 193178,
+        "jsBytes": 18432,
+        "cssBytes": 2048,
+        "rscBytes": 58368,
+        "imageBytes": 7490,
+        "fontBytes": 104792,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin",
+          "duration": 1604
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1321.1,
+        "fcp": 1524,
+        "lcp": 1524,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1339.9,
+        "settled": 6343.1,
+        "requestCount": 75,
+        "totalBytes": 178842,
+        "jsBytes": 16384,
+        "cssBytes": 2048,
+        "rscBytes": 46080,
+        "imageBytes": 7490,
+        "fontBytes": 104792,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin",
+          "duration": 1328
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "ERP",
+      "route": "/erp/select-role",
+      "label": "Role Selector",
+      "cold": {
+        "ttfb": 1091.4,
+        "fcp": 1328,
+        "lcp": 1328,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1337.7,
+        "settled": 2490.8,
+        "requestCount": 15,
+        "totalBytes": 68429,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/select-role",
+          "duration": 1096
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1103.6,
+        "fcp": 1328,
+        "lcp": 1328,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1342.8,
+        "settled": 2599.2,
+        "requestCount": 15,
+        "totalBytes": 68429,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/select-role",
+          "duration": 1109
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "ERP",
+      "route": "/erp/unauthorized",
+      "label": "Unauthorized Boundary",
+      "cold": {
+        "ttfb": 12.5,
+        "fcp": 284,
+        "lcp": 284,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 371.4,
+        "settled": 984.3,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/224ipm--yod3x.js",
+          "duration": 259
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 7.5,
+        "fcp": 240,
+        "lcp": 240,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 383.1,
+        "settled": 940,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 180
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "ERP",
+      "route": "/erp/account-not-provisioned",
+      "label": "Unprovisioned Boundary",
+      "cold": {
+        "ttfb": 10,
+        "fcp": 228,
+        "lcp": 228,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 377.9,
+        "settled": 924.6,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 167
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 6.9,
+        "fcp": 232,
+        "lcp": 232,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 316.9,
+        "settled": 936,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 163
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin",
+      "label": "Admin Dashboard",
+      "cold": {
+        "ttfb": 1705.5,
+        "fcp": 1912,
+        "lcp": 1912,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2077.9,
+        "settled": 7085.5,
+        "requestCount": 62,
+        "totalBytes": 116557,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 48128,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin",
+          "duration": 1710
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1149.8,
+        "fcp": 1432,
+        "lcp": 1432,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1467.8,
+        "settled": 6483.3,
+        "requestCount": 52,
+        "totalBytes": 104269,
+        "jsBytes": 13312,
+        "cssBytes": 1024,
+        "rscBytes": 32768,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin",
+          "duration": 1154
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/students",
+      "label": "Students Directory",
+      "cold": {
+        "ttfb": 1162.8,
+        "fcp": 1356,
+        "lcp": 1356,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1491.2,
+        "settled": 6499,
+        "requestCount": 47,
+        "totalBytes": 100173,
+        "jsBytes": 9216,
+        "cssBytes": 1024,
+        "rscBytes": 32768,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin/students",
+          "duration": 1168
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1070.1,
+        "fcp": 1324,
+        "lcp": 1324,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1403.5,
+        "settled": 6417.7,
+        "requestCount": 48,
+        "totalBytes": 100173,
+        "jsBytes": 9216,
+        "cssBytes": 1024,
+        "rscBytes": 32768,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin/students",
+          "duration": 1075
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 2286
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/students/new",
+      "label": "New Student Form",
+      "cold": {
+        "ttfb": 1255.3,
+        "fcp": 1528,
+        "lcp": 1528,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1611.7,
+        "settled": 6617.7,
+        "requestCount": 47,
+        "totalBytes": 101197,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 27648,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/admin/students/new",
+          "duration": 1260
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1248.4,
+        "fcp": 1516,
+        "lcp": 1516,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1543.9,
+        "settled": 6555.6,
+        "requestCount": 47,
+        "totalBytes": 101197,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 27648,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/admin/students/new",
+          "duration": 1252
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1721.6
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/students/f200bc99-0002-4ef8-bb6d-6bb9bd380a11",
+      "label": "Student Profile View",
+      "cold": {
+        "ttfb": 1689.6,
+        "fcp": 1892,
+        "lcp": 1892,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2067.6,
+        "settled": 7073.1,
+        "requestCount": 48,
+        "totalBytes": 102221,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 28672,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "nts/f200bc99-0002-4ef8-bb6d-6bb9bd380a11",
+          "duration": 1697
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1241,
+        "fcp": 1468,
+        "lcp": 1468,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1505.1,
+        "settled": 6519.6,
+        "requestCount": 48,
+        "totalBytes": 102221,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 28672,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "nts/f200bc99-0002-4ef8-bb6d-6bb9bd380a11",
+          "duration": 1248
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1322.7
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/students/f200bc99-0002-4ef8-bb6d-6bb9bd380a11/edit",
+      "label": "Edit Student Form",
+      "cold": {
+        "ttfb": 1807.8,
+        "fcp": 2076,
+        "lcp": 2076,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2233,
+        "settled": 7242,
+        "requestCount": 49,
+        "totalBytes": 102221,
+        "jsBytes": 16384,
+        "cssBytes": 1024,
+        "rscBytes": 27648,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "200bc99-0002-4ef8-bb6d-6bb9bd380a11/edit",
+          "duration": 1812
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1074.3,
+        "fcp": 1352,
+        "lcp": 1352,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1373.8,
+        "settled": 6377.6,
+        "requestCount": 48,
+        "totalBytes": 101197,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 27648,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "200bc99-0002-4ef8-bb6d-6bb9bd380a11/edit",
+          "duration": 1080
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1416.5
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/admissions",
+      "label": "Admissions Desk",
+      "cold": {
+        "ttfb": 1175.1,
+        "fcp": 1384,
+        "lcp": 1384,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1506.5,
+        "settled": 6508.5,
+        "requestCount": 49,
+        "totalBytes": 100173,
+        "jsBytes": 9216,
+        "cssBytes": 1024,
+        "rscBytes": 32768,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/admin/admissions",
+          "duration": 1179
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1567.9,
+        "fcp": 1764,
+        "lcp": 1764,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1913.5,
+        "settled": 6926.1,
+        "requestCount": 46,
+        "totalBytes": 100173,
+        "jsBytes": 9216,
+        "cssBytes": 1024,
+        "rscBytes": 32768,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/admin/admissions",
+          "duration": 1572
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1656.4
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/admissions/new",
+      "label": "New Admission Form",
+      "cold": {
+        "ttfb": 1868.3,
+        "fcp": 2056,
+        "lcp": 2056,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2227.6,
+        "settled": 7230.2,
+        "requestCount": 47,
+        "totalBytes": 101197,
+        "jsBytes": 16384,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/admin/admissions/new",
+          "duration": 1872
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1198.4,
+        "fcp": 1416,
+        "lcp": 1416,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1442.9,
+        "settled": 6449.4,
+        "requestCount": 47,
+        "totalBytes": 101197,
+        "jsBytes": 16384,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/admin/admissions/new",
+          "duration": 1202
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1315.7
+      }
+    },
+    {
+      "portal": "/erp/admin/admissions/[id]",
+      "route": "/erp/admin/admissions/061f2409-0773-4365-ac3c-6225032da6d9",
+      "label": "Admission Application View",
+      "cold": {
+        "ttfb": 1359.8,
+        "fcp": 1600,
+        "lcp": 1600,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1629.4,
+        "settled": 6641.5,
+        "requestCount": 45,
+        "totalBytes": 99149,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ons/061f2409-0773-4365-ac3c-6225032da6d9",
+          "duration": 1364
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1384.2,
+        "fcp": 1612,
+        "lcp": 1612,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1638.5,
+        "settled": 6640,
+        "requestCount": 45,
+        "totalBytes": 99149,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ons/061f2409-0773-4365-ac3c-6225032da6d9",
+          "duration": 1389
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1415.4
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/attendance",
+      "label": "Admin Attendance Register",
+      "cold": {
+        "ttfb": 1246,
+        "fcp": 1412,
+        "lcp": 1412,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1579.4,
+        "settled": 6583.4,
+        "requestCount": 44,
+        "totalBytes": 98125,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/admin/attendance",
+          "duration": 1250
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1237.9,
+        "fcp": 1472,
+        "lcp": 1472,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1587,
+        "settled": 6595.4,
+        "requestCount": 44,
+        "totalBytes": 98125,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/admin/attendance",
+          "duration": 1244
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 2006.1
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/fees",
+      "label": "Fee Management Console",
+      "cold": {
+        "ttfb": 1801.6,
+        "fcp": 1916,
+        "lcp": 1916,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1948.6,
+        "settled": 6964.5,
+        "requestCount": 45,
+        "totalBytes": 114665,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 68936,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin/fees",
+          "duration": 1804
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1696.1,
+        "fcp": 1776,
+        "lcp": 1776,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1835.8,
+        "settled": 6841.7,
+        "requestCount": 45,
+        "totalBytes": 114665,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 68936,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin/fees",
+          "duration": 1699
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1556.7
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/collections",
+      "label": "Collections & Dues Ledger",
+      "cold": {
+        "ttfb": 1072.6,
+        "fcp": 1180,
+        "lcp": 1180,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1365.4,
+        "settled": 6371.6,
+        "requestCount": 47,
+        "totalBytes": 130401,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 83648,
+        "slowestRequest": {
+          "url": "p://localhost:3009/erp/admin/collections",
+          "duration": 1075
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1003.8,
+        "fcp": 1096,
+        "lcp": 1096,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1282.3,
+        "settled": 6293.1,
+        "requestCount": 49,
+        "totalBytes": 132449,
+        "jsBytes": 17408,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 83648,
+        "slowestRequest": {
+          "url": "p://localhost:3009/erp/admin/collections",
+          "duration": 1006
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1521.4
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/leave",
+      "label": "Staff Leave Portal",
+      "cold": {
+        "ttfb": 1066.1,
+        "fcp": 1164,
+        "lcp": 1164,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1582.5,
+        "settled": 6592.1,
+        "requestCount": 45,
+        "totalBytes": 99149,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin/leave",
+          "duration": 1068
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1696.1,
+        "fcp": 1792,
+        "lcp": 1792,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2219.9,
+        "settled": 7227.1,
+        "requestCount": 47,
+        "totalBytes": 101197,
+        "jsBytes": 17408,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin/leave",
+          "duration": 1699
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1578.2
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/leave/approvals",
+      "label": "Leave Approvals Queue",
+      "cold": {
+        "ttfb": 1271.2,
+        "fcp": 1372,
+        "lcp": 1372,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1390.3,
+        "settled": 6392.1,
+        "requestCount": 45,
+        "totalBytes": 99149,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "localhost:3009/erp/admin/leave/approvals",
+          "duration": 1273
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1437.5,
+        "fcp": 1532,
+        "lcp": 1532,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1550.2,
+        "settled": 6552.9,
+        "requestCount": 48,
+        "totalBytes": 102221,
+        "jsBytes": 17408,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "localhost:3009/erp/admin/leave/approvals",
+          "duration": 1440
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1624.8
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/examinations",
+      "label": "Examinations Planner",
+      "cold": {
+        "ttfb": 1029.5,
+        "fcp": 1164,
+        "lcp": 1164,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1179.8,
+        "settled": 6193.6,
+        "requestCount": 44,
+        "totalBytes": 96077,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/admin/examinations",
+          "duration": 1032
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1080.2,
+        "fcp": 1200,
+        "lcp": 1200,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1218,
+        "settled": 6225.2,
+        "requestCount": 44,
+        "totalBytes": 98125,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/admin/examinations",
+          "duration": 1083
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1421.7
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/admit-cards",
+      "label": "Admit Cards Generator",
+      "cold": {
+        "ttfb": 1150.5,
+        "fcp": 1244,
+        "lcp": 1244,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1297.3,
+        "settled": 6303.8,
+        "requestCount": 44,
+        "totalBytes": 98125,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "p://localhost:3009/erp/admin/admit-cards",
+          "duration": 1153
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1093.7,
+        "fcp": 1180,
+        "lcp": 1180,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1226.4,
+        "settled": 6230.3,
+        "requestCount": 45,
+        "totalBytes": 99149,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "p://localhost:3009/erp/admin/admit-cards",
+          "duration": 1096
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1542.1
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/results",
+      "label": "Results & Marks Ledger",
+      "cold": {
+        "ttfb": 1015.7,
+        "fcp": 1164,
+        "lcp": 1164,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1182.4,
+        "settled": 6187.8,
+        "requestCount": 36,
+        "totalBytes": 87885,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 19456,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin/fees",
+          "duration": 1175
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1149.8,
+        "fcp": 1276,
+        "lcp": 1276,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1291.7,
+        "settled": 6305.4,
+        "requestCount": 47,
+        "totalBytes": 101197,
+        "jsBytes": 17408,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/admin/results",
+          "duration": 1152
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1481.1
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/promotion",
+      "label": "Academic Promotion Manager",
+      "cold": {
+        "ttfb": 1093.3,
+        "fcp": 1196,
+        "lcp": 1196,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1374.4,
+        "settled": 6388.9,
+        "requestCount": 44,
+        "totalBytes": 98125,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ttp://localhost:3009/erp/admin/promotion",
+          "duration": 1096
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1425.5,
+        "fcp": 1528,
+        "lcp": 1528,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1733.3,
+        "settled": 6743.5,
+        "requestCount": 45,
+        "totalBytes": 99149,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ttp://localhost:3009/erp/admin/promotion",
+          "duration": 1428
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1696.8
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/teacher-assignments",
+      "label": "Teacher Subject Assignments",
+      "cold": {
+        "ttfb": 1245.5,
+        "fcp": 1348,
+        "lcp": 1348,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1365.3,
+        "settled": 6367.9,
+        "requestCount": 45,
+        "totalBytes": 99149,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "lhost:3009/erp/admin/teacher-assignments",
+          "duration": 1247
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1275.6,
+        "fcp": 1380,
+        "lcp": 1380,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1401.4,
+        "settled": 6407.7,
+        "requestCount": 47,
+        "totalBytes": 101197,
+        "jsBytes": 17408,
+        "cssBytes": 1024,
+        "rscBytes": 25600,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "lhost:3009/erp/admin/teacher-assignments",
+          "duration": 1278
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1341.6
+      }
+    },
+    {
+      "portal": "Admin",
+      "route": "/erp/admin/documents",
+      "label": "Document Templates & Issuance",
+      "cold": {
+        "ttfb": 1107.7,
+        "fcp": 1196,
+        "lcp": 1196,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1648.8,
+        "settled": 6659.1,
+        "requestCount": 46,
+        "totalBytes": 100173,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ttp://localhost:3009/erp/admin/documents",
+          "duration": 1110
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1178.6,
+        "fcp": 1284,
+        "lcp": 1284,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1503.9,
+        "settled": 6516.7,
+        "requestCount": 46,
+        "totalBytes": 100173,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ttp://localhost:3009/erp/admin/documents",
+          "duration": 1181
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "internalNav": {
+        "clickToSkeleton": 35,
+        "rscDuration": 120,
+        "clickToUsable": 1855.9
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal",
+      "label": "Principal Dashboard",
+      "cold": {
+        "ttfb": 931.7,
+        "fcp": 1040,
+        "lcp": 1040,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1067.5,
+        "settled": 6070.1,
+        "requestCount": 46,
+        "totalBytes": 99149,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/principal",
+          "duration": 934
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1126.5,
+        "fcp": 1220,
+        "lcp": 1220,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1250.8,
+        "settled": 6264.8,
+        "requestCount": 45,
+        "totalBytes": 99149,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 26624,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/principal",
+          "duration": 1128
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/students",
+      "label": "Principal Students Roster",
+      "cold": {
+        "ttfb": 1109.9,
+        "fcp": 1212,
+        "lcp": 1212,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1243.7,
+        "settled": 6252.2,
+        "requestCount": 53,
+        "totalBytes": 107341,
+        "jsBytes": 13312,
+        "cssBytes": 1024,
+        "rscBytes": 35840,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/principal/students",
+          "duration": 1112
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1138.3,
+        "fcp": 1248,
+        "lcp": 1248,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1273.2,
+        "settled": 6282.9,
+        "requestCount": 53,
+        "totalBytes": 107341,
+        "jsBytes": 13312,
+        "cssBytes": 1024,
+        "rscBytes": 35840,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/principal/students",
+          "duration": 1141
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/admissions",
+      "label": "Principal Admissions Review",
+      "cold": {
+        "ttfb": 1611.7,
+        "fcp": 1696,
+        "lcp": 1696,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1745.1,
+        "settled": 6749.5,
+        "requestCount": 52,
+        "totalBytes": 106317,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 35840,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/principal/admissions",
+          "duration": 1614
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1102.9,
+        "fcp": 1204,
+        "lcp": 1204,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1220.8,
+        "settled": 6235.2,
+        "requestCount": 50,
+        "totalBytes": 102221,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 29696,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/principal/admissions",
+          "duration": 1105
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/attendance",
+      "label": "Principal Attendance Overview",
+      "cold": {
+        "ttfb": 1110.6,
+        "fcp": 1212,
+        "lcp": 1212,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1491.7,
+        "settled": 6080.7,
+        "requestCount": 43,
+        "totalBytes": 97101,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/principal/attendance",
+          "duration": 1114
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1265.6,
+        "fcp": 1368,
+        "lcp": 1368,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1584.1,
+        "settled": 6594,
+        "requestCount": 43,
+        "totalBytes": 97101,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/principal/attendance",
+          "duration": 1268
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/examinations",
+      "label": "Principal Exams Monitor",
+      "cold": {
+        "ttfb": 1311.4,
+        "fcp": 1416,
+        "lcp": 1416,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1437.3,
+        "settled": 6421.7,
+        "requestCount": 43,
+        "totalBytes": 97101,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ocalhost:3009/erp/principal/examinations",
+          "duration": 1314
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1091,
+        "fcp": 1156,
+        "lcp": 1156,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1299.9,
+        "settled": 6308.8,
+        "requestCount": 42,
+        "totalBytes": 96077,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ocalhost:3009/erp/principal/examinations",
+          "duration": 1094
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/admit-cards",
+      "label": "Principal Admit Cards",
+      "cold": {
+        "ttfb": 1045.3,
+        "fcp": 1180,
+        "lcp": 1180,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1193.3,
+        "settled": 6199.1,
+        "requestCount": 42,
+        "totalBytes": 96077,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "localhost:3009/erp/principal/admit-cards",
+          "duration": 1047
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1080.5,
+        "fcp": 1208,
+        "lcp": 1208,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1225.8,
+        "settled": 6230.6,
+        "requestCount": 42,
+        "totalBytes": 96077,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "localhost:3009/erp/principal/admit-cards",
+          "duration": 1083
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/results",
+      "label": "Principal Results Registry",
+      "cold": {
+        "ttfb": 1133,
+        "fcp": 1272,
+        "lcp": 1272,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1295.6,
+        "settled": 6303.6,
+        "requestCount": 41,
+        "totalBytes": 94029,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "p://localhost:3009/erp/principal/results",
+          "duration": 1136
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1796.8,
+        "fcp": 1912,
+        "lcp": 1912,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1976.3,
+        "settled": 6985.8,
+        "requestCount": 42,
+        "totalBytes": 96077,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "p://localhost:3009/erp/principal/results",
+          "duration": 1800
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/promotion",
+      "label": "Principal Promotion Policy",
+      "cold": {
+        "ttfb": 1318.7,
+        "fcp": 1428,
+        "lcp": 1428,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1594.2,
+        "settled": 6596.8,
+        "requestCount": 41,
+        "totalBytes": 95053,
+        "jsBytes": 13312,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "//localhost:3009/erp/principal/promotion",
+          "duration": 1321
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1228.7,
+        "fcp": 1352,
+        "lcp": 1352,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1528,
+        "settled": 6531.5,
+        "requestCount": 42,
+        "totalBytes": 96077,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "//localhost:3009/erp/principal/promotion",
+          "duration": 1245
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/leave",
+      "label": "Principal Leave Approvals",
+      "cold": {
+        "ttfb": 1306.2,
+        "fcp": 1412,
+        "lcp": 1412,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1810.8,
+        "settled": 6814.2,
+        "requestCount": 43,
+        "totalBytes": 97101,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ttp://localhost:3009/erp/principal/leave",
+          "duration": 1309
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1370.5,
+        "fcp": 1488,
+        "lcp": 1488,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1926.9,
+        "settled": 6939.3,
+        "requestCount": 43,
+        "totalBytes": 97101,
+        "jsBytes": 15360,
+        "cssBytes": 1024,
+        "rscBytes": 23552,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "ttp://localhost:3009/erp/principal/leave",
+          "duration": 1373
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Principal",
+      "route": "/erp/principal/documents",
+      "label": "Principal Document Dispatch",
+      "cold": {
+        "ttfb": 1640,
+        "fcp": 1728,
+        "lcp": 1728,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2019.6,
+        "settled": 7034.8,
+        "requestCount": 38,
+        "totalBytes": 90957,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 21504,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/principal/attendance",
+          "duration": 1691
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1494.3,
+        "fcp": 1580,
+        "lcp": 1580,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2852.9,
+        "settled": 7863.2,
+        "requestCount": 30,
+        "totalBytes": 83789,
+        "jsBytes": 9216,
+        "cssBytes": 1024,
+        "rscBytes": 16384,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "//localhost:3009/erp/principal/documents",
+          "duration": 1497
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Teacher",
+      "route": "/erp/teacher",
+      "label": "Teacher Dashboard",
+      "cold": {
+        "ttfb": 3334,
+        "fcp": 3420,
+        "lcp": 3420,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3483.1,
+        "settled": 8383.8,
+        "requestCount": 28,
+        "totalBytes": 81741,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 12288,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/teacher",
+          "duration": 3336
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 14465.5,
+        "fcp": 14552,
+        "lcp": 14552,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 17124.4,
+        "settled": 22135.2,
+        "requestCount": 21,
+        "totalBytes": 70477,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 4096,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/teacher",
+          "duration": 14468
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Teacher",
+      "route": "/erp/teacher/attendance",
+      "label": "Teacher Attendance Overview",
+      "cold": {
+        "ttfb": 16773.1,
+        "fcp": 16860,
+        "lcp": 16860,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 16933.9,
+        "settled": 21939.9,
+        "requestCount": 21,
+        "totalBytes": 70477,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 4096,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/teacher/attendance",
+          "duration": 16776
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 13555,
+        "fcp": 13648,
+        "lcp": 13648,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 13701.4,
+        "settled": 18710.8,
+        "requestCount": 24,
+        "totalBytes": 76621,
+        "jsBytes": 8192,
+        "cssBytes": 1024,
+        "rscBytes": 10240,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/teacher/attendance",
+          "duration": 13558
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Teacher",
+      "route": "/erp/teacher/attendance/mark",
+      "label": "Daily Attendance Marking Sheet",
+      "cold": {
+        "ttfb": 6989.2,
+        "fcp": 7092,
+        "lcp": 7092,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 7112.1,
+        "settled": 12116.1,
+        "requestCount": 23,
+        "totalBytes": 72525,
+        "jsBytes": 9216,
+        "cssBytes": 1024,
+        "rscBytes": 5120,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "calhost:3009/erp/teacher/attendance/mark",
+          "duration": 6992
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1883.6,
+        "fcp": 1964,
+        "lcp": 1964,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2012.1,
+        "settled": 6456.7,
+        "requestCount": 29,
+        "totalBytes": 82765,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 12288,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "calhost:3009/erp/teacher/attendance/mark",
+          "duration": 1886
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Teacher",
+      "route": "/erp/teacher/marks",
+      "label": "Marks Entry Sheet",
+      "cold": {
+        "ttfb": 3371.7,
+        "fcp": 3480,
+        "lcp": 3480,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 4022.4,
+        "settled": 8761.3,
+        "requestCount": 27,
+        "totalBytes": 80717,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 11264,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/teacher/marks",
+          "duration": 3374
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 2704.9,
+        "fcp": 2800,
+        "lcp": 2800,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3263.7,
+        "settled": 7751,
+        "requestCount": 27,
+        "totalBytes": 80717,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 11264,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/teacher/marks",
+          "duration": 2707
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Teacher",
+      "route": "/erp/teacher/examinations",
+      "label": "Teacher Exam Schedules",
+      "cold": {
+        "ttfb": 1923.4,
+        "fcp": 2004,
+        "lcp": 2004,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2067.7,
+        "settled": 7073.8,
+        "requestCount": 26,
+        "totalBytes": 79693,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 11264,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/teacher/examinations",
+          "duration": 1926
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 2246.2,
+        "fcp": 2300,
+        "lcp": 2300,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2355.9,
+        "settled": 7358.4,
+        "requestCount": 26,
+        "totalBytes": 79693,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 11264,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "/localhost:3009/erp/teacher/examinations",
+          "duration": 2249
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Teacher",
+      "route": "/erp/teacher/leave",
+      "label": "Teacher My Leave",
+      "cold": {
+        "ttfb": 1649.3,
+        "fcp": 1732,
+        "lcp": 1732,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2464,
+        "settled": 6148.5,
+        "requestCount": 27,
+        "totalBytes": 80717,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 11264,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/teacher/leave",
+          "duration": 1651
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 2923.3,
+        "fcp": 3012,
+        "lcp": 3012,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3817.1,
+        "settled": 7690.9,
+        "requestCount": 27,
+        "totalBytes": 80717,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 11264,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/teacher/leave",
+          "duration": 2925
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Teacher",
+      "route": "/erp/teacher/leave/approvals",
+      "label": "Teacher Student Leave Approvals",
+      "cold": {
+        "ttfb": 3787.6,
+        "fcp": 3876,
+        "lcp": 3876,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3914.4,
+        "settled": 8930.7,
+        "requestCount": 29,
+        "totalBytes": 82765,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 12288,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "calhost:3009/erp/teacher/leave/approvals",
+          "duration": 3790
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 3077.3,
+        "fcp": 3160,
+        "lcp": 3160,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3218.5,
+        "settled": 8232.1,
+        "requestCount": 28,
+        "totalBytes": 81741,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 12288,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "calhost:3009/erp/teacher/leave/approvals",
+          "duration": 3080
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Accountant",
+      "route": "/erp/accountant",
+      "label": "Accountant Dashboard",
+      "cold": {
+        "ttfb": 1898.8,
+        "fcp": 2000,
+        "lcp": 2000,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2305.2,
+        "settled": 6367.6,
+        "requestCount": 24,
+        "totalBytes": 93161,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 8192,
+        "imageBytes": 3745,
+        "fontBytes": 68936,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/accountant",
+          "duration": 1901
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 3974.3,
+        "fcp": 4064,
+        "lcp": 4064,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 4502.9,
+        "settled": 8228.9,
+        "requestCount": 24,
+        "totalBytes": 93161,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 8192,
+        "imageBytes": 3745,
+        "fontBytes": 68936,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/accountant",
+          "duration": 3976
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Accountant",
+      "route": "/erp/accountant/fees",
+      "label": "Fee Collection Window",
+      "cold": {
+        "ttfb": 4832,
+        "fcp": 4920,
+        "lcp": 4920,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 4988.2,
+        "settled": 9559.4,
+        "requestCount": 25,
+        "totalBytes": 94185,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 9216,
+        "imageBytes": 3745,
+        "fontBytes": 68936,
+        "slowestRequest": {
+          "url": "ttp://localhost:3009/erp/accountant/fees",
+          "duration": 4834
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 3605.1,
+        "fcp": 3700,
+        "lcp": 3700,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3761.1,
+        "settled": 8774.6,
+        "requestCount": 24,
+        "totalBytes": 93161,
+        "jsBytes": 9216,
+        "cssBytes": 1024,
+        "rscBytes": 9216,
+        "imageBytes": 3745,
+        "fontBytes": 68936,
+        "slowestRequest": {
+          "url": "ttp://localhost:3009/erp/accountant/fees",
+          "duration": 3608
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Accountant",
+      "route": "/erp/accountant/collections",
+      "label": "Daily Collections Register",
+      "cold": {
+        "ttfb": 2888.8,
+        "fcp": 2972,
+        "lcp": 2972,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3044.4,
+        "settled": 6000.3,
+        "requestCount": 26,
+        "totalBytes": 108897,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 9216,
+        "imageBytes": 3745,
+        "fontBytes": 83648,
+        "slowestRequest": {
+          "url": "ocalhost:3009/erp/accountant/collections",
+          "duration": 2892
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 4473.1,
+        "fcp": 4568,
+        "lcp": 4568,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 4634.5,
+        "settled": 7797.3,
+        "requestCount": 26,
+        "totalBytes": 108897,
+        "jsBytes": 10240,
+        "cssBytes": 1024,
+        "rscBytes": 9216,
+        "imageBytes": 3745,
+        "fontBytes": 83648,
+        "slowestRequest": {
+          "url": "ocalhost:3009/erp/accountant/collections",
+          "duration": 4476
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Student",
+      "route": "/erp/student",
+      "label": "Student Dashboard",
+      "cold": {
+        "ttfb": 239.8,
+        "fcp": 572,
+        "lcp": 572,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 635.9,
+        "settled": 1169.2,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/login",
+          "duration": 241
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 389.5,
+        "fcp": 832,
+        "lcp": 832,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 864,
+        "settled": 1383.1,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/login",
+          "duration": 391
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Student",
+      "route": "/erp/student/attendance",
+      "label": "Student Attendance Tracker",
+      "cold": {
+        "ttfb": 2.5,
+        "fcp": 116,
+        "lcp": 116,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 164.3,
+        "settled": 689.6,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/224ipm--yod3x.js",
+          "duration": 71
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 2.7,
+        "fcp": 120,
+        "lcp": 120,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 148.3,
+        "settled": 675,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 21
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Student",
+      "route": "/erp/student/fees",
+      "label": "Student Fee History & Pay",
+      "cold": {
+        "ttfb": 2.5,
+        "fcp": 104,
+        "lcp": 104,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 159.5,
+        "settled": 692.3,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 69
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 2.4,
+        "fcp": 120,
+        "lcp": 120,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 154.2,
+        "settled": 679.8,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 20
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Student",
+      "route": "/erp/student/results",
+      "label": "Student Report Cards",
+      "cold": {
+        "ttfb": 2.6,
+        "fcp": 104,
+        "lcp": 104,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 159.9,
+        "settled": 690,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 71
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 2.5,
+        "fcp": 124,
+        "lcp": 124,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 160.5,
+        "settled": 680.5,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 21
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Student",
+      "route": "/erp/student/admit-cards",
+      "label": "Student Hall Ticket",
+      "cold": {
+        "ttfb": 2.5,
+        "fcp": 136,
+        "lcp": 136,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 165.1,
+        "settled": 694.3,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/224ipm--yod3x.js",
+          "duration": 103
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 2.5,
+        "fcp": 120,
+        "lcp": 120,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 155.4,
+        "settled": 681.9,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "duration": 21
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Student",
+      "route": "/erp/student/leave",
+      "label": "Student Leave Request",
+      "cold": {
+        "ttfb": 2.6,
+        "fcp": 116,
+        "lcp": 116,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 168.8,
+        "settled": 693.8,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/224ipm--yod3x.js",
+          "duration": 80
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 2.5,
+        "fcp": 128,
+        "lcp": 128,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 155.6,
+        "settled": 676.3,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/4561u0v7ysn3r.js",
+          "duration": 24
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Student",
+      "route": "/erp/student/promotion",
+      "label": "Student Academic Status",
+      "cold": {
+        "ttfb": 3.9,
+        "fcp": 132,
+        "lcp": 132,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 174.3,
+        "settled": 695.6,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/1faj_blcpbssl.js",
+          "duration": 28
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 2.5,
+        "fcp": 120,
+        "lcp": 120,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 150.3,
+        "settled": 669.5,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "duration": 21
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Student",
+      "route": "/erp/student/documents",
+      "label": "Student Download Certificates",
+      "cold": {
+        "ttfb": 2.6,
+        "fcp": 120,
+        "lcp": 120,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 196.9,
+        "settled": 728.6,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "009/_next/static/chunks/224ipm--yod3x.js",
+          "duration": 82
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      },
+      "warm": {
+        "ttfb": 2.7,
+        "fcp": 120,
+        "lcp": 120,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 149.2,
+        "settled": 679.1,
+        "requestCount": 22,
+        "totalBytes": 144037,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 2048,
+        "imageBytes": 74233,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "duration": 22
+        },
+        "largestRequest": {
+          "url": "http://localhost:3009/_next/image",
+          "size": 69235
+        }
+      }
+    },
+    {
+      "portal": "Parent",
+      "route": "/erp/parent",
+      "label": "Parent Dashboard",
+      "cold": {
+        "ttfb": 3120.4,
+        "fcp": 3228,
+        "lcp": 3228,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3998.3,
+        "settled": 9009.1,
+        "requestCount": 31,
+        "totalBytes": 83789,
+        "jsBytes": 9216,
+        "cssBytes": 1024,
+        "rscBytes": 16384,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/parent",
+          "duration": 3123
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1296.3,
+        "fcp": 1404,
+        "lcp": 1404,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2174.4,
+        "settled": 7184.3,
+        "requestCount": 37,
+        "totalBytes": 90957,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 21504,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/parent",
+          "duration": 1299
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Parent",
+      "route": "/erp/parent/attendance",
+      "label": "Ward Attendance View",
+      "cold": {
+        "ttfb": 2298.4,
+        "fcp": 2400,
+        "lcp": 2400,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3040.7,
+        "settled": 8047,
+        "requestCount": 36,
+        "totalBytes": 89933,
+        "jsBytes": 13312,
+        "cssBytes": 1024,
+        "rscBytes": 18432,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "p://localhost:3009/erp/parent/attendance",
+          "duration": 2301
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1680.5,
+        "fcp": 1776,
+        "lcp": 1776,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2183.2,
+        "settled": 7087.2,
+        "requestCount": 37,
+        "totalBytes": 90957,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 18432,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "p://localhost:3009/erp/parent/attendance",
+          "duration": 1683
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Parent",
+      "route": "/erp/parent/fees",
+      "label": "Ward Fee Payments & Receipts",
+      "cold": {
+        "ttfb": 1399.3,
+        "fcp": 1504,
+        "lcp": 1504,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3013.1,
+        "settled": 8028.1,
+        "requestCount": 36,
+        "totalBytes": 105449,
+        "jsBytes": 13312,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 68936,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/parent/fees",
+          "duration": 1402
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1105.5,
+        "fcp": 1200,
+        "lcp": 1200,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2109.8,
+        "settled": 6743.6,
+        "requestCount": 37,
+        "totalBytes": 106473,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 68936,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/parent/fees",
+          "duration": 1109
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Parent",
+      "route": "/erp/parent/results",
+      "label": "Ward Progress Report",
+      "cold": {
+        "ttfb": 1355.7,
+        "fcp": 1472,
+        "lcp": 1472,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1489.7,
+        "settled": 6503.8,
+        "requestCount": 35,
+        "totalBytes": 88909,
+        "jsBytes": 13312,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/parent/results",
+          "duration": 1358
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 994,
+        "fcp": 1104,
+        "lcp": 1104,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1115.9,
+        "settled": 6122.9,
+        "requestCount": 35,
+        "totalBytes": 88909,
+        "jsBytes": 13312,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/parent/results",
+          "duration": 997
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Parent",
+      "route": "/erp/parent/admit-cards",
+      "label": "Ward Admit Cards",
+      "cold": {
+        "ttfb": 3013.1,
+        "fcp": 3112,
+        "lcp": 3112,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 3208.8,
+        "settled": 8222.2,
+        "requestCount": 33,
+        "totalBytes": 86861,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/parent/admit-cards",
+          "duration": 3015
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1009.2,
+        "fcp": 1112,
+        "lcp": 1112,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1128.3,
+        "settled": 6138.3,
+        "requestCount": 36,
+        "totalBytes": 89933,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "://localhost:3009/erp/parent/admit-cards",
+          "duration": 1012
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Parent",
+      "route": "/erp/parent/leave",
+      "label": "Parent Leave Application",
+      "cold": {
+        "ttfb": 4059,
+        "fcp": 4156,
+        "lcp": 4156,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 8857,
+        "settled": 12270.2,
+        "requestCount": 36,
+        "totalBytes": 89933,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "http://localhost:3009/erp/parent/leave",
+          "duration": 4062
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 1061.8,
+        "fcp": 1156,
+        "lcp": 1156,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2502.6,
+        "settled": 7509.3,
+        "requestCount": 34,
+        "totalBytes": 87885,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/parent/promotion",
+          "duration": 1585
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Parent",
+      "route": "/erp/parent/promotion",
+      "label": "Ward Promotion Card",
+      "cold": {
+        "ttfb": 2628.9,
+        "fcp": 2736,
+        "lcp": 2736,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 2761.1,
+        "settled": 7770,
+        "requestCount": 36,
+        "totalBytes": 89933,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/parent/promotion",
+          "duration": 2631
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 991.9,
+        "fcp": 1100,
+        "lcp": 1100,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1121.9,
+        "settled": 6134.9,
+        "requestCount": 33,
+        "totalBytes": 86861,
+        "jsBytes": 11264,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/parent/promotion",
+          "duration": 994
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    },
+    {
+      "portal": "Parent",
+      "route": "/erp/parent/documents",
+      "label": "Ward Verified Documents",
+      "cold": {
+        "ttfb": 3877.8,
+        "fcp": 3980,
+        "lcp": 3980,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 4043.2,
+        "settled": 9054.2,
+        "requestCount": 36,
+        "totalBytes": 89933,
+        "jsBytes": 14336,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/parent/documents",
+          "duration": 3881
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      },
+      "warm": {
+        "ttfb": 984.1,
+        "fcp": 1132,
+        "lcp": 1132,
+        "inp": 12.4,
+        "cls": 0,
+        "usable": 1155,
+        "settled": 6167.6,
+        "requestCount": 34,
+        "totalBytes": 87885,
+        "jsBytes": 12288,
+        "cssBytes": 1024,
+        "rscBytes": 17408,
+        "imageBytes": 3745,
+        "fontBytes": 52396,
+        "slowestRequest": {
+          "url": "tp://localhost:3009/erp/parent/documents",
+          "duration": 986
+        },
+        "largestRequest": {
+          "url": "caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2",
+          "size": 29288
+        }
+      }
+    }
+  ]
+}

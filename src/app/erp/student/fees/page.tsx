@@ -39,8 +39,8 @@ export default async function StudentFeesPage() {
         title="Fee Ledger &amp; Receipts"
         description="Review assigned fee invoices, payment installments, outstanding dues, and download official payment receipts."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/student' },
-          { label: 'My Fees' },
+          { label: 'Student Portal', href: '/erp/student' },
+          { label: 'Fee Ledger' },
         ]}
       />
 

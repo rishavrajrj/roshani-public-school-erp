@@ -15,7 +15,7 @@ export default async function TeacherLeavePage() {
         title="Teacher Leave Portal &amp; Applications"
         description="Submit leave requests, attach medical records, review approval timelines, and process assigned class student leave requests."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Teacher ERP Portal', href: '/erp/teacher' },
           { label: 'Leave' },
         ]}
         actions={

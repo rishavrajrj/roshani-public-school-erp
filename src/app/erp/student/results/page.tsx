@@ -35,8 +35,8 @@ export default async function StudentResultsPage() {
         title="My Examination Results &amp; Grade Card"
         description="Official subject scores, grading distribution, percentage calculations, and teacher evaluation comments."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/student' },
-          { label: 'My Results' },
+          { label: 'Student Portal', href: '/erp/student' },
+          { label: 'Report Cards' },
         ]}
       />
 

@@ -48,8 +48,8 @@ export default async function TeacherPortalPage() {
         title={`Teacher Cockpit — ${user.fullName}`}
         description="Daily classroom workflow — mark student attendance, submit examination marks, review schedules, and manage leave requests."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp' },
-          { label: 'Teacher Dashboard' },
+          { label: 'Teacher ERP Portal', href: '/erp/teacher' },
+          { label: 'Overview' },
         ]}
         actions={
           assignments.length > 0 && (

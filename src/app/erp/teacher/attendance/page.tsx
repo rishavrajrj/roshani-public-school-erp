@@ -26,7 +26,7 @@ export default async function TeacherAttendanceDashboard() {
         title="Class Attendance Portal"
         description="Select an assigned classroom section to record daily student presence, absences, or late arrivals."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Teacher ERP Portal', href: '/erp/teacher' },
           { label: 'Attendance' },
         ]}
       />

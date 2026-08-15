@@ -30,7 +30,7 @@ export default async function ParentFeesPage() {
         title="Child Fee Portal &amp; Ledger"
         description={`Review invoice dues, payment installment history, and download official receipts for ${selectedChild.name}.`}
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Parent ERP Portal', href: '/erp/parent' },
           { label: 'Fee Portal' },
         ]}
       />

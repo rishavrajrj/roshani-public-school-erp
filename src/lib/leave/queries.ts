@@ -1,8 +1,9 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import type { LeaveType, LeaveApplicationItem, StaffLeaveBalance } from '@/types/leave'
 
-export async function getLeaveTypes(category?: 'student' | 'staff') {
+export const getLeaveTypes = cache(async function getLeaveTypes(category?: 'student' | 'staff') {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -32,9 +33,9 @@ export async function getLeaveTypes(category?: 'student' | 'staff') {
     requiresDocument: t.requires_document,
     active: t.active,
   })) as LeaveType[]
-}
+})
 
-export async function getUserLeaveApplications(studentId?: string) {
+export const getUserLeaveApplications = cache(async function getUserLeaveApplications(studentId?: string) {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -65,7 +66,6 @@ export async function getUserLeaveApplications(studentId?: string) {
       rejection_reason,
       cancellation_reason,
       leave_types(name),
-      profiles!leave_applications_applicant_profile_id_fkey(full_name),
       students(first_name, last_name)
     `)
     .eq('school_id', user.schoolId)
@@ -95,7 +95,7 @@ export async function getUserLeaveApplications(studentId?: string) {
     schoolId: item.school_id,
     academicSessionId: item.academic_session_id,
     applicantProfileId: item.applicant_profile_id,
-    applicantName: item.profiles?.full_name || 'Applicant',
+    applicantName: item.applicant_profile_id === user.profileId ? user.fullName : (item.students ? `${item.students.first_name} ${item.students.last_name}` : 'Applicant'),
     applicantRole: item.applicant_role,
     studentId: item.student_id,
     studentName: item.students ? `${item.students.first_name} ${item.students.last_name}` : null,
@@ -115,9 +115,9 @@ export async function getUserLeaveApplications(studentId?: string) {
     rejectionReason: item.rejection_reason,
     cancellationReason: item.cancellation_reason,
   })) as LeaveApplicationItem[]
-}
+})
 
-export async function getPendingApprovalsQueue() {
+export const getPendingApprovalsQueue = cache(async function getPendingApprovalsQueue() {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -146,7 +146,6 @@ export async function getPendingApprovalsQueue() {
         reason,
         status,
         leave_types(name),
-        profiles!leave_applications_applicant_profile_id_fkey(full_name),
         students(first_name, last_name)
       )
     `)
@@ -163,7 +162,7 @@ export async function getPendingApprovalsQueue() {
       stepOrder: app.step_order,
       approverRole: app.approver_role,
       leaveApplicationId: la?.id,
-      applicantName: la?.profiles?.full_name || 'Applicant',
+      applicantName: la?.students ? `${la.students.first_name} ${la.students.last_name}` : (la?.applicant_profile_id === user.profileId ? user.fullName : 'Applicant'),
       applicantRole: la?.applicant_role,
       studentName: la?.students ? `${la.students.first_name} ${la.students.last_name}` : null,
       leaveTypeName: la?.leave_types?.name || 'Leave',
@@ -175,7 +174,7 @@ export async function getPendingApprovalsQueue() {
       status: la?.status,
     }
   })
-}
+})
 
 export async function getStaffLeaveBalances(academicSessionId: string, profileId?: string) {
   const authState = await resolveUser()

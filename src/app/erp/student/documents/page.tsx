@@ -41,8 +41,8 @@ export default async function StudentDocumentsPage() {
         title="Official Certificates &amp; Documents"
         description="View and download issued Transfer Certificates (TC), Character Certificates, and Bonafide Certificates with anti-tamper QR verification hashes."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/student' },
-          { label: 'Documents' },
+          { label: 'Student Portal', href: '/erp/student' },
+          { label: 'Certificates' },
         ]}
       />
 

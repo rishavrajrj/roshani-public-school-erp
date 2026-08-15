@@ -45,7 +45,7 @@ export default async function ParentAttendancePage({ searchParams }: PageProps) 
         title="Child Attendance Tracking"
         description="Real-time daily presence, absences, late logs, and monthly aggregate percentages."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Parent ERP Portal', href: '/erp/parent' },
           { label: 'Child Attendance' },
         ]}
       />

@@ -38,7 +38,7 @@ export default async function ParentAdmitCardsPage() {
         title={`Examination Admit Card — ${childName}`}
         description="Download and print candidate hall ticket with digital QR verification token and verified exam roll number."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Parent ERP Portal', href: '/erp/parent' },
           { label: 'Admit Card' },
         ]}
       />

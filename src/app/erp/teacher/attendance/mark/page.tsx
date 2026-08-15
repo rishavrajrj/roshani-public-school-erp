@@ -62,7 +62,7 @@ export default async function MarkAttendancePage({ searchParams }: PageProps) {
         title={`Mark Attendance — ${cls?.name || 'Class'} (${sec?.name || 'Section'})`}
         description={`Record daily student status for Date: ${date}. Use single-tap toggle controls for rapid data entry.`}
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Teacher ERP Portal', href: '/erp/teacher' },
           { label: 'Attendance', href: '/erp/teacher/attendance' },
           { label: 'Mark Attendance' },
         ]}

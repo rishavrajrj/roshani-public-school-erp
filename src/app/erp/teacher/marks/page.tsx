@@ -27,11 +27,12 @@ export default async function TeacherMarksEntryPage() {
   const subjects = subjectsRes.data || []
 
   const defaultExamId = examinations[0]?.id || ''
+  const defaultSessionId = examinations[0]?.academicSessionId || ''
   const defaultClassId = classes[0]?.id || ''
   const defaultSubjectId = subjects[0]?.id || ''
 
   const marks = (defaultExamId && defaultClassId && defaultSubjectId)
-    ? await getMarksForClassSubject(defaultExamId, defaultClassId, defaultSubjectId)
+    ? await getMarksForClassSubject(defaultExamId, defaultClassId, defaultSubjectId, undefined, defaultSessionId)
     : []
 
   return (
@@ -40,7 +41,7 @@ export default async function TeacherMarksEntryPage() {
         title="Student Marks Entry &amp; Grading"
         description="Select term examination, grade level, and subject to submit marks with real-time maximum mark boundary enforcement."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Teacher ERP Portal', href: '/erp/teacher' },
           { label: 'Enter Marks' },
         ]}
       />

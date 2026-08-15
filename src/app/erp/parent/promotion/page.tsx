@@ -34,7 +34,7 @@ export default async function ParentPromotionPage() {
         title={`Session Promotion &amp; Progression — ${childName}`}
         description="Current class placement, annual academic promotion evaluation, and session history."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Parent ERP Portal', href: '/erp/parent' },
           { label: 'Promotion' },
         ]}
       />

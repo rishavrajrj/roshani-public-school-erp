@@ -1,9 +1,10 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { calculateAttendanceSummary } from './calculations'
 import type { AttendanceStatus, AttendanceSessionStatus } from '@/types/attendance'
 
-export async function getTeacherAssignments(teacherProfileId?: string) {
+export const getTeacherAssignments = cache(async function getTeacherAssignments(teacherProfileId?: string) {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -24,8 +25,7 @@ export async function getTeacherAssignments(teacherProfileId?: string) {
       active,
       classes(name),
       sections(name),
-      academic_sessions(name),
-      profiles!teacher_assignments_teacher_profile_id_fkey(full_name)
+      academic_sessions(name)
     `)
     .eq('school_id', user.schoolId)
     .eq('active', true)
@@ -55,9 +55,9 @@ export async function getTeacherAssignments(teacherProfileId?: string) {
     className: item.classes?.name,
     sectionName: item.sections?.name,
     sessionName: item.academic_sessions?.name,
-    teacherName: item.profiles?.full_name,
+    teacherName: (!isAdminOrSuper || teacherProfileId === user.profileId) ? user.fullName : undefined,
   }))
-}
+})
 
 export async function getSectionAttendanceSheet(
   academicSessionId: string,
@@ -232,19 +232,21 @@ export async function getAdminAttendanceOverview(academicSessionId: string, atte
   return overview
 }
 
-export async function getParentAttendanceData(studentId?: string) {
+export const getParentChildren = cache(async function getParentChildren(profileId?: string, schoolId?: string) {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return null
 
   const user = authState.user
+  const targetSchoolId = schoolId || user.schoolId
+  const targetProfileId = profileId || user.profileId
   const supabase = await createClient()
 
   // Fetch guardian profile
   const { data: guardian } = await (supabase as any)
     .from('guardians')
     .select('id')
-    .eq('profile_id', user.profileId)
-    .single()
+    .eq('profile_id', targetProfileId)
+    .maybeSingle()
 
   const guardianObj = guardian as { id: string } | null
   if (!guardianObj) return null
@@ -261,11 +263,11 @@ export async function getParentAttendanceData(studentId?: string) {
         admission_number
       )
     `)
-    .eq('school_id', user.schoolId)
+    .eq('school_id', targetSchoolId)
     .eq('guardian_id', guardianObj.id)
 
   if (sgError || !sgData || sgData.length === 0) {
-    return { children: [], selectedStudent: null, records: [], summary: null }
+    return { guardianId: guardianObj.id, children: [] }
   }
 
   const children = (sgData as any[]).map((item: any) => ({
@@ -274,6 +276,25 @@ export async function getParentAttendanceData(studentId?: string) {
     admissionNumber: item.students.admission_number,
   }))
 
+  return {
+    guardianId: guardianObj.id,
+    children,
+  }
+})
+
+export const getParentAttendanceData = cache(async function getParentAttendanceData(studentId?: string) {
+  const authState = await resolveUser()
+  if (authState.state !== 'authenticated') return null
+
+  const user = authState.user
+  const supabase = await createClient()
+
+  const parentInfo = await getParentChildren(user.profileId, user.schoolId)
+  if (!parentInfo || parentInfo.children.length === 0) {
+    return { children: [], selectedStudent: null, records: [], summary: null }
+  }
+
+  const children = parentInfo.children
   const targetStudentId = studentId || children[0].id
 
   // Security check: ensure target student is in parent's linked children
@@ -315,7 +336,7 @@ export async function getParentAttendanceData(studentId?: string) {
     records,
     summary,
   }
-}
+})
 
 export async function getStudentSelfAttendanceData() {
   const authState = await resolveUser()

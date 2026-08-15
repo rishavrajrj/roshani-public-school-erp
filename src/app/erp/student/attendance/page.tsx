@@ -37,7 +37,7 @@ export default async function StudentAttendancePage() {
         title="My Attendance Record"
         description="View your personal attendance history, monthly presence percentage, and attendance remarks."
         breadcrumbs={[
-          { label: 'ERP Portal', href: '/erp/student' },
+          { label: 'Student Portal', href: '/erp/student' },
           { label: 'Attendance' },
         ]}
       />

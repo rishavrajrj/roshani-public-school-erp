@@ -1,12 +1,14 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import type { StudentMark, StudentResult, GradingScale } from '@/types/result'
 
-export async function getMarksForClassSubject(
+export const getMarksForClassSubject = cache(async function getMarksForClassSubject(
   examinationId: string,
   classId: string,
   subjectId: string,
-  sectionId?: string
+  sectionId?: string,
+  academicSessionId?: string
 ): Promise<StudentMark[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
@@ -15,8 +17,9 @@ export async function getMarksForClassSubject(
   const supabase = (await createClient()) as any
   const schoolId = authState.user.schoolId
 
-  // Fetch examination subject config
-  const { data: config } = await supabase
+  let resolvedSessionId = academicSessionId
+
+  const configPromise = supabase
     .from('examination_subject_configs')
     .select('maximum_marks, passing_marks')
     .eq('examination_id', examinationId)
@@ -25,31 +28,26 @@ export async function getMarksForClassSubject(
     .eq('school_id', schoolId)
     .maybeSingle()
 
-  const maxMarks = config ? Number(config.maximum_marks) : 100
-  const passMarks = config ? Number(config.passing_marks) : 33
+  if (!resolvedSessionId) {
+    const { data: exam } = await supabase
+      .from('examinations')
+      .select('academic_session_id')
+      .eq('id', examinationId)
+      .single()
 
-  // Fetch enrolled students for session and class via student_academic_history
-  const { data: exam } = await supabase
-    .from('examinations')
-    .select('academic_session_id')
-    .eq('id', examinationId)
-    .single()
-
-  if (!exam) return []
+    if (!exam) return []
+    resolvedSessionId = exam.academic_session_id
+  }
 
   let historyQuery = supabase
     .from('student_academic_history')
     .select('student_id, students(first_name, last_name, admission_number)')
     .eq('school_id', schoolId)
-    .eq('academic_session_id', exam.academic_session_id)
+    .eq('academic_session_id', resolvedSessionId)
     .eq('class_id', classId)
 
   if (sectionId) historyQuery = historyQuery.eq('section_id', sectionId)
 
-  const { data: history } = await historyQuery
-  if (!history || history.length === 0) return []
-
-  // Fetch existing entered marks
   let marksQuery = supabase
     .from('student_marks')
     .select('*')
@@ -60,7 +58,17 @@ export async function getMarksForClassSubject(
 
   if (sectionId) marksQuery = marksQuery.eq('section_id', sectionId)
 
-  const { data: existingMarks } = await marksQuery
+  const [{ data: config }, { data: history }, { data: existingMarks }] = await Promise.all([
+    configPromise,
+    historyQuery,
+    marksQuery,
+  ])
+
+  const maxMarks = config ? Number(config.maximum_marks) : 100
+  const passMarks = config ? Number(config.passing_marks) : 33
+
+  if (!history || history.length === 0) return []
+
   const marksMap = new Map<string, any>()
   if (existingMarks) {
     for (const m of existingMarks) {
@@ -77,7 +85,7 @@ export async function getMarksForClassSubject(
     return {
       id: existing?.id,
       schoolId,
-      academicSessionId: exam.academic_session_id,
+      academicSessionId: resolvedSessionId,
       examinationId,
       studentId: sId,
       studentName: sName,
@@ -101,7 +109,7 @@ export async function getMarksForClassSubject(
       lockedAt: existing?.locked_at,
     }
   })
-}
+})
 
 export async function getResultsForAdmin(examinationId: string, classId: string): Promise<StudentResult[]> {
   const authState = await resolveUser()
