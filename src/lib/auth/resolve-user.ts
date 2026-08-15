@@ -1,6 +1,4 @@
-// ============================================================
-// Resolve User — Server-Side Auth + Profile + Role Resolution
-// ============================================================
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import type { AuthState, ResolvedUser, ProfileStatus } from '@/types/auth'
 
@@ -11,10 +9,11 @@ import type { AuthState, ResolvedUser, ProfileStatus } from '@/types/auth'
  *
  * This function MUST only be called server-side (Server Components, Server Actions, Route Handlers).
  * It uses the authenticated user's session — never trusts client-provided data.
+ * Wrapped in React.cache to deduplicate auth and profile lookups within the same request lifecycle.
  *
  * @returns AuthState representing the user's current authentication/authorization state
  */
-export async function resolveUser(): Promise<AuthState> {
+export const resolveUser = cache(async function resolveUser(): Promise<AuthState> {
   const supabase = await createClient()
 
   // 1. Get authenticated user from Supabase Auth (verifies JWT server-side)
@@ -24,10 +23,22 @@ export async function resolveUser(): Promise<AuthState> {
     return { state: 'unauthenticated' }
   }
 
-  // 2. Resolve profile from auth_user_id
+  // 2. Resolve profile and assigned roles in a single unified PostgREST query
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('id, school_id, full_name, status, avatar_url')
+    .select(`
+      id,
+      school_id,
+      full_name,
+      status,
+      avatar_url,
+      user_roles!user_roles_profile_id_fkey (
+        role_id,
+        roles (
+          name
+        )
+      )
+    `)
     .eq('auth_user_id', user.id)
     .single()
 
@@ -37,34 +48,23 @@ export async function resolveUser(): Promise<AuthState> {
   }
 
   // 3. Check profile status
-  const status = (profile as Record<string, unknown>).status as ProfileStatus
+  const rawProfile = profile as Record<string, unknown>
+  const status = rawProfile.status as ProfileStatus
   if (status !== 'active') {
     return { state: 'disabled', userId: user.id, status }
   }
 
-  // Cast profile to a typed object for safe access
-  const p = profile as { id: string; school_id: string; full_name: string; avatar_url: string | null }
+  // 4. Extract role names from unified joined user_roles
+  const roleRecords = rawProfile.user_roles as Array<{
+    role_id: string
+    roles: { name: string } | null
+  }> | null
 
-  // 4. Resolve roles via user_roles → roles
-  const { data: roleRecords, error: rolesError } = await supabase
-    .from('user_roles')
-    .select('role_id, roles(name)')
-    .eq('profile_id', p.id)
-    .eq('school_id', p.school_id)
-
-  if (rolesError) {
-    // Database error — treat as unprovisioned for safety
-    return { state: 'unprovisioned', userId: user.id }
-  }
-
-  // Extract role names from the joined query
   const roles: string[] = []
-  if (roleRecords) {
+  if (roleRecords && Array.isArray(roleRecords)) {
     for (const record of roleRecords) {
-      // The `roles` field is the joined roles table row
-      const roleData = (record as Record<string, unknown>).roles as { name: string } | null
-      if (roleData?.name) {
-        roles.push(roleData.name)
+      if (record?.roles?.name) {
+        roles.push(record.roles.name)
       }
     }
   }
@@ -74,6 +74,14 @@ export async function resolveUser(): Promise<AuthState> {
     return { state: 'unprovisioned', userId: user.id }
   }
 
+  const p = profile as {
+    id: string
+    school_id: string
+    full_name: string
+    avatar_url: string | null
+    status: ProfileStatus
+  }
+
   // 5. Build resolved user context
   const resolvedUser: ResolvedUser = {
     userId: user.id,
@@ -81,12 +89,12 @@ export async function resolveUser(): Promise<AuthState> {
     schoolId: p.school_id,
     fullName: p.full_name,
     roles,
-    status,
+    status: p.status,
     avatarUrl: p.avatar_url,
   }
 
   return { state: 'authenticated', user: resolvedUser }
-}
+})
 
 /**
  * Checks if the resolved user has any of the specified roles.
@@ -94,4 +102,26 @@ export async function resolveUser(): Promise<AuthState> {
  */
 export function hasAnyRole(user: ResolvedUser, allowedRoles: string[]): boolean {
   return user.roles.some((role) => allowedRoles.includes(role))
+}
+
+/**
+ * Checks if the resolved user possesses a specific permission.
+ */
+export function hasPermission(user: ResolvedUser, permission: import('./permissions').Permission): boolean {
+  const { userHasPermission } = require('./permissions')
+  return userHasPermission(user.roles, permission)
+}
+
+/**
+ * Checks if user belongs to System Authority (Super Admin, Admin).
+ */
+export function isSystemAuthority(user: ResolvedUser): boolean {
+  return hasAnyRole(user, ['Super Admin', 'Admin'])
+}
+
+/**
+ * Checks if user belongs to School Authority (Principal, Admin / VP, Coordinator, Teacher).
+ */
+export function isSchoolAuthority(user: ResolvedUser): boolean {
+  return hasAnyRole(user, ['Principal', 'Admin', 'Teacher'])
 }

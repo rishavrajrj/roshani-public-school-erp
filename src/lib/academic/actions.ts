@@ -1,9 +1,10 @@
 'use server'
 
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser } from '@/lib/auth/resolve-user'
 
-export async function getAcademicSessions() {
+export const getAcademicSessions = cache(async function getAcademicSessions() {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') {
     return { success: false, error: 'Unauthorized', data: [] }
@@ -22,9 +23,9 @@ export async function getAcademicSessions() {
   }
 
   return { success: true, data: data || [] }
-}
+})
 
-export async function getClasses() {
+export const getClasses = cache(async function getClasses() {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') {
     return { success: false, error: 'Unauthorized', data: [] }
@@ -43,9 +44,9 @@ export async function getClasses() {
   }
 
   return { success: true, data: data || [] }
-}
+})
 
-export async function getSectionsByClass(classId: string) {
+export const getSectionsByClass = cache(async function getSectionsByClass(classId: string) {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') {
     return { success: false, error: 'Unauthorized', data: [] }
@@ -65,4 +66,4 @@ export async function getSectionsByClass(classId: string) {
   }
 
   return { success: true, data: data || [] }
-}
+})

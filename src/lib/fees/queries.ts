@@ -61,6 +61,12 @@ export async function getFeeStructures(classId?: string): Promise<FeeStructure[]
     description: item.description,
     version: item.version,
     isActive: item.is_active,
+    status: item.status || (item.is_active ? 'active' : 'draft'),
+    submittedBy: item.submitted_by,
+    submittedAt: item.submitted_at,
+    approvedBy: item.approved_by,
+    approvedAt: item.approved_at,
+    rejectionReason: item.rejection_reason,
     effectiveFrom: item.effective_from,
     effectiveTo: item.effective_to,
     createdAt: item.created_at,
@@ -228,7 +234,7 @@ export function markTestInvoicePaid(invoiceId: string) {
   }
 }
 
-export async function getInvoices(studentId?: string): Promise<Invoice[]> {
+export async function getInvoices(studentId?: string, limit?: number): Promise<Invoice[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -242,7 +248,8 @@ export async function getInvoices(studentId?: string): Promise<Invoice[]> {
     query = query.eq('student_id', studentId)
   }
 
-  const { data, error } = await query.order('issue_date', { ascending: false })
+  const queryLimit = limit ?? (studentId ? 50 : 100)
+  const { data, error } = await query.order('issue_date', { ascending: false }).limit(queryLimit)
   
   if (error || !data || data.length === 0) {
     if (studentId && DEFAULT_TEST_INVOICES[studentId]) {
@@ -289,7 +296,7 @@ export async function getInvoices(studentId?: string): Promise<Invoice[]> {
   }))
 }
 
-export async function getPayments(studentId?: string): Promise<Payment[]> {
+export async function getPayments(studentId?: string, limit?: number): Promise<Payment[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -303,7 +310,8 @@ export async function getPayments(studentId?: string): Promise<Payment[]> {
     query = query.eq('student_id', studentId)
   }
 
-  const { data, error } = await query.order('payment_date', { ascending: false })
+  const queryLimit = limit ?? (studentId ? 50 : 100)
+  const { data, error } = await query.order('payment_date', { ascending: false }).limit(queryLimit)
   if (error || !data) return []
 
   return data.map((item: any) => ({
@@ -339,7 +347,7 @@ export async function getPayments(studentId?: string): Promise<Payment[]> {
   }))
 }
 
-export async function getFinancialLedger(studentId?: string): Promise<FinancialLedgerEntry[]> {
+export async function getFinancialLedger(studentId?: string, limit?: number): Promise<FinancialLedgerEntry[]> {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -353,7 +361,8 @@ export async function getFinancialLedger(studentId?: string): Promise<FinancialL
     query = query.eq('student_id', studentId)
   }
 
-  const { data, error } = await query.order('created_at', { ascending: false })
+  const queryLimit = limit ?? (studentId ? 50 : 100)
+  const { data, error } = await query.order('created_at', { ascending: false }).limit(queryLimit)
   if (error || !data) return []
 
   return data.map((item: any) => ({
@@ -426,8 +435,8 @@ export async function getFeeDashboardSummary(): Promise<FeeDashboardSummary> {
   const schoolId = authState.user.schoolId
 
   const [{ data: invData }, { data: payData }] = await Promise.all([
-    supabase.from('invoices').select('net_amount, paid_amount, outstanding_amount, status, due_date').eq('school_id', schoolId),
-    supabase.from('payments').select('amount, payment_method, status, payment_date, verified_by').eq('school_id', schoolId),
+    supabase.from('invoices').select('net_amount, paid_amount, outstanding_amount, status, due_date').eq('school_id', schoolId).neq('status', 'cancelled'),
+    supabase.from('payments').select('amount, payment_method, status, payment_date, verified_by').eq('school_id', schoolId).in('status', ['successful', 'pending']),
   ])
 
   let totalBilled = 0

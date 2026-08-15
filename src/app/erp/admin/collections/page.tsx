@@ -8,7 +8,6 @@ import {
   getDailyReconciliation,
   getReconciliationHistory,
 } from '@/lib/fees/collection-queries'
-import { getPayments } from '@/lib/fees/queries'
 import { CollectionRegister } from '@/components/fees/collection-register'
 import { CollectionReports } from '@/components/fees/collection-reports'
 import { CashReconciliation } from '@/components/fees/cash-reconciliation'
@@ -37,7 +36,6 @@ export default async function AdminCollectionsPage() {
     paymentModeReport,
     todayReconciliation,
     reconciliationHistory,
-    allPayments,
   ] = await Promise.all([
     getCollectionRegister({ fromDate: monthStart, toDate: today }),
     getDateRangeCollectionReport(monthStart, today),
@@ -45,20 +43,21 @@ export default async function AdminCollectionsPage() {
     getPaymentModeReport(monthStart, today),
     getDailyReconciliation(today),
     getReconciliationHistory(monthStart, today),
-    getPayments(),
   ])
 
-  // Extract unique staff list from payments
+  // Extract unique staff list from staff report and collection register
   const staffMap = new Map<string, string>()
-  if (allPayments && Array.isArray(allPayments)) {
-    for (const p of allPayments) {
-      const pAny = p as any
-      if (pAny.received_by || p.receivedBy) {
-        const id = pAny.received_by || p.receivedBy
-        const name = p.receivedByName || p.studentName || 'Staff'
-        if (id && !staffMap.has(id)) {
-          staffMap.set(id, name)
-        }
+  if (staffReport && Array.isArray(staffReport)) {
+    for (const s of staffReport) {
+      if (s.staffId && !staffMap.has(s.staffId)) {
+        staffMap.set(s.staffId, s.staffName || 'Staff')
+      }
+    }
+  }
+  if (collectionRegister && Array.isArray(collectionRegister)) {
+    for (const p of collectionRegister) {
+      if (p.received_by && !staffMap.has(p.received_by)) {
+        staffMap.set(p.received_by, p.profiles?.full_name || 'Staff')
       }
     }
   }

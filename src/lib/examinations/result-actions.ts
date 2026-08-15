@@ -63,6 +63,27 @@ export async function saveMarksAction(input: BatchSaveMarksInput) {
     const supabase = (await createClient()) as any
     const schoolId = authState.user.schoolId
 
+    // Scoped teacher assignment check:
+    if (authState.user.roles.includes('Teacher') && !hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      let taQuery = supabase
+        .from('teacher_assignments')
+        .select('id')
+        .eq('school_id', schoolId)
+        .eq('teacher_profile_id', authState.user.profileId)
+        .eq('class_id', validated.classId)
+        .eq('active', true)
+
+      if (validated.sectionId) {
+        taQuery = taQuery.eq('section_id', validated.sectionId)
+      }
+      taQuery = taQuery.or(`subject_id.is.null,subject_id.eq.${validated.subjectId}`)
+
+      const { data: assignments } = await taQuery
+      if (!assignments || assignments.length === 0) {
+        return { success: false, error: 'Forbidden: You are not assigned to enter marks for this class, section, and subject.' }
+      }
+    }
+
     // Fetch Examination & Subject Config
     const { data: exam } = await supabase
       .from('examinations')
@@ -148,6 +169,27 @@ export async function submitMarksAction(input: SubmitMarksInput) {
     const validated = submitMarksSchema.parse(input)
     const supabase = (await createClient()) as any
     const schoolId = authState.user.schoolId
+
+    // Scoped teacher assignment check:
+    if (authState.user.roles.includes('Teacher') && !hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      let taQuery = supabase
+        .from('teacher_assignments')
+        .select('id')
+        .eq('school_id', schoolId)
+        .eq('teacher_profile_id', authState.user.profileId)
+        .eq('class_id', validated.classId)
+        .eq('active', true)
+
+      if (validated.sectionId) {
+        taQuery = taQuery.eq('section_id', validated.sectionId)
+      }
+      taQuery = taQuery.or(`subject_id.is.null,subject_id.eq.${validated.subjectId}`)
+
+      const { data: assignments } = await taQuery
+      if (!assignments || assignments.length === 0) {
+        return { success: false, error: 'Forbidden: You are not assigned to submit marks for this class, section, and subject.' }
+      }
+    }
 
     let query = supabase
       .from('student_marks')
@@ -283,7 +325,9 @@ export async function unlockMarksAction(input: UnlockMarksInput) {
   try {
     const authState = await resolveUser()
     if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
-    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) return { success: false, error: 'Forbidden' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      return { success: false, error: 'Forbidden: Insufficient permissions to perform controlled unlocking of marks.' }
+    }
 
     const validated = unlockMarksSchema.parse(input)
     const supabase = (await createClient()) as any
@@ -293,7 +337,7 @@ export async function unlockMarksAction(input: UnlockMarksInput) {
       .from('student_marks')
       .update({
         status: 'submitted',
-        correction_reason: `Unlocked by Admin: ${validated.reason}`,
+        correction_reason: `Unlocked by Principal: ${validated.reason}`,
         updated_at: new Date().toISOString(),
       })
       .eq('examination_id', validated.examinationId)
@@ -304,7 +348,10 @@ export async function unlockMarksAction(input: UnlockMarksInput) {
 
     if (error) return { success: false, error: error.message }
 
-    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'UNLOCK_MARKS', 'student_marks', validated.examinationId, null, { reason: validated.reason, count: updated?.length })
+    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'UNLOCK_MARKS', 'student_marks', validated.examinationId,
+      { previousState: 'locked' },
+      { newState: 'submitted', unlockedBy: authState.user.profileId, unlockedByRole: authState.user.roles.join(', '), reason: validated.reason, timestamp: new Date().toISOString(), count: updated?.length }
+    )
 
     return { success: true, count: updated?.length }
   } catch (err: any) {
@@ -444,7 +491,9 @@ export async function approveResultsAction(input: ApproveResultsInput) {
   try {
     const authState = await resolveUser()
     if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
-    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) return { success: false, error: 'Forbidden' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      return { success: false, error: 'Forbidden: Insufficient permissions to approve academic results' }
+    }
 
     const validated = approveResultsSchema.parse(input)
     const supabase = (await createClient()) as any
@@ -466,7 +515,7 @@ export async function approveResultsAction(input: ApproveResultsInput) {
 
     if (error) return { success: false, error: error.message }
 
-    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'APPROVE_CLASS_RESULTS', 'student_results', validated.examinationId, null, { count: updated?.length })
+    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'APPROVE_CLASS_RESULTS', 'student_results', validated.examinationId, null, { count: updated?.length, approvedBy: authState.user.profileId })
 
     return { success: true, count: updated?.length }
   } catch (err: any) {
@@ -547,7 +596,9 @@ export async function publishResultsAction(input: PublishResultsInput) {
   try {
     const authState = await resolveUser()
     if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
-    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) return { success: false, error: 'Forbidden' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      return { success: false, error: 'Forbidden: Insufficient permissions to publish examination results' }
+    }
 
     const validated = publishResultsSchema.parse(input)
     const supabase = (await createClient()) as any

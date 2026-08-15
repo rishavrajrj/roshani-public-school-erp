@@ -125,7 +125,7 @@ export function MetricCard({
   )
 
   if (href) {
-    return <Link href={href} className="block">{Content}</Link>
+    return <Link href={href} prefetch={true} className="block">{Content}</Link>
   }
 
   return Content

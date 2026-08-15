@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser } from '@/lib/auth/resolve-user'
 
-export async function getCollectionRegister(filters?: { fromDate?: string, toDate?: string, paymentMethod?: string, staffId?: string }) {
+export async function getCollectionRegister(filters?: { fromDate?: string, toDate?: string, paymentMethod?: string, staffId?: string, limit?: number }) {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return []
 
@@ -16,9 +16,11 @@ export async function getCollectionRegister(filters?: { fromDate?: string, toDat
   if (filters?.paymentMethod) query = query.eq('payment_method', filters.paymentMethod)
   if (filters?.staffId) query = query.eq('received_by', filters.staffId)
 
+  const limit = filters?.limit ?? 100
   const { data, error } = await query
     .order('payment_date', { ascending: false })
     .order('created_at', { ascending: false })
+    .limit(limit)
 
   if (error || !data) return []
   return data
@@ -239,8 +241,8 @@ export async function getEnhancedDashboardSummary() {
   
   // We can fetch fee dashboard summary as base
   const [{ data: invData }, { data: payData }, { data: creditsData }, { data: refundsData }] = await Promise.all([
-    supabase.from('invoices').select('net_amount, paid_amount, outstanding_amount, status, due_date').eq('school_id', schoolId),
-    supabase.from('payments').select('amount, payment_method, status, payment_date, verified_by, received_by, profiles!inner(full_name)').eq('school_id', schoolId),
+    supabase.from('invoices').select('net_amount, paid_amount, outstanding_amount, status, due_date').eq('school_id', schoolId).neq('status', 'cancelled'),
+    supabase.from('payments').select('amount, payment_method, status, payment_date, verified_by, received_by, profiles!inner(full_name)').eq('school_id', schoolId).in('status', ['successful', 'pending']),
     supabase.from('student_credits').select('remaining_amount').eq('school_id', schoolId).gt('remaining_amount', 0),
     supabase.from('refunds').select('amount').eq('school_id', schoolId).eq('status', 'processed').gte('processed_at', firstDayOfMonth)
   ])

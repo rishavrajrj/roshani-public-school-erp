@@ -69,6 +69,15 @@ export interface FeeStructureItem {
   createdAt: string
 }
 
+export type FeeStructureStatus =
+  | 'draft'
+  | 'submitted'
+  | 'under_review'
+  | 'rejected'
+  | 'approved'
+  | 'active'
+  | 'archived'
+
 export interface FeeStructure {
   id: string
   schoolId: string
@@ -81,6 +90,12 @@ export interface FeeStructure {
   description?: string | null
   version: number
   isActive: boolean
+  status?: FeeStructureStatus
+  submittedBy?: string | null
+  submittedAt?: string | null
+  approvedBy?: string | null
+  approvedAt?: string | null
+  rejectionReason?: string | null
   effectiveFrom: string
   effectiveTo?: string | null
   createdAt: string

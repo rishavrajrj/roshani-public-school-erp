@@ -318,6 +318,153 @@ export function AdminFeeDashboard({
         </div>
       )}
 
+      {activeTab === 'structures' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-bold text-slate-900">Academic Fee Structures</h3>
+            <p className="text-xs text-slate-500">Draft &rarr; Submit for Approval &rarr; Principal Approval &rarr; Active</p>
+          </div>
+
+          {feeStructures.length === 0 ? (
+            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
+              No fee structures configured yet. Click <strong>+ Fee Structure</strong> to create a draft proposal.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {feeStructures.map((fs) => {
+                const isApprovedOrActive = fs.status === 'approved' || fs.status === 'active' || fs.isActive
+                const status = fs.status || (fs.isActive ? 'active' : 'draft')
+
+                return (
+                  <div key={fs.id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-slate-900 text-base">{fs.name}</h4>
+                          <span className="text-xs font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold">
+                            v{fs.version || 1}
+                          </span>
+                        </div>
+                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                          status === 'active' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                          status === 'approved' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                          status === 'submitted' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                          status === 'rejected' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
+                          'bg-slate-100 text-slate-700 border border-slate-200'
+                        }`}>
+                          {status}
+                        </span>
+                      </div>
+
+                      {fs.description && <p className="text-xs text-slate-600 mb-3">{fs.description}</p>}
+
+                      {isApprovedOrActive ? (
+                        <div className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-600 mb-3">
+                          <strong className="text-slate-800 block mb-0.5">🔒 Approved &amp; Immutable</strong>
+                          Approved fee structures cannot be directly edited. Create a new version (v{(fs.version || 1) + 1}) to make modifications.
+                        </div>
+                      ) : status === 'submitted' ? (
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-xs text-amber-800 mb-3">
+                          <strong className="block mb-0.5">⏳ Awaiting Principal Approval</strong>
+                          This fee structure proposal is submitted and awaiting Principal review.
+                        </div>
+                      ) : null}
+
+                      {/* Items */}
+                      <div className="space-y-1.5 border-t border-slate-100 pt-3">
+                        <p className="text-xs font-semibold text-slate-500 uppercase">Fee Heads Included:</p>
+                        {fs.items.map((it) => (
+                          <div key={it.id} className="flex justify-between text-xs py-1">
+                            <span className="text-slate-700 font-medium">{it.feeHeadName} ({it.frequency})</span>
+                            <span className="font-bold text-slate-900">₹{it.amount.toLocaleString('en-IN')}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="border-t border-slate-100 pt-3 mt-4 flex items-center justify-between gap-2">
+                      {status === 'draft' || status === 'rejected' ? (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const { submitFeeStructureAction } = await import('@/lib/fees/actions')
+                            const res = await submitFeeStructureAction(fs.id)
+                            if (res.success) {
+                              setSuccessMessage('Fee structure submitted for Principal approval!')
+                              router.refresh()
+                            } else {
+                              setErrorMessage(res.error || 'Failed to submit')
+                            }
+                          }}
+                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition"
+                        >
+                          Submit for Approval
+                        </button>
+                      ) : status === 'submitted' ? (
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              const { approveFeeStructureAction } = await import('@/lib/fees/actions')
+                              const res = await approveFeeStructureAction(fs.id)
+                              if (res.success) {
+                                setSuccessMessage('Fee structure approved and activated!')
+                                router.refresh()
+                              } else {
+                                setErrorMessage(res.error || 'Failed to approve')
+                              }
+                            }}
+                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition"
+                          >
+                            Approve (Principal)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              const reason = window.prompt('Enter rejection reason:')
+                              if (!reason) return
+                              const { rejectFeeStructureAction } = await import('@/lib/fees/actions')
+                              const res = await rejectFeeStructureAction(fs.id, reason)
+                              if (res.success) {
+                                setSuccessMessage('Fee structure rejected.')
+                                router.refresh()
+                              } else {
+                                setErrorMessage(res.error || 'Failed to reject')
+                              }
+                            }}
+                            className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      ) : isApprovedOrActive ? (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const { createNewFeeStructureVersionAction } = await import('@/lib/fees/actions')
+                            const res = await createNewFeeStructureVersionAction(fs.id)
+                            if (res.success) {
+                              setSuccessMessage(`New draft version v${(fs.version || 1) + 1} created!`)
+                              router.refresh()
+                            } else {
+                              setErrorMessage(res.error || 'Failed to create new version')
+                            }
+                          }}
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg text-xs font-semibold transition"
+                        >
+                          + Create New Version (v{(fs.version || 1) + 1})
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {activeTab === 'invoices' && (
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
           <table className="w-full text-left border-collapse text-sm">

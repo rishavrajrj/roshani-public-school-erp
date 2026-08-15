@@ -296,6 +296,7 @@ export async function getParentAttendanceData(studentId?: string) {
     .eq('school_id', user.schoolId)
     .eq('student_id', selectedStudent.id)
     .order('attendance_date', { ascending: false })
+    .limit(180)
 
   const records = ((recordsData as any[]) || []).map((r: any) => ({
     id: r.id,
@@ -347,6 +348,7 @@ export async function getStudentSelfAttendanceData() {
     .eq('school_id', user.schoolId)
     .eq('student_id', studentObj.id)
     .order('attendance_date', { ascending: false })
+    .limit(180)
 
   const records = ((recordsData as any[]) || []).map((r: any) => ({
     id: r.id,

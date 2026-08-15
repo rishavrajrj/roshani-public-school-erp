@@ -39,10 +39,20 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
     return { success: false, error: error?.message || 'Invalid email or password' }
   }
 
-  // 1. Resolve profile directly using authenticated user ID
+  // 1. Resolve profile and roles in a single unified PostgREST query directly using authenticated user ID
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, school_id, status')
+    .select(`
+      id,
+      school_id,
+      status,
+      user_roles!user_roles_profile_id_fkey (
+        role_id,
+        roles (
+          name
+        )
+      )
+    `)
     .eq('auth_user_id', authData.user.id)
     .single()
 
@@ -54,20 +64,18 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
     return { success: true, redirectUrl: '/erp/unauthorized' }
   }
 
-  // 2. Resolve roles directly using profile ID
-  const p = profile as { id: string; school_id: string }
-  const { data: roleRecords } = await supabase
-    .from('user_roles')
-    .select('role_id, roles(name)')
-    .eq('profile_id', p.id)
-    .eq('school_id', p.school_id)
+  // 2. Extract roles directly from joined query
+  const rawProfile = profile as Record<string, unknown>
+  const roleRecords = rawProfile.user_roles as Array<{
+    role_id: string
+    roles: { name: string } | null
+  }> | null
 
   const roles: string[] = []
-  if (roleRecords) {
+  if (roleRecords && Array.isArray(roleRecords)) {
     for (const record of roleRecords) {
-      const roleData = (record as Record<string, unknown>).roles as { name: string } | null
-      if (roleData?.name) {
-        roles.push(roleData.name)
+      if (record?.roles?.name) {
+        roles.push(record.roles.name)
       }
     }
   }

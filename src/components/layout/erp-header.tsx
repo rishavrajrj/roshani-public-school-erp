@@ -68,11 +68,25 @@ export function ERPHeader({
           {/* User Profile & Logout */}
           <div className="flex items-center gap-3 pl-2 sm:pl-3 border-l border-slate-200">
             <div className="hidden sm:flex flex-col text-right">
-              <span className="text-xs font-bold text-slate-900 truncate max-w-[140px]">
+              <span className="text-xs font-bold text-slate-900 truncate max-w-[160px]">
                 {userName}
               </span>
-              <span className="text-[10px] font-medium text-slate-500">
-                {activeRole}
+              <span className="text-[10px] font-semibold text-slate-500">
+                {activeRole === 'Super Admin'
+                  ? 'System Administration • Super Admin'
+                  : activeRole === 'Admin'
+                  ? 'System Admin / Vice Principal'
+                  : activeRole === 'Principal'
+                  ? 'School Administration • Principal'
+                  : activeRole === 'Teacher'
+                  ? 'Academic Staff • Teacher'
+                  : activeRole === 'Accountant'
+                  ? 'Finance & Accounts • Accountant'
+                  : activeRole === 'Parent'
+                  ? 'Guardian Portal • Parent'
+                  : activeRole === 'Student'
+                  ? 'Student Portal • Student'
+                  : activeRole}
               </span>
             </div>
 

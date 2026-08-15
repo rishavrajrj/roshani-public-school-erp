@@ -374,7 +374,15 @@ export async function getAdmissionApplications(params: {
   let query = (supabase
     .from('admission_applications') as any)
     .select(`
-      *,
+      id,
+      application_number,
+      applicant_first_name,
+      applicant_middle_name,
+      applicant_last_name,
+      status,
+      guardian_name,
+      guardian_phone,
+      created_at,
       academic_sessions!admission_applications_academic_session_id_fkey(id, name),
       classes!admission_applications_applying_for_class_id_fkey(id, name)
     `, { count: 'exact' })

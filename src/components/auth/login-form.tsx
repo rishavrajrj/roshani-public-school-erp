@@ -1,19 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginInput } from '@/lib/auth/schemas'
 import { loginAction } from '@/lib/auth/actions'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Loader2 } from 'lucide-react'
 
 export function LoginForm() {
+  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [rememberMe, setRememberMe] = useState(true)
+  const [statusMessage, setStatusMessage] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
 
   const {
     register,
@@ -24,26 +28,47 @@ export function LoginForm() {
     resolver: zodResolver(loginSchema),
   })
 
+  const isLoading = isSubmitting || isPending || !!statusMessage
+
   const onSubmit = async (data: LoginInput) => {
     setError(null)
+    setStatusMessage('Signing you in…')
+
     const formData = new FormData()
     formData.append('email', data.email)
     formData.append('password', data.password)
 
-    const result = await loginAction(formData)
+    try {
+      const result = await loginAction(formData)
 
-    if (result?.error) {
-      if (
-        result.error.toLowerCase().includes('invalid') ||
-        result.error.toLowerCase().includes('credentials') ||
-        result.error.toLowerCase().includes('password')
-      ) {
-        setError('Invalid credentials. Please check your details and try again.')
-      } else {
-        setError(result.error)
+      if (result?.error) {
+        setStatusMessage(null)
+        if (
+          result.error.toLowerCase().includes('invalid') ||
+          result.error.toLowerCase().includes('credentials') ||
+          result.error.toLowerCase().includes('password')
+        ) {
+          setError('Invalid credentials. Please check your details and try again.')
+        } else {
+          setError(result.error)
+        }
+      } else if (result?.redirectUrl) {
+        setStatusMessage('Opening your dashboard…')
+        startTransition(() => {
+          router.replace(result.redirectUrl!)
+          router.refresh()
+        })
+
+        // Safety fallback if client router doesn't unload within 2.5s
+        setTimeout(() => {
+          if (window.location.pathname !== result.redirectUrl) {
+            window.location.href = result.redirectUrl!
+          }
+        }, 2500)
       }
-    } else if (result?.redirectUrl) {
-      window.location.href = result.redirectUrl
+    } catch (err: any) {
+      setStatusMessage(null)
+      setError(err?.message || 'A network error occurred. Please try again.')
     }
   }
 
@@ -143,11 +168,11 @@ export function LoginForm() {
         <Button
           type="submit"
           id="submit-btn"
-          disabled={isSubmitting}
+          disabled={isLoading}
           className="w-full justify-center py-2.5 px-3 h-[40px] bg-[#B91C5C] hover:bg-[#9e144c] text-white rounded-[8px] text-xs sm:text-sm font-semibold transition-all border-none shadow-none hover:shadow-[0_4px_12px_rgba(185,28,92,0.3)] active:scale-[0.99]"
-          isLoading={isSubmitting}
+          isLoading={isLoading}
         >
-          Sign In to Portal →
+          {statusMessage ? statusMessage : 'Sign In to Portal →'}
         </Button>
 
         {/* Demo Quick-Fill Section */}

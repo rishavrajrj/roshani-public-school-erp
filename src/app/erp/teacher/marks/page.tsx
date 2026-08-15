@@ -17,15 +17,14 @@ export default async function TeacherMarksEntryPage() {
   }
 
   const supabase = (await createClient()) as any
-  const { data: subjectsData } = await supabase.from('subjects').select('id, name, code').eq('school_id', authState.user.schoolId)
-
-  const [classesRes, examinations] = await Promise.all([
+  const [classesRes, examinations, subjectsRes] = await Promise.all([
     getClasses(),
     getExaminations(),
+    supabase.from('subjects').select('id, name, code').eq('school_id', authState.user.schoolId),
   ])
 
   const classes: Array<{ id: string; name: string }> = classesRes.success ? classesRes.data : []
-  const subjects = subjectsData || []
+  const subjects = subjectsRes.data || []
 
   const defaultExamId = examinations[0]?.id || ''
   const defaultClassId = classes[0]?.id || ''

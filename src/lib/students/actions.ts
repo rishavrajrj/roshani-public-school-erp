@@ -46,7 +46,14 @@ export async function getStudents(params: {
   let query = (supabase
     .from('students') as any)
     .select(`
-      *,
+      id,
+      admission_number,
+      first_name,
+      middle_name,
+      last_name,
+      gender,
+      status,
+      created_at,
       student_academic_history!student_academic_history_student_id_fkey!inner(
         id,
         roll_number,

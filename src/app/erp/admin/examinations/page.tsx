@@ -16,20 +16,19 @@ export default async function AdminExaminationsPage() {
   }
 
   const supabase = (await createClient()) as any
-  const { data: subjectsData } = await supabase.from('subjects').select('id, name, code').eq('school_id', authState.user.schoolId)
-
-  const [sessionsRes, classesRes, examTypes, examinations, schedules, invigilators] = await Promise.all([
+  const [sessionsRes, classesRes, examTypes, examinations, schedules, invigilators, subjectsRes] = await Promise.all([
     getAcademicSessions(),
     getClasses(),
     getExamTypes(),
     getExaminations(),
     getExamSchedules(),
     getAvailableInvigilators(),
+    supabase.from('subjects').select('id, name, code').eq('school_id', authState.user.schoolId),
   ])
 
   const sessions = sessionsRes.success ? sessionsRes.data : []
   const classes = classesRes.success ? classesRes.data : []
-  const subjects = subjectsData || []
+  const subjects = subjectsRes.data || []
 
   return (
     <div className="space-y-6 w-full">

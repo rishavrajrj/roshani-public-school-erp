@@ -38,6 +38,7 @@ export function PageHeader({
                   {crumb.href && !isLast ? (
                     <Link
                       href={crumb.href}
+                      prefetch={true}
                       className="hover:text-blue-600 font-medium transition-colors"
                     >
                       {crumb.label}

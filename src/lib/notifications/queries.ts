@@ -1,8 +1,9 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser } from '@/lib/auth/resolve-user'
 import type { AppNotification } from '@/types/notification'
 
-export async function getUserNotifications() {
+export const getUserNotifications = cache(async function getUserNotifications() {
   const authState = await resolveUser()
   if (authState.state !== 'authenticated') return { notifications: [], unreadCount: 0 }
 
@@ -27,6 +28,7 @@ export async function getUserNotifications() {
     .eq('school_id', user.schoolId)
     .eq('recipient_profile_id', user.profileId)
     .order('created_at', { ascending: false })
+    .limit(25)
 
   if (error || !data) return { notifications: [], unreadCount: 0 }
 
@@ -47,4 +49,4 @@ export async function getUserNotifications() {
   const unreadCount = notifications.filter((n) => !n.readAt).length
 
   return { notifications, unreadCount }
-}
+})

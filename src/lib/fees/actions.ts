@@ -144,8 +144,8 @@ export async function createFeeStructureAction(input: CreateFeeStructureInput) {
     if (authState.state !== 'authenticated') {
       return { success: false, error: 'Unauthorized' }
     }
-    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Accountant'])) {
-      return { success: false, error: 'Forbidden' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      return { success: false, error: 'Forbidden: Insufficient permissions to create fee structures' }
     }
 
     const validated = createFeeStructureSchema.parse(input)
@@ -161,7 +161,8 @@ export async function createFeeStructureAction(input: CreateFeeStructureInput) {
         name: validated.name,
         description: validated.description || null,
         version: 1,
-        is_active: true,
+        is_active: false,
+        status: 'draft',
         effective_from: validated.effectiveFrom,
       })
       .select()
@@ -192,11 +193,218 @@ export async function createFeeStructureAction(input: CreateFeeStructureInput) {
     // Fix #7: Audit log
     await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
       'FEE_STRUCTURE_CREATED', 'fee_structure', structure.id, null,
-      { name: validated.name, classId: validated.classId, itemCount: validated.items.length })
+      { name: validated.name, classId: validated.classId, itemCount: validated.items.length, status: 'draft' })
 
     return { success: true, data: structure }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to create fee structure' }
+  }
+}
+
+export async function submitFeeStructureAction(feeStructureId: string) {
+  try {
+    const authState = await resolveUser()
+    if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      return { success: false, error: 'Forbidden: Insufficient permissions to submit fee structure' }
+    }
+
+    const supabase = (await createClient()) as any
+    const { data: existing, error: fetchErr } = await supabase
+      .from('fee_structures')
+      .select('*')
+      .eq('id', feeStructureId)
+      .eq('school_id', authState.user.schoolId)
+      .single()
+
+    if (fetchErr || !existing) return { success: false, error: 'Fee structure not found' }
+    if (existing.status !== 'draft' && existing.status !== 'rejected') {
+      return { success: false, error: `Cannot submit fee structure with status '${existing.status}'. Only draft or rejected structures can be submitted.` }
+    }
+
+    const { data: updated, error: updateErr } = await supabase
+      .from('fee_structures')
+      .update({
+        status: 'submitted',
+        submitted_by: authState.user.profileId,
+        submitted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', feeStructureId)
+      .eq('school_id', authState.user.schoolId)
+      .select()
+      .single()
+
+    if (updateErr) return { success: false, error: updateErr.message }
+
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'FEE_STRUCTURE_SUBMITTED', 'fee_structure', feeStructureId,
+      { status: existing.status }, { status: 'submitted' })
+
+    return { success: true, data: updated }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to submit fee structure' }
+  }
+}
+
+export async function approveFeeStructureAction(feeStructureId: string) {
+  try {
+    const authState = await resolveUser()
+    if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
+    if (!hasAnyRole(authState.user, ['Principal', 'Super Admin'])) {
+      return { success: false, error: 'Forbidden: Only the Principal has final authority to approve fee structures' }
+    }
+
+    const supabase = (await createClient()) as any
+    const { data: existing, error: fetchErr } = await supabase
+      .from('fee_structures')
+      .select('*')
+      .eq('id', feeStructureId)
+      .eq('school_id', authState.user.schoolId)
+      .single()
+
+    if (fetchErr || !existing) return { success: false, error: 'Fee structure not found' }
+    if (existing.status !== 'submitted' && existing.status !== 'under_review' && existing.status !== 'draft') {
+      return { success: false, error: `Cannot approve fee structure in status '${existing.status}'.` }
+    }
+
+    const { data: updated, error: updateErr } = await supabase
+      .from('fee_structures')
+      .update({
+        status: 'active',
+        is_active: true,
+        approved_by: authState.user.profileId,
+        approved_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', feeStructureId)
+      .eq('school_id', authState.user.schoolId)
+      .select()
+      .single()
+
+    if (updateErr) return { success: false, error: updateErr.message }
+
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'FEE_STRUCTURE_APPROVED', 'fee_structure', feeStructureId,
+      { status: existing.status }, { status: 'active', approved_by: authState.user.profileId })
+
+    return { success: true, data: updated }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to approve fee structure' }
+  }
+}
+
+export async function rejectFeeStructureAction(feeStructureId: string, reason: string) {
+  try {
+    const authState = await resolveUser()
+    if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
+    if (!hasAnyRole(authState.user, ['Principal', 'Super Admin'])) {
+      return { success: false, error: 'Forbidden: Only the Principal has authority to reject proposed fee structures' }
+    }
+
+    if (!reason || reason.trim().length === 0) {
+      return { success: false, error: 'Rejection reason is required' }
+    }
+
+    const supabase = (await createClient()) as any
+    const { data: existing, error: fetchErr } = await supabase
+      .from('fee_structures')
+      .select('*')
+      .eq('id', feeStructureId)
+      .eq('school_id', authState.user.schoolId)
+      .single()
+
+    if (fetchErr || !existing) return { success: false, error: 'Fee structure not found' }
+
+    const { data: updated, error: updateErr } = await supabase
+      .from('fee_structures')
+      .update({
+        status: 'rejected',
+        is_active: false,
+        rejection_reason: reason,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', feeStructureId)
+      .eq('school_id', authState.user.schoolId)
+      .select()
+      .single()
+
+    if (updateErr) return { success: false, error: updateErr.message }
+
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'FEE_STRUCTURE_REJECTED', 'fee_structure', feeStructureId,
+      { status: existing.status }, { status: 'rejected', reason })
+
+    return { success: true, data: updated }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to reject fee structure' }
+  }
+}
+
+export async function createNewFeeStructureVersionAction(existingFeeStructureId: string) {
+  try {
+    const authState = await resolveUser()
+    if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      return { success: false, error: 'Forbidden: Insufficient permissions to version fee structures' }
+    }
+
+    const supabase = (await createClient()) as any
+    const { data: existing, error: fetchErr } = await supabase
+      .from('fee_structures')
+      .select('*, fee_structure_items(*)')
+      .eq('id', existingFeeStructureId)
+      .eq('school_id', authState.user.schoolId)
+      .single()
+
+    if (fetchErr || !existing) return { success: false, error: 'Existing fee structure not found' }
+
+    const newVersionNumber = (existing.version || 1) + 1
+
+    // Create new Draft version N+1
+    const { data: newStructure, error: insertErr } = await supabase
+      .from('fee_structures')
+      .insert({
+        school_id: authState.user.schoolId,
+        academic_session_id: existing.academic_session_id,
+        class_id: existing.class_id,
+        section_id: existing.section_id || null,
+        name: `${existing.name} (v${newVersionNumber})`,
+        description: existing.description || null,
+        version: newVersionNumber,
+        is_active: false,
+        status: 'draft',
+        effective_from: existing.effective_from,
+      })
+      .select()
+      .single()
+
+    if (insertErr || !newStructure) {
+      return { success: false, error: insertErr?.message || 'Failed to create new fee structure version' }
+    }
+
+    if (existing.fee_structure_items && existing.fee_structure_items.length > 0) {
+      const itemsToClone = existing.fee_structure_items.map((item: any) => ({
+        school_id: authState.user.schoolId,
+        fee_structure_id: newStructure.id,
+        fee_head_id: item.fee_head_id,
+        amount: item.amount,
+        frequency: item.frequency,
+        due_day: item.due_day,
+        is_mandatory: item.is_mandatory,
+      }))
+
+      await supabase.from('fee_structure_items').insert(itemsToClone)
+    }
+
+    await writeAuditLog(supabase, authState.user.schoolId, authState.user.profileId,
+      'FEE_STRUCTURE_VERSION_CREATED', 'fee_structure', newStructure.id,
+      { parentStructureId: existing.id, previousVersion: existing.version },
+      { newVersion: newVersionNumber, status: 'draft' })
+
+    return { success: true, data: newStructure }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to create new fee structure version' }
   }
 }
 

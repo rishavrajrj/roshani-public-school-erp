@@ -100,6 +100,7 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
               <Link
                 key={c.id}
                 href={`/erp/parent?studentId=${c.id}`}
+                prefetch={true}
                 className={`p-3.5 rounded-xl border transition flex items-center justify-between ${
                   isSelected
                     ? 'bg-blue-50/80 border-blue-400 text-blue-900 shadow-xs'
@@ -168,6 +169,7 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <Link
           href={`/erp/parent/attendance?studentId=${selectedStudent?.id}`}
+          prefetch={true}
           className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 transition group text-center shadow-xs"
         >
           <CalendarCheck className="w-6 h-6 text-emerald-600 mb-2 group-hover:scale-110 transition-transform" />
@@ -177,6 +179,7 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
         </Link>
         <Link
           href="/erp/parent/fees"
+          prefetch={true}
           className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-300 transition group text-center shadow-xs"
         >
           <CreditCard className="w-6 h-6 text-amber-600 mb-2 group-hover:scale-110 transition-transform" />
@@ -186,6 +189,7 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
         </Link>
         <Link
           href="/erp/parent/admit-cards"
+          prefetch={true}
           className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition group text-center shadow-xs"
         >
           <Award className="w-6 h-6 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
@@ -195,6 +199,7 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
         </Link>
         <Link
           href="/erp/parent/results"
+          prefetch={true}
           className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white hover:bg-purple-50 border border-slate-200 hover:border-purple-300 transition group text-center shadow-xs"
         >
           <FileCheck className="w-6 h-6 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
@@ -204,6 +209,7 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
         </Link>
         <Link
           href="/erp/parent/documents"
+          prefetch={true}
           className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-300 transition group text-center shadow-xs"
         >
           <FileText className="w-6 h-6 text-rose-600 mb-2 group-hover:scale-110 transition-transform" />
@@ -213,6 +219,7 @@ export default async function ParentPortalPage({ searchParams }: PageProps) {
         </Link>
         <Link
           href="/erp/parent/leave"
+          prefetch={true}
           className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 transition group text-center shadow-xs"
         >
           <CalendarOff className="w-6 h-6 text-indigo-600 mb-2 group-hover:scale-110 transition-transform" />

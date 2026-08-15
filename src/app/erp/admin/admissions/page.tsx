@@ -221,6 +221,7 @@ export default async function AdmissionsListPage({ searchParams }: Props) {
                     <td className="py-3.5 px-4 text-right">
                       <Link
                         href={`/erp/admin/admissions/${app.id}`}
+                        prefetch={true}
                         className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-blue-700 hover:text-blue-800 text-xs font-bold rounded-lg transition"
                       >
                         Manage <ArrowRight className="w-3.5 h-3.5" />

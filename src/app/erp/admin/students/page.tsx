@@ -239,6 +239,7 @@ export default async function StudentsListPage({ searchParams }: Props) {
                       <td className="py-3.5 px-4 text-right space-x-2">
                         <Link
                           href={`/erp/admin/students/${st.id}`}
+                          prefetch={true}
                           className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-blue-700 hover:text-blue-800 text-xs font-bold rounded-lg transition"
                         >
                           Profile <ArrowRight className="w-3.5 h-3.5" />

@@ -194,7 +194,9 @@ export async function approveReportCardAction(input: ApproveReportCardInput) {
   try {
     const authState = await resolveUser()
     if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
-    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) return { success: false, error: 'Forbidden' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      return { success: false, error: 'Forbidden: Insufficient permissions to approve report cards' }
+    }
 
     const validated = approveReportCardSchema.parse(input)
     const supabase = (await createClient()) as any
@@ -216,7 +218,7 @@ export async function approveReportCardAction(input: ApproveReportCardInput) {
 
     if (error) return { success: false, error: error.message }
 
-    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'APPROVE_REPORT_CARD', 'report_cards', updated.id, null, { status: 'approved' })
+    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'APPROVE_REPORT_CARD', 'report_cards', updated.id, null, { status: 'approved', approvedBy: authState.user.profileId })
 
     return { success: true, data: updated }
   } catch (err: any) {
@@ -228,7 +230,9 @@ export async function publishReportCardAction(input: PublishReportCardInput) {
   try {
     const authState = await resolveUser()
     if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
-    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) return { success: false, error: 'Forbidden' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
+      return { success: false, error: 'Forbidden: Insufficient permissions to publish report cards' }
+    }
 
     const validated = publishReportCardSchema.parse(input)
     const supabase = (await createClient()) as any

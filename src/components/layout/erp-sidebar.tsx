@@ -81,7 +81,7 @@ export function ERPSidebar({
             className="flex items-center gap-3 overflow-hidden group"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition shrink-0">
-              <SchoolLogo className="w-6 h-6 object-contain" />
+              <SchoolLogo className="w-6 h-6 object-contain" priority />
             </div>
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
@@ -138,7 +138,7 @@ export function ERPSidebar({
         )}
 
         {/* Navigation Items List */}
-        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scrollbar">
+        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scrollbar overscroll-contain">
           {navItems.map((item) => {
             const active = isActive(item)
             const Icon = item.icon
@@ -146,6 +146,7 @@ export function ERPSidebar({
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 title={isCollapsed ? item.name : undefined}
                 className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-150 relative ${
                   active
