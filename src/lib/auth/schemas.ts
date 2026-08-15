@@ -7,31 +7,31 @@ import { z } from 'zod'
 export const loginSchema = z.object({
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
+    .min(1, 'Please enter your email or user ID.')
+    .email('Please enter a valid email address.'),
   password: z
     .string()
-    .min(1, 'Password is required'),
+    .min(1, 'Please enter your password.'),
 })
 
 /** Forgot password form validation schema */
 export const forgotPasswordSchema = z.object({
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
+    .min(1, 'Please enter your email address.')
+    .email('Please enter a valid email address.'),
 })
 
 /** Reset password form validation schema */
 export const resetPasswordSchema = z.object({
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters'),
+    .min(8, 'Password must be at least 8 characters.'),
   confirmPassword: z
     .string()
-    .min(1, 'Please confirm your password'),
+    .min(1, 'Please confirm your password.'),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
+  message: 'Passwords do not match.',
   path: ['confirmPassword'],
 })
 

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getAcademicSessions, getClasses } from '@/lib/academic/actions'
 import { AdmissionApplicationForm } from '@/components/admissions/admission-form'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function NewAdmissionPage() {
   const authState = await resolveUser()
@@ -21,15 +22,16 @@ export default async function NewAdmissionPage() {
   const classes = classesRes.success ? classesRes.data : []
 
   return (
-    <div className="flex-1 bg-slate-50 p-6 max-w-4xl mx-auto w-full">
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <Link href="/erp/admin/admissions" className="text-xs font-semibold text-blue-600 hover:text-blue-800">
-            &larr; Back to Admissions List
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-900 mt-1">New Admission Application</h1>
-        </div>
-      </div>
+    <div className="space-y-6 max-w-4xl mx-auto w-full">
+      <PageHeader
+        title="New Admission Application"
+        description="Register a new applicant enquiry or submitted application into the admission workflow."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Admissions', href: '/erp/admin/admissions' },
+          { label: 'New Application' },
+        ]}
+      />
 
       <AdmissionApplicationForm sessions={sessions} classes={classes} />
     </div>

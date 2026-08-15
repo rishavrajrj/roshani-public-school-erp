@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getSectionAttendanceSheet } from '@/lib/attendance/queries'
 import { AttendanceMarkingSheet } from '@/components/attendance/attendance-marking-sheet'
+import { PageHeader } from '@/components/ui/page-header'
 
 interface PageProps {
   searchParams: Promise<{
@@ -55,7 +56,17 @@ export default async function MarkAttendancePage({ searchParams }: PageProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title={`Mark Attendance — ${cls?.name || 'Class'} (${sec?.name || 'Section'})`}
+        description={`Record daily student status for Date: ${date}. Use single-tap toggle controls for rapid data entry.`}
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Attendance', href: '/erp/teacher/attendance' },
+          { label: 'Mark Attendance' },
+        ]}
+      />
+
       <AttendanceMarkingSheet
         academicSessionId={sessionId}
         classId={classId}

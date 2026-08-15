@@ -4,6 +4,7 @@ import { getClasses } from '@/lib/academic/actions'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getResultsForAdmin } from '@/lib/examinations/result-queries'
 import { AdminResultManager } from '@/components/examinations/results/admin-result-manager'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function AdminResultsPage() {
   const authState = await resolveUser()
@@ -26,7 +27,16 @@ export default async function AdminResultsPage() {
   const results = (defaultExamId && defaultClassId) ? await getResultsForAdmin(defaultExamId, defaultClassId) : []
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Result Tabulation &amp; Report Cards"
+        description="Compute aggregate percentages, determine student pass/fail criteria, finalize academic grade cards, and publish official report cards."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Results & Marks' },
+        ]}
+      />
+
       <AdminResultManager
         examinations={examinations}
         classes={classes}

@@ -4,6 +4,7 @@ import { getClasses } from '@/lib/academic/actions'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getAdmitCardsForAdmin } from '@/lib/examinations/admit-card-queries'
 import { AdminAdmitCardManager } from '@/components/examinations/admit-cards/admin-admit-card-manager'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function AdminAdmitCardsPage() {
   const authState = await resolveUser()
@@ -24,7 +25,16 @@ export default async function AdminAdmitCardsPage() {
   const admitCards = defaultExamId ? await getAdmitCardsForAdmin(defaultExamId) : []
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Admit Card Batch Generation &amp; Release"
+        description="Verify fee clearance prerequisites, batch-generate exam hall tickets with secure QR validation tokens, and publish to students."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Admit Cards' },
+        ]}
+      />
+
       <AdminAdmitCardManager
         examinations={examinations}
         classes={classes}

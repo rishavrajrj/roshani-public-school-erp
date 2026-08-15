@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getStudentPromotionStatus } from '@/lib/examinations/promotion-queries'
 import { StudentPromotionView } from '@/components/examinations/promotion/student-promotion-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function StudentPromotionPage() {
   const authState = await resolveUser()
@@ -20,10 +21,21 @@ export default async function StudentPromotionPage() {
     .eq('profile_id', authState.user.profileId)
     .single()
 
-  const { activeHistory, promotionHistory } = student ? await getStudentPromotionStatus(student.id) : { activeHistory: null, promotionHistory: [] }
+  const { activeHistory, promotionHistory } = student
+    ? await getStudentPromotionStatus(student.id)
+    : { activeHistory: null, promotionHistory: [] }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Session Promotion Status"
+        description="Current academic grade level, promotion outcome, and historical session progression record."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/student' },
+          { label: 'Promotion' },
+        ]}
+      />
+
       <StudentPromotionView activeHistory={activeHistory} promotionHistory={promotionHistory} />
     </div>
   )

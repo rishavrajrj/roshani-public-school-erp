@@ -1,28 +1,65 @@
-import Link from "next/link";
-import { LogoutButton } from "@/components/auth/logout-button";
+import Link from 'next/link'
+import { LogoutButton } from '@/components/auth/logout-button'
+import { UserX, Mail, HelpCircle } from 'lucide-react'
+import { SchoolLogo } from '@/components/ui/school-logo'
 
 export default function AccountNotProvisionedPage() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center border border-slate-200">
-        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-amber-100 mb-4">
-          <svg className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-        </div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Account Not Provisioned</h2>
-        <p className="text-slate-600 mb-8">
-          Your account has not been provisioned for the ERP system. Please contact your school administrator to grant you access.
-        </p>
-        <div className="flex flex-col space-y-4">
-          <Link href="/login" className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-            Return to Login
-          </Link>
-          <div className="w-full flex justify-center">
-            <LogoutButton />
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col justify-between p-6 sm:p-10 relative overflow-hidden">
+      {/* Background Accent */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Header */}
+      <div className="max-w-4xl mx-auto w-full flex items-center justify-between z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-md">
+            <SchoolLogo className="w-6 h-6 object-contain" />
+          </div>
+          <div>
+            <h1 className="font-bold text-white text-base tracking-tight">Roshani Public School</h1>
+            <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider">Account Provisioning</p>
           </div>
         </div>
       </div>
+
+      {/* Center Card */}
+      <div className="max-w-md mx-auto w-full my-auto z-10">
+        <div className="bg-slate-800/90 border border-slate-700 rounded-2xl p-8 shadow-2xl text-center backdrop-blur-md">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto mb-5 shadow-inner">
+            <UserX className="w-8 h-8" />
+          </div>
+
+          <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+            Pending Staff / Student Setup
+          </span>
+
+          <h2 className="text-2xl font-black text-white mt-3 mb-2">Account Not Provisioned</h2>
+          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-6">
+            Your login identity has been verified, but your user profile has not yet been assigned an active ERP role (Teacher, Student, Parent, Administrator).
+          </p>
+
+          <div className="bg-slate-900/60 border border-slate-700/60 rounded-xl p-4 text-left mb-6 text-xs text-slate-300 space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-white">
+              <HelpCircle className="w-4 h-4 text-blue-400 shrink-0" />
+              <span>Next Steps:</span>
+            </div>
+            <p className="text-slate-400">
+              Please contact your school IT administrator or academic office to associate your email with your official school records.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <div className="w-full flex justify-center">
+              <LogoutButton />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="max-w-4xl mx-auto w-full text-center text-xs text-slate-500 z-10">
+        Roshani Public School ERP &bull; Account Provisioning Services
+      </div>
     </div>
-  );
+  )
 }

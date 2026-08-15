@@ -21,6 +21,25 @@
 // ============================================================
 
 import { createClient } from '@supabase/supabase-js'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+
+// Load .env.local if present
+try {
+  if (typeof (process as any).loadEnvFile === 'function') {
+    (process as any).loadEnvFile('.env.local')
+  } else if (fs.existsSync('.env.local')) {
+    const envConfig = fs.readFileSync('.env.local', 'utf-8')
+    envConfig.split('\n').forEach(line => {
+      const match = line.match(/^([^#=]+)=(.*)$/)
+      if (match) {
+        const key = match[1].trim()
+        const val = match[2].trim().replace(/^["']|["']$/g, '')
+        if (!process.env[key]) process.env[key] = val
+      }
+    })
+  }
+} catch (e) {}
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -75,58 +94,58 @@ interface TestUser {
 
 const TEST_USERS: TestUser[] = [
   {
-    email: 'superadmin@rps-test.local',
+    email: 'superadmin@roshanischool.com',
     fullName: 'Vijay Kumar (Super Admin)',
     roles: ['Super Admin'],
     status: 'active',
   },
   {
-    email: 'admin@rps-test.local',
+    email: 'admin@roshanischool.com',
     fullName: 'Priya Sharma (Admin)',
     roles: ['Admin'],
     status: 'active',
   },
   {
-    email: 'principal@rps-test.local',
+    email: 'principal@roshanischool.com',
     fullName: 'Dr. Ramesh Gupta (Principal)',
     roles: ['Principal'],
     status: 'active',
   },
   {
-    email: 'teacher@rps-test.local',
+    email: 'teacher@roshanischool.com',
     fullName: 'Sunita Devi (Teacher)',
     roles: ['Teacher'],
     status: 'active',
   },
   {
-    email: 'accountant@rps-test.local',
+    email: 'accountant@roshanischool.com',
     fullName: 'Manoj Verma (Accountant)',
     roles: ['Accountant'],
     status: 'active',
   },
   {
-    email: 'parent@rps-test.local',
+    email: 'parent@roshanischool.com',
     fullName: 'Rajesh Kumar (Parent)',
     roles: ['Parent'],
     status: 'active',
     linkGuardianId: GUARDIAN_RAJESH_ID,
   },
   {
-    email: 'student@rps-test.local',
+    email: 'student@roshanischool.com',
     fullName: 'Arjun Kumar (Student)',
     roles: ['Student'],
     status: 'active',
     linkStudentId: STUDENT_ARJUN_ID,
   },
   {
-    email: 'unprovisioned@rps-test.local',
+    email: 'unprovisioned@roshanischool.com',
     fullName: 'Unprovisioned User',
     roles: [],
     status: 'active',
     skipProfile: true,
   },
   {
-    email: 'disabled@rps-test.local',
+    email: 'disabled@roshanischool.com',
     fullName: 'Disabled Account',
     roles: ['Admin'],
     status: 'inactive',

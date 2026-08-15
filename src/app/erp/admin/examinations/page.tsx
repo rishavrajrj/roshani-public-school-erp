@@ -4,6 +4,7 @@ import { getAcademicSessions, getClasses } from '@/lib/academic/actions'
 import { createClient } from '@/lib/supabase/server'
 import { getExamTypes, getExaminations, getExamSchedules, getAvailableInvigilators } from '@/lib/examinations/queries'
 import { ExamMasterDashboard } from '@/components/examinations/exam-master-dashboard'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function AdminExaminationsPage() {
   const authState = await resolveUser()
@@ -31,7 +32,16 @@ export default async function AdminExaminationsPage() {
   const subjects = subjectsData || []
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Examination Master &amp; Date Sheets"
+        description="Schedule academic terms (Mid-Term, Final, Unit Tests), assign subjects, set maximum/passing marks, and allocate invigilators."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Examinations' },
+        ]}
+      />
+
       <ExamMasterDashboard
         examinations={examinations}
         examTypes={examTypes}

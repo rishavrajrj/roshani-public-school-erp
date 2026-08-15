@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getStudentById } from '@/lib/students/actions'
 import { EditStudentForm } from '@/components/students/edit-student-form'
+import { PageHeader } from '@/components/ui/page-header'
 
 interface Props {
   params: Promise<{
@@ -28,18 +29,23 @@ export default async function EditStudentPage({ params }: Props) {
     redirect('/erp/admin/students')
   }
 
-  return (
-    <div className="flex-1 bg-slate-50 p-6 max-w-4xl mx-auto w-full">
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <Link href={`/erp/admin/students/${id}`} className="text-xs font-semibold text-blue-600 hover:text-blue-800">
-            &larr; Back to Student Profile
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-900 mt-1">Edit Student Profile</h1>
-        </div>
-      </div>
+  const student = studentRes.data as any
+  const fullName = `${student.first_name} ${student.last_name}`
 
-      <EditStudentForm student={studentRes.data as any} />
+  return (
+    <div className="space-y-6 max-w-4xl mx-auto w-full">
+      <PageHeader
+        title={`Edit Student: ${fullName}`}
+        description={`Admission Number: ${student.admission_number} • Update personal and residential contact information.`}
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Students', href: '/erp/admin/students' },
+          { label: fullName, href: `/erp/admin/students/${id}` },
+          { label: 'Edit' },
+        ]}
+      />
+
+      <EditStudentForm student={student} />
     </div>
   )
 }

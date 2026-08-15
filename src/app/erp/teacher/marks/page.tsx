@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getMarksForClassSubject } from '@/lib/examinations/result-queries'
 import { MarksEntryTable } from '@/components/examinations/results/marks-entry-table'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function TeacherMarksEntryPage() {
   const authState = await resolveUser()
@@ -35,7 +36,16 @@ export default async function TeacherMarksEntryPage() {
     : []
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Student Marks Entry &amp; Grading"
+        description="Select term examination, grade level, and subject to submit marks with real-time maximum mark boundary enforcement."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Enter Marks' },
+        ]}
+      />
+
       <MarksEntryTable
         examinations={examinations}
         classes={classes}

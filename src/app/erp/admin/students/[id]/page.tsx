@@ -3,6 +3,9 @@ import Link from 'next/link'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getStudentById } from '@/lib/students/actions'
 import { StudentProfileView } from '@/components/students/student-profile-view'
+import { PageHeader } from '@/components/ui/page-header'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { Edit, ArrowLeft } from 'lucide-react'
 
 interface Props {
   params: Promise<{
@@ -28,15 +31,35 @@ export default async function StudentDetailPage({ params }: Props) {
     redirect('/erp/admin/students')
   }
 
-  return (
-    <div className="flex-1 bg-slate-50 p-6 max-w-6xl mx-auto w-full">
-      <div className="mb-4">
-        <Link href="/erp/admin/students" className="text-xs font-semibold text-blue-600 hover:text-blue-800">
-          &larr; Back to Student Directory
-        </Link>
-      </div>
+  const student = studentRes.data as any
+  const fullName = `${student.first_name} ${student.middle_name ? student.middle_name + ' ' : ''}${student.last_name}`
+  const isAdmin = hasAnyRole(authState.user, ['Super Admin', 'Admin'])
 
-      <StudentProfileView student={studentRes.data as any} userRoles={authState.user.roles} />
+  return (
+    <div className="space-y-6 max-w-6xl mx-auto w-full">
+      <PageHeader
+        title={fullName}
+        description={`Admission Number: ${student.admission_number} • Enrolled Student Record`}
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Students', href: '/erp/admin/students' },
+          { label: fullName },
+        ]}
+        badge={<StatusBadge status={student.status} size="md" />}
+        actions={
+          isAdmin && (
+            <Link
+              href={`/erp/admin/students/${student.id}/edit`}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-semibold rounded-xl shadow-2xs transition"
+            >
+              <Edit className="w-4 h-4 text-slate-500" />
+              Edit Profile
+            </Link>
+          )
+        }
+      />
+
+      <StudentProfileView student={student} userRoles={authState.user.roles} />
     </div>
   )
 }

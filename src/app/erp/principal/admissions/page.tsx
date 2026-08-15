@@ -3,6 +3,10 @@ import Link from 'next/link'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getAdmissionApplications } from '@/lib/admissions/actions'
 import { getAcademicSessions, getClasses } from '@/lib/academic/actions'
+import { PageHeader } from '@/components/ui/page-header'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Search, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface Props {
   searchParams: Promise<{
@@ -43,49 +47,42 @@ export default async function PrincipalAdmissionsPage({ searchParams }: Props) {
   const sessions: any[] = sessionsResult.success ? sessionsResult.data : []
   const classes: any[] = classesResult.success ? classesResult.data : []
 
-  const statusBadgeColors: Record<string, string> = {
-    draft: 'bg-slate-100 text-slate-700 border-slate-200',
-    submitted: 'bg-blue-50 text-blue-700 border-blue-200',
-    under_review: 'bg-amber-50 text-amber-700 border-amber-200',
-    approved: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    rejected: 'bg-rose-50 text-rose-700 border-rose-200',
-    withdrawn: 'bg-gray-100 text-gray-600 border-gray-200',
-    converted: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-  }
-
   return (
-    <div className="flex-1 bg-slate-50 p-6 max-w-7xl mx-auto w-full">
-      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Principal — Admissions Review</h1>
-          <p className="text-slate-500 text-sm mt-0.5">
-            Review submitted student applications and approve or reject candidates.
-          </p>
-        </div>
-      </div>
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Admissions Executive Review"
+        description="Review incoming student applications, assess enrollment capacity, and approve or reject candidate entries."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/principal' },
+          { label: 'Admissions' },
+        ]}
+      />
 
       {/* Filters Bar */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
-        <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 sm:p-5">
+        <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Search</label>
-            <input
-              type="text"
-              name="search"
-              defaultValue={search}
-              placeholder="App #, Name..."
-              className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Search Applicant</label>
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                name="search"
+                defaultValue={search}
+                placeholder="App #, Name, Phone..."
+                className="w-full text-xs sm:text-sm pl-9 pr-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none transition"
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
             <select
               name="status"
               defaultValue={status}
-              className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none transition"
             >
-              <option value="all">All Statuses</option>
+              <option value="all">All Application Statuses</option>
               <option value="submitted">Submitted</option>
               <option value="under_review">Under Review</option>
               <option value="approved">Approved</option>
@@ -95,27 +92,27 @@ export default async function PrincipalAdmissionsPage({ searchParams }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Academic Session</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Session</label>
             <select
               name="sessionId"
               defaultValue={sessionId}
-              className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none transition"
             >
-              <option value="">All Sessions</option>
+              <option value="">All Academic Sessions</option>
               {sessions.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name}
+                  {s.name} {s.is_current ? '(Current)' : ''}
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Applying Class</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Applying Class</label>
             <select
               name="classId"
               defaultValue={classId}
-              className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full text-xs sm:text-sm px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none transition"
             >
               <option value="">All Classes</option>
               {classes.map((c) => (
@@ -126,16 +123,16 @@ export default async function PrincipalAdmissionsPage({ searchParams }: Props) {
             </select>
           </div>
 
-          <div className="flex items-end space-x-2">
+          <div className="flex items-end gap-2">
             <button
               type="submit"
-              className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm py-2 px-4 rounded-md transition"
+              className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm py-2 px-4 rounded-xl transition"
             >
               Filter
             </button>
             <Link
               href="/erp/principal/admissions"
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm py-2 px-3 rounded-md transition text-center"
+              className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm py-2 px-3 rounded-xl transition font-medium text-center"
             >
               Clear
             </Link>
@@ -144,61 +141,88 @@ export default async function PrincipalAdmissionsPage({ searchParams }: Props) {
       </div>
 
       {/* Applications Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm border-collapse">
-            <thead>
-              <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
-                <th className="py-3 px-4">App #</th>
-                <th className="py-3 px-4">Applicant</th>
-                <th className="py-3 px-4">Applying Class</th>
-                <th className="py-3 px-4">Guardian</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {applications.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center py-8 text-slate-400">
-                    No admission applications found matching current criteria.
-                  </td>
+      <div className="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+        {applications.length === 0 ? (
+          <div className="p-6 sm:p-12">
+            <EmptyState
+              title="No applications found"
+              description="No applications match the current filter criteria."
+            />
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs sm:text-sm border-collapse">
+              <thead>
+                <tr className="bg-slate-50/80 text-slate-700 font-semibold border-b border-slate-200">
+                  <th className="py-3.5 px-4">App #</th>
+                  <th className="py-3.5 px-4">Applicant</th>
+                  <th className="py-3.5 px-4">Applying Class</th>
+                  <th className="py-3.5 px-4">Guardian</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
-              ) : (
-                applications.map((app: any) => (
-                  <tr key={app.id} className="hover:bg-slate-50">
-                    <td className="py-3 px-4 font-mono font-medium text-slate-900">{app.application_number}</td>
-                    <td className="py-3 px-4 font-medium text-slate-800">
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {applications.map((app: any) => (
+                  <tr key={app.id} className="hover:bg-slate-50/60 transition group">
+                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
+                      {app.application_number}
+                    </td>
+                    <td className="py-3.5 px-4 font-bold text-slate-900">
                       {app.applicant_first_name} {app.applicant_last_name}
                     </td>
-                    <td className="py-3 px-4 text-slate-600">{(app.classes as { name?: string })?.name}</td>
-                    <td className="py-3 px-4 text-slate-600">
-                      <div className="font-medium text-slate-800">{app.guardian_name}</div>
-                      <div className="text-xs text-slate-400">{app.guardian_phone}</div>
+                    <td className="py-3.5 px-4 text-slate-700 font-medium">
+                      {(app.classes as { name?: string })?.name}
                     </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
-                          statusBadgeColors[app.status] || 'bg-gray-100 text-gray-700 border-gray-200'
-                        }`}
-                      >
-                        {app.status.replace('_', ' ').toUpperCase()}
-                      </span>
+                    <td className="py-3.5 px-4 text-slate-600">
+                      <div className="font-semibold text-slate-900">{app.guardian_name}</div>
+                      <div className="text-[11px] text-slate-400 font-mono">{app.guardian_phone}</div>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-4">
+                      <StatusBadge status={app.status} size="sm" />
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
                       <Link
                         href={`/erp/admin/admissions/${app.id}`}
-                        className="inline-flex items-center px-3 py-1 bg-slate-100 hover:bg-blue-50 text-blue-700 text-xs font-semibold rounded"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-purple-50 text-purple-700 hover:text-purple-800 text-xs font-bold rounded-lg transition"
                       >
-                        Review &rarr;
+                        Review <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
                     </td>
                   </tr>
-                ))
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Pagination Footer */}
+        {pagination.totalPages > 1 && (
+          <div className="bg-slate-50/70 px-4 sm:px-6 py-3 border-t border-slate-200 flex items-center justify-between">
+            <div className="text-xs text-slate-500">
+              Showing page <strong className="text-slate-900">{pagination.page}</strong> of{' '}
+              <strong className="text-slate-900">{pagination.totalPages}</strong> ({pagination.total} records)
+            </div>
+            <div className="flex items-center gap-2">
+              {pagination.page > 1 && (
+                <Link
+                  href={`/erp/principal/admissions?page=${pagination.page - 1}&search=${search}&status=${status}&sessionId=${sessionId}&classId=${classId}`}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" /> Previous
+                </Link>
               )}
-            </tbody>
-          </table>
-        </div>
+              {pagination.page < pagination.totalPages && (
+                <Link
+                  href={`/erp/principal/admissions?page=${pagination.page + 1}&search=${search}&status=${status}&sessionId=${sessionId}&classId=${classId}`}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition"
+                >
+                  Next <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

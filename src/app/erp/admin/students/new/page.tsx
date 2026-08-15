@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getAcademicSessions, getClasses } from '@/lib/academic/actions'
 import { DirectStudentForm } from '@/components/students/direct-student-form'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function NewDirectStudentPage() {
   const authState = await resolveUser()
@@ -21,15 +22,16 @@ export default async function NewDirectStudentPage() {
   const classes = classesRes.success ? classesRes.data : []
 
   return (
-    <div className="flex-1 bg-slate-50 p-6 max-w-4xl mx-auto w-full">
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <Link href="/erp/admin/students" className="text-xs font-semibold text-blue-600 hover:text-blue-800">
-            &larr; Back to Student Directory
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-900 mt-1">Direct Administrative Enrollment</h1>
-        </div>
-      </div>
+    <div className="space-y-6 max-w-4xl mx-auto w-full">
+      <PageHeader
+        title="Direct Administrative Enrollment"
+        description="Directly enroll a new student into an academic session, class, and section with roll number assignment."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Students', href: '/erp/admin/students' },
+          { label: 'Direct Enrollment' },
+        ]}
+      />
 
       <DirectStudentForm sessions={sessions} classes={classes} />
     </div>

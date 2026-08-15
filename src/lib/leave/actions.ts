@@ -87,7 +87,7 @@ export async function createLeaveApplicationAction(input: CreateLeaveApplication
       // Security check: guardian relationship
       const { data: sg } = await (supabase as any)
         .from('student_guardians')
-        .select('id, students!inner(status)')
+        .select('id, students!student_id!inner(status)')
         .eq('school_id', user.schoolId)
         .eq('student_id', targetStudentId)
         .single()

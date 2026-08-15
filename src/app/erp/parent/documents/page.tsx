@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getStudentReportCard, getStudentCertificates } from '@/lib/examinations/document-queries'
 import { ParentDocumentView } from '@/components/examinations/documents/parent-document-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function ParentDocumentsPage() {
   const authState = await resolveUser()
@@ -35,7 +36,16 @@ export default async function ParentDocumentsPage() {
     : [null, []]
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title={`Certificates &amp; Documents — ${childName}`}
+        description="Official school certificates, report cards, and verification credentials."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Documents' },
+        ]}
+      />
+
       <ParentDocumentView reportCard={reportCard} certificates={certificates} childName={childName} />
     </div>
   )

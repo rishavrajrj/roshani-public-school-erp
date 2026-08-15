@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getStudentResult } from '@/lib/examinations/result-queries'
 import { ParentResultView } from '@/components/examinations/results/parent-result-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function ParentResultsPage() {
   const authState = await resolveUser()
@@ -29,7 +30,16 @@ export default async function ParentResultsPage() {
   const result = studentId && latestExamId ? await getStudentResult(studentId, latestExamId) : null
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title={`Academic Grade &amp; Report Card — ${childName}`}
+        description="Official subject scores, grading distribution, aggregate percentage, and faculty remarks."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Report Card' },
+        ]}
+      />
+
       <ParentResultView result={result} childName={childName} />
     </div>
   )

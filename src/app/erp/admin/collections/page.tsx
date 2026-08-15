@@ -12,6 +12,7 @@ import { getPayments } from '@/lib/fees/queries'
 import { CollectionRegister } from '@/components/fees/collection-register'
 import { CollectionReports } from '@/components/fees/collection-reports'
 import { CashReconciliation } from '@/components/fees/cash-reconciliation'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function AdminCollectionsPage() {
   const authState = await resolveUser()
@@ -64,16 +65,18 @@ export default async function AdminCollectionsPage() {
   const staffList = Array.from(staffMap.entries()).map(([id, name]) => ({ id, name }))
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Collection Management</h1>
-        <p className="text-slate-500 mt-1">
-          Payment collection register, reports, and daily cash reconciliation
-        </p>
-      </div>
+    <div className="space-y-8 w-full">
+      <PageHeader
+        title="Fee Collection &amp; Cash Reconciliation"
+        description="Daily counter payment register, payment mode breakdown (Cash/UPI/Cheque), transaction logs, and end-of-day financial reconciliation."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Collections' },
+        ]}
+      />
 
       {/* Collection Register */}
-      <section className="mb-10">
+      <section className="space-y-4">
         <CollectionRegister
           payments={collectionRegister || []}
           staffList={staffList}
@@ -81,7 +84,7 @@ export default async function AdminCollectionsPage() {
       </section>
 
       {/* Reports */}
-      <section className="mb-10">
+      <section className="space-y-4">
         <CollectionReports
           dateRangeReport={dateRangeReport}
           staffReport={staffReport || []}
@@ -90,7 +93,7 @@ export default async function AdminCollectionsPage() {
       </section>
 
       {/* Cash Reconciliation */}
-      <section>
+      <section className="space-y-4">
         <CashReconciliation
           todayReconciliation={todayReconciliation}
           reconciliationHistory={reconciliationHistory || []}

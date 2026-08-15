@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getStudentResult } from '@/lib/examinations/result-queries'
 import { StudentResultView } from '@/components/examinations/results/student-result-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function StudentResultsPage() {
   const authState = await resolveUser()
@@ -26,7 +27,16 @@ export default async function StudentResultsPage() {
   const result = student && latestExamId ? await getStudentResult(student.id, latestExamId) : null
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="My Examination Results &amp; Grade Card"
+        description="Official subject scores, grading distribution, percentage calculations, and teacher evaluation comments."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/student' },
+          { label: 'My Results' },
+        ]}
+      />
+
       <StudentResultView result={result} />
     </div>
   )

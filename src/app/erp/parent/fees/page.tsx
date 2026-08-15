@@ -1,16 +1,20 @@
 import { getParentAttendanceData } from '@/lib/attendance/queries'
 import { getInvoices, getPayments } from '@/lib/fees/queries'
 import { ParentFeePortal } from '@/components/fees/parent-fee-portal'
+import { PageHeader } from '@/components/ui/page-header'
+import { EmptyState } from '@/components/ui/empty-state'
+import { CreditCard, HeartHandshake } from 'lucide-react'
 
 export default async function ParentFeesPage() {
   const parentData = await getParentAttendanceData()
 
   if (!parentData || parentData.children.length === 0 || !parentData.selectedStudent) {
     return (
-      <div className="max-w-7xl mx-auto p-8 text-center text-slate-600">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-2">Student Fee Portal</h1>
-        <p className="text-sm">No linked student profiles found for your account. Please contact school administration.</p>
-      </div>
+      <EmptyState
+        icon={HeartHandshake}
+        title="No Linked Student Profiles"
+        description="No linked student profiles found for your account. Please contact school administration."
+      />
     )
   }
 
@@ -21,7 +25,16 @@ export default async function ParentFeesPage() {
   ])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Child Fee Portal &amp; Ledger"
+        description={`Review invoice dues, payment installment history, and download official receipts for ${selectedChild.name}.`}
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Fee Portal' },
+        ]}
+      />
+
       <ParentFeePortal
         studentName={selectedChild.name}
         admissionNumber={selectedChild.admissionNumber}

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getAdminAttendanceOverview } from '@/lib/attendance/queries'
 import { AdminAttendanceDashboard } from '@/components/attendance/admin-attendance-dashboard'
+import { PageHeader } from '@/components/ui/page-header'
 
 interface PageProps {
   searchParams: Promise<{
@@ -47,7 +48,16 @@ export default async function AdminAttendancePage({ searchParams }: PageProps) {
   const overview = await getAdminAttendanceOverview(sessionId, selectedDate)
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Class Attendance Management"
+        description="Monitor daily student attendance submission across all classes and sections, perform administrative locks, and review records."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Attendance' },
+        ]}
+      />
+
       <AdminAttendanceDashboard
         academicSessionId={sessionId}
         attendanceDate={selectedDate}

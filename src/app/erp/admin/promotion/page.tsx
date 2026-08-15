@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getPromotionWorkspaceData } from '@/lib/examinations/promotion-queries'
 import { AdminPromotionWorkspace } from '@/components/examinations/promotion/admin-promotion-workspace'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function AdminPromotionPage() {
   const authState = await resolveUser()
@@ -35,7 +36,16 @@ export default async function AdminPromotionPage() {
     : []
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Annual Session Promotion &amp; Progression"
+        description="Guided academic progression workspace — review academic performance, evaluate retention/promotion criteria, and batch-transfer students to next session."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Promotion' },
+        ]}
+      />
+
       <AdminPromotionWorkspace
         sessions={sessions}
         classes={classes}

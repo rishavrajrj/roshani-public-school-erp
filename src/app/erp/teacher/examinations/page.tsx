@@ -2,6 +2,7 @@ import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { redirect } from 'next/navigation'
 import { getTeacherExamSchedule } from '@/lib/examinations/queries'
 import { TeacherScheduleView } from '@/components/examinations/teacher-schedule-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function TeacherExaminationsPage() {
   const authState = await resolveUser()
@@ -15,7 +16,16 @@ export default async function TeacherExaminationsPage() {
   const schedules = await getTeacherExamSchedule()
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Examination Invigilation Schedule"
+        description="Assigned examination rooms, subject timings, and candidate supervision schedules."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Exam Schedule' },
+        ]}
+      />
+
       <TeacherScheduleView schedules={schedules} />
     </div>
   )

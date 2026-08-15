@@ -254,7 +254,7 @@ export async function getParentAttendanceData(studentId?: string) {
     .from('student_guardians')
     .select(`
       student_id,
-      students (
+      students!student_id (
         id,
         first_name,
         last_name,

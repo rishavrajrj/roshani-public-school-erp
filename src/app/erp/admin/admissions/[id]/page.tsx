@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getAdmissionApplicationById } from '@/lib/admissions/actions'
 import { AdmissionDetailView } from '@/components/admissions/admission-detail-view'
+import { PageHeader } from '@/components/ui/page-header'
+import { StatusBadge } from '@/components/ui/status-badge'
 
 interface Props {
   params: Promise<{
@@ -28,15 +30,22 @@ export default async function AdmissionDetailPage({ params }: Props) {
     redirect('/erp/admin/admissions')
   }
 
-  return (
-    <div className="flex-1 bg-slate-50 p-6 max-w-6xl mx-auto w-full">
-      <div className="mb-4">
-        <Link href="/erp/admin/admissions" className="text-xs font-semibold text-blue-600 hover:text-blue-800">
-          &larr; Back to Admissions List
-        </Link>
-      </div>
+  const app = appResult.data as any
 
-      <AdmissionDetailView application={appResult.data as any} userRoles={authState.user.roles} />
+  return (
+    <div className="space-y-6 max-w-6xl mx-auto w-full">
+      <PageHeader
+        title={`Application: ${app.application_number}`}
+        description={`Applicant: ${app.applicant_first_name} ${app.applicant_last_name} • Applying for Class: ${app.classes?.name || 'N/A'}`}
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Admissions', href: '/erp/admin/admissions' },
+          { label: app.application_number },
+        ]}
+        badge={<StatusBadge status={app.status} size="md" />}
+      />
+
+      <AdmissionDetailView application={app} userRoles={authState.user.roles} />
     </div>
   )
 }

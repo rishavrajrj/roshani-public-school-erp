@@ -7,6 +7,7 @@ import {
   getFinancialLedger,
 } from '@/lib/fees/queries'
 import { AdminFeeDashboard } from '@/components/fees/admin-fee-dashboard'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function AdminFeesPage() {
   const [summary, feeHeads, feeStructures, invoices, payments, ledger] = await Promise.all([
@@ -19,7 +20,16 @@ export default async function AdminFeesPage() {
   ])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Fee Structure &amp; Ledger Configuration"
+        description="Configure academic fee heads, class-wise installment structures, concessions, and student invoice ledger generation."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Fee Configuration' },
+        ]}
+      />
+
       <AdminFeeDashboard
         summary={summary}
         feeHeads={feeHeads}

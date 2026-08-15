@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getTeacherAssignments } from '@/lib/attendance/queries'
 import { TeacherAssignmentManager } from '@/components/attendance/teacher-assignment-manager'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function TeacherAssignmentsPage() {
   const authState = await resolveUser()
@@ -64,11 +65,15 @@ export default async function TeacherAssignmentsPage() {
   const assignments = await getTeacherAssignments()
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Teacher Class Assignments</h1>
-        <p className="text-sm text-slate-600">Assign teachers to classes and sections for attendance management.</p>
-      </div>
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Teacher &amp; Classroom Allocations"
+        description="Allocate faculty as Class Teachers and subject instructors to classes and sections for daily attendance marking and grading."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/admin' },
+          { label: 'Teacher Assignments' },
+        ]}
+      />
 
       <TeacherAssignmentManager
         currentSessionId={session?.id || ''}

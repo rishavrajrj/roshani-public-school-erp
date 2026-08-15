@@ -2,6 +2,9 @@ import { resolveUser } from '@/lib/auth/resolve-user'
 import { createClient } from '@/lib/supabase/server'
 import { getInvoices, getPayments } from '@/lib/fees/queries'
 import { ParentFeePortal } from '@/components/fees/parent-fee-portal'
+import { PageHeader } from '@/components/ui/page-header'
+import { EmptyState } from '@/components/ui/empty-state'
+import { CreditCard } from 'lucide-react'
 
 export default async function StudentFeesPage() {
   const authState = await resolveUser()
@@ -16,10 +19,11 @@ export default async function StudentFeesPage() {
 
   if (!student) {
     return (
-      <div className="max-w-7xl mx-auto p-8 text-center text-slate-600">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-2">My Fee Portal</h1>
-        <p className="text-sm">Student profile not linked. Please contact administration.</p>
-      </div>
+      <EmptyState
+        icon={CreditCard}
+        title="Student Profile Not Linked"
+        description="No student record linked to your user account. Please contact school administration."
+      />
     )
   }
 
@@ -30,7 +34,16 @@ export default async function StudentFeesPage() {
   ])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Fee Ledger &amp; Receipts"
+        description="Review assigned fee invoices, payment installments, outstanding dues, and download official payment receipts."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/student' },
+          { label: 'My Fees' },
+        ]}
+      />
+
       <ParentFeePortal
         studentName={`${studentObj.first_name} ${studentObj.last_name}`}
         admissionNumber={studentObj.admission_number}

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getStudentReportCard, getStudentCertificates } from '@/lib/examinations/document-queries'
 import { StudentDocumentView } from '@/components/examinations/documents/student-document-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function StudentDocumentsPage() {
   const authState = await resolveUser()
@@ -32,7 +33,16 @@ export default async function StudentDocumentsPage() {
     : [null, []]
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Official Certificates &amp; Documents"
+        description="View and download issued Transfer Certificates (TC), Character Certificates, and Bonafide Certificates with anti-tamper QR verification hashes."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/student' },
+          { label: 'Documents' },
+        ]}
+      />
+
       <StudentDocumentView reportCard={reportCard} certificates={certificates} />
     </div>
   )

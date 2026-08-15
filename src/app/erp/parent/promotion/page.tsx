@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getStudentPromotionStatus } from '@/lib/examinations/promotion-queries'
 import { ParentPromotionView } from '@/components/examinations/promotion/parent-promotion-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function ParentPromotionPage() {
   const authState = await resolveUser()
@@ -23,10 +24,21 @@ export default async function ParentPromotionPage() {
   const studentId = psm?.student_id
   const childName = psm?.students ? `${psm.students.first_name || ''} ${psm.students.last_name || ''}`.trim() : 'Ward'
 
-  const { activeHistory, promotionHistory } = studentId ? await getStudentPromotionStatus(studentId) : { activeHistory: null, promotionHistory: [] }
+  const { activeHistory, promotionHistory } = studentId
+    ? await getStudentPromotionStatus(studentId)
+    : { activeHistory: null, promotionHistory: [] }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title={`Session Promotion &amp; Progression — ${childName}`}
+        description="Current class placement, annual academic promotion evaluation, and session history."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Promotion' },
+        ]}
+      />
+
       <ParentPromotionView activeHistory={activeHistory} promotionHistory={promotionHistory} childName={childName} />
     </div>
   )

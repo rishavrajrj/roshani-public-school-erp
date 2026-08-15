@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { getTeacherAssignments } from '@/lib/attendance/queries'
+import { PageHeader } from '@/components/ui/page-header'
+import { EmptyState } from '@/components/ui/empty-state'
+import { CalendarCheck, BookOpen, Clock, ArrowRight } from 'lucide-react'
 
 export default async function TeacherAttendanceDashboard() {
   const authState = await resolveUser()
@@ -18,45 +21,48 @@ export default async function TeacherAttendanceDashboard() {
   const todayDate = new Date().toISOString().split('T')[0]
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Attendance Portal</h1>
-        <p className="text-sm text-slate-600">Select an assigned class and section to mark or review attendance.</p>
-      </div>
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Class Attendance Portal"
+        description="Select an assigned classroom section to record daily student presence, absences, or late arrivals."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/teacher' },
+          { label: 'Attendance' },
+        ]}
+      />
 
       {assignments.length === 0 ? (
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-xl text-center">
-          <h3 className="font-semibold text-lg mb-1">No Section Assignments Found</h3>
-          <p className="text-sm">
-            You are not currently assigned to any class section for the active academic session.
-            Please contact your school administrator to assign your sections.
-          </p>
-        </div>
+        <EmptyState
+          icon={CalendarCheck}
+          title="No Section Assignments Found"
+          description="You are not currently assigned to any class section for the active session. Please contact school administration."
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {assignments.map((a) => (
+          {assignments.map((a: any) => (
             <div
               key={a.id}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition p-6 flex flex-col justify-between"
+              className="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition p-6 flex flex-col justify-between"
             >
               <div>
                 <div className="flex justify-between items-start mb-3">
-                  <span className="text-xs font-semibold uppercase px-2.5 py-1 bg-blue-50 text-blue-700 rounded-md">
-                    {a.sessionName}
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-md border border-emerald-200">
+                    {a.sessionName || 'Session'}
                   </span>
-                  <span className="text-xs font-medium text-slate-500">Active</span>
+                  <span className="text-xs font-semibold text-slate-400">Class Teacher</span>
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-1">
                   {a.className} — Section {a.sectionName}
                 </h3>
-                <p className="text-xs text-slate-500 mb-4">Assigned Section</p>
+                <p className="text-xs text-slate-500 mb-4">Official Daily Attendance Register</p>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
+              <div className="pt-4 border-t border-slate-100">
                 <Link
                   href={`/erp/teacher/attendance/mark?sessionId=${a.academicSessionId}&classId=${a.classId}&sectionId=${a.sectionId}&date=${todayDate}`}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-medium py-2 px-4 rounded-lg text-sm transition shadow-sm"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-center font-semibold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-xs"
                 >
+                  <CalendarCheck className="w-4 h-4" />
                   Mark Today ({todayDate})
                 </Link>
               </div>

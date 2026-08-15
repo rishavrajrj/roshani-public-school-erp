@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getStudentAdmitCard } from '@/lib/examinations/admit-card-queries'
 import { StudentAdmitCardView } from '@/components/examinations/admit-cards/student-admit-card-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function StudentAdmitCardsPage() {
   const authState = await resolveUser()
@@ -26,7 +27,16 @@ export default async function StudentAdmitCardsPage() {
   const admitCard = student && latestExamId ? await getStudentAdmitCard(student.id, latestExamId) : null
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title="Examination Admit Card"
+        description="Download and print your official examination hall ticket with security QR token and verified exam roll number."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/student' },
+          { label: 'Admit Card' },
+        ]}
+      />
+
       <StudentAdmitCardView admitCard={admitCard} />
     </div>
   )

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getExaminations } from '@/lib/examinations/queries'
 import { getStudentAdmitCard } from '@/lib/examinations/admit-card-queries'
 import { ParentAdmitCardView } from '@/components/examinations/admit-cards/parent-admit-card-view'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default async function ParentAdmitCardsPage() {
   const authState = await resolveUser()
@@ -29,7 +30,16 @@ export default async function ParentAdmitCardsPage() {
   const admitCard = studentId && latestExamId ? await getStudentAdmitCard(studentId, latestExamId) : null
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <div className="space-y-6 w-full">
+      <PageHeader
+        title={`Examination Admit Card — ${childName}`}
+        description="Download and print candidate hall ticket with digital QR verification token and verified exam roll number."
+        breadcrumbs={[
+          { label: 'ERP Portal', href: '/erp/parent' },
+          { label: 'Admit Card' },
+        ]}
+      />
+
       <ParentAdmitCardView admitCard={admitCard} childName={childName} />
     </div>
   )
