@@ -54,6 +54,8 @@ export const getExaminations = cache(async function getExaminations(filters?: { 
 
   query = query.order('start_date', { ascending: false })
 
+  const { data, error } = await query
+
   if (error) {
     if (!error.message?.includes('schema cache') && !error.message?.includes('does not exist')) {
       console.error('Failed to fetch examinations:', error.message)
@@ -178,7 +180,9 @@ export async function getExamSchedules(filters?: { examinationId?: string; class
 
   const { data, error } = await query
   if (error) {
-    console.error('Failed to fetch exam schedules:', error.message)
+    if (!error.message?.includes('schema cache') && !error.message?.includes('does not exist')) {
+      console.error('Failed to fetch exam schedules:', error.message)
+    }
     return []
   }
   if (!data) return []
