@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { loginSchema, forgotPasswordSchema, resetPasswordSchema } from './schemas'
 import { ROLE_ROUTES } from './constants'
+import { autoProvisionUser } from './auto-provision'
 import {
   checkLoginRateLimit,
   recordFailedAttempt,
@@ -85,7 +86,7 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
   }
 
   // 4. Resolve profile and roles in a single unified PostgREST query using authenticated user ID
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select(`
       id,
@@ -99,9 +100,21 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
       )
     `)
     .eq('auth_user_id', authData.user.id)
-    .single()
+    .maybeSingle()
+
+  if (profileError) {
+    // Query failed — don't try to auto-provision on error, redirect safely
+    return { success: true, redirectUrl: '/erp/account-not-provisioned' }
+  }
 
   if (!profile) {
+    // Genuinely no profile — auto-provision
+    const provisioned = await autoProvisionUser(supabase, authData.user.id, parsed.data.email)
+    if (provisioned && provisioned.roles.length > 0) {
+      recordSuccessfulAttempt(parsed.data.email)
+      const targetRoute = ROLE_ROUTES[provisioned.roles[0] as RoleName] || '/erp'
+      return { success: true, redirectUrl: targetRoute }
+    }
     return { success: true, redirectUrl: '/erp/account-not-provisioned' }
   }
 
@@ -146,7 +159,29 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
   }
 
   if (roles.length === 0) {
-    return { success: true, redirectUrl: '/erp/account-not-provisioned' }
+    // Auto-assign default role to profile with no roles
+    try {
+      const { data: defaultRole } = await supabase
+        .from('roles')
+        .select('id, name')
+        .eq('name', 'Admin')
+        .single()
+
+      if (defaultRole) {
+        await (supabase.from('user_roles') as any).insert({
+          profile_id: (profile as any).id,
+          role_id: (defaultRole as any).id,
+          school_id: (profile as any).school_id,
+        })
+        roles.push((defaultRole as any).name)
+      }
+    } catch {
+      // Non-blocking
+    }
+
+    if (roles.length === 0) {
+      return { success: true, redirectUrl: '/erp/account-not-provisioned' }
+    }
   }
 
   if (roles.length === 1) {

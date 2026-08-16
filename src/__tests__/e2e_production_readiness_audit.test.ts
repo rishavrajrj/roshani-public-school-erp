@@ -178,9 +178,9 @@ describe('Roshani Public School ERP — Complete End-to-End QA, Security & Produ
 
       const summary = calculateAttendanceSummary(records)
       expect(summary.totalSchoolDays).toBe(22)
-      expect(summary.presentDays).toBe(20)
-      expect(summary.absentDays).toBe(2)
-      expect(summary.attendancePercentage).toBe(90.91)
+      expect(summary.presentCount).toBe(20)
+      expect(summary.absentCount).toBe(2)
+      expect(summary.attendancePercentage).toBe(90.9)
     })
   })
 

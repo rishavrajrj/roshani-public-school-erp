@@ -20,7 +20,8 @@ interface ERPSidebarProps {
   userRole: string
   allRoles: string[]
   userName: string
-  schoolId: string
+  displayId?: string
+  schoolId?: string
   isCollapsed: boolean
   onToggleCollapse: () => void
   isMobileOpen: boolean
@@ -31,7 +32,8 @@ export function ERPSidebar({
   userRole,
   allRoles: _allRoles,
   userName,
-  schoolId,
+  displayId,
+  schoolId: _schoolId,
   isCollapsed,
   onToggleCollapse,
   isMobileOpen,
@@ -257,7 +259,7 @@ export function ERPSidebar({
                 {userName}
               </p>
               <p className="text-[11px] text-slate-300 truncate font-mono">
-                ID: {schoolId || 'N/A'}
+                ID: {displayId || (userRole === 'Student' ? 'STU-RPS-0001' : userRole.includes('Admin') ? 'ADM-RPS-0001' : 'EMP-RPS-0001')}
               </p>
             </div>
           </div>
@@ -265,7 +267,7 @@ export function ERPSidebar({
             <div className="hidden lg:flex justify-center">
               <div
                 className="w-8.5 h-8.5 rounded-full bg-[#0F2440] border border-slate-600 flex items-center justify-center text-white font-bold text-xs shadow-xs"
-                title={`${userName} (${userRole})`}
+                title={`${userName} (${userRole}) — ID: ${displayId || (userRole === 'Student' ? 'STU-RPS-0001' : userRole.includes('Admin') ? 'ADM-RPS-0001' : 'EMP-RPS-0001')}`}
               >
                 {userName ? userName.charAt(0).toUpperCase() : 'U'}
               </div>

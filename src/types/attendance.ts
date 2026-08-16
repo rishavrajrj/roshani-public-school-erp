@@ -66,6 +66,8 @@ export interface AttendanceSummary {
   absentCount: number
   lateCount: number
   leaveCount: number
+  presentDays?: number
+  absentDays?: number
   attendedDays: number // present + late
   eligibleDays: number
   attendancePercentage: number | 'N/A'

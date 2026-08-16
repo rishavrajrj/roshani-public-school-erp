@@ -154,18 +154,20 @@ describe('Security Hardening & Login Session Audit Test Suite', () => {
         },
         from: vi.fn((table: string) => {
           if (table === 'profiles') {
+            const profileResolved = {
+              data: {
+                id: 'prof-123',
+                school_id: 'school-123',
+                status: 'active',
+                user_roles: [{ role_id: 'r1', roles: { name: 'Admin' } }],
+              },
+              error: null,
+            }
             return {
               select: vi.fn().mockReturnThis(),
               eq: vi.fn().mockReturnThis(),
-              single: vi.fn().mockResolvedValue({
-                data: {
-                  id: 'prof-123',
-                  school_id: 'school-123',
-                  status: 'active',
-                  user_roles: [{ role_id: 'r1', roles: { name: 'Admin' } }],
-                },
-                error: null,
-              }),
+              single: vi.fn().mockResolvedValue(profileResolved),
+              maybeSingle: vi.fn().mockResolvedValue(profileResolved),
             }
           }
           if (table === 'audit_logs') {
@@ -207,6 +209,16 @@ describe('Security Hardening & Login Session Audit Test Suite', () => {
   // --------------------------------------------------------------------------
   describe('4. Account Disablement & Real-Time Lockout', () => {
     it('immediately denies access when profile status is suspended or inactive', async () => {
+      const profileSuspended = {
+        data: {
+          id: 'prof-suspended',
+          school_id: 'school-1',
+          full_name: 'Suspended Teacher',
+          status: 'suspended',
+          user_roles: [{ role_id: 'r-teacher', roles: { name: 'Teacher' } }],
+        },
+        error: null,
+      }
       const mockSupabase = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -217,16 +229,8 @@ describe('Security Hardening & Login Session Audit Test Suite', () => {
         from: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({
-            data: {
-              id: 'prof-suspended',
-              school_id: 'school-1',
-              full_name: 'Suspended Teacher',
-              status: 'suspended',
-              user_roles: [{ role_id: 'r-teacher', roles: { name: 'Teacher' } }],
-            },
-            error: null,
-          }),
+          single: vi.fn().mockResolvedValue(profileSuspended),
+          maybeSingle: vi.fn().mockResolvedValue(profileSuspended),
         }),
       }
 
@@ -245,6 +249,16 @@ describe('Security Hardening & Login Session Audit Test Suite', () => {
   // --------------------------------------------------------------------------
   describe('5. Dynamic Role Changes', () => {
     it('immediately reflects modified roles without relying on stale tokens', async () => {
+      const profileDemoted = {
+        data: {
+          id: 'prof-demoted',
+          school_id: 'school-1',
+          full_name: 'Former Admin',
+          status: 'active',
+          user_roles: [{ role_id: 'r-teacher', roles: { name: 'Teacher' } }], // Demoted from Admin to Teacher
+        },
+        error: null,
+      }
       const mockSupabase = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -255,16 +269,8 @@ describe('Security Hardening & Login Session Audit Test Suite', () => {
         from: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({
-            data: {
-              id: 'prof-demoted',
-              school_id: 'school-1',
-              full_name: 'Former Admin',
-              status: 'active',
-              user_roles: [{ role_id: 'r-teacher', roles: { name: 'Teacher' } }], // Demoted from Admin to Teacher
-            },
-            error: null,
-          }),
+          single: vi.fn().mockResolvedValue(profileDemoted),
+          maybeSingle: vi.fn().mockResolvedValue(profileDemoted),
         }),
       }
 

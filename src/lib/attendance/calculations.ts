@@ -61,6 +61,8 @@ export function calculateAttendanceSummary(
     absentCount,
     lateCount,
     leaveCount,
+    presentDays: presentCount,
+    absentDays: absentCount,
     attendedDays,
     eligibleDays,
     attendancePercentage,

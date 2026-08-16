@@ -11,6 +11,11 @@ export type ResolvedUser = {
   roles: string[]      // e.g. ['Admin', 'Teacher']
   status: ProfileStatus
   avatarUrl: string | null
+  displayId?: string
+  studentCode?: string | null
+  admissionNumber?: string | null
+  employeeCode?: string | null
+  guardianCode?: string | null
 }
 
 /** Profile status values matching the database CHECK constraint */

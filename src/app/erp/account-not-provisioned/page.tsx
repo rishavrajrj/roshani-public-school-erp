@@ -49,9 +49,12 @@ export default function AccountNotProvisionedPage() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <div className="w-full flex justify-center">
-              <LogoutButton />
-            </div>
+            <LogoutButton
+              variant="outline"
+              className="w-full justify-center bg-slate-800 hover:bg-slate-700 text-slate-100 border-slate-600 hover:border-slate-500 font-semibold py-2.5 rounded-xl transition"
+            >
+              Sign out &amp; switch account
+            </LogoutButton>
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ interface ERPAppShellProps {
   userRole: string
   allRoles: string[]
   userName: string
+  displayId?: string
   schoolId: string
   notifications: any[]
   unreadCount: number
@@ -19,6 +20,7 @@ export function ERPAppShell({
   userRole,
   allRoles,
   userName,
+  displayId,
   schoolId,
   notifications,
   unreadCount,
@@ -69,6 +71,7 @@ export function ERPAppShell({
         userRole={userRole}
         allRoles={allRoles}
         userName={userName}
+        displayId={displayId}
         schoolId={schoolId}
         isCollapsed={isCollapsed}
         onToggleCollapse={toggleCollapse}

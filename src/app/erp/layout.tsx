@@ -76,6 +76,7 @@ export default async function ERPLayout({ children }: { children: React.ReactNod
       userRole={activeRole}
       allRoles={roles}
       userName={userName}
+      displayId={user?.displayId || ''}
       schoolId={user?.schoolId || ''}
       notifications={notifications}
       unreadCount={unreadCount}
