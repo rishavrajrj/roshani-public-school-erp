@@ -90,7 +90,7 @@ export function AdmissionApplicationForm({ sessions, classes }: Props) {
               required
               className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              <option value="">Select Session</option>
+              <option value="">{sessions.length === 0 ? 'No academic sessions configured' : 'Select Session'}</option>
               {sessions.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name} {s.is_current ? '(Current Session)' : ''}
@@ -108,7 +108,7 @@ export function AdmissionApplicationForm({ sessions, classes }: Props) {
               required
               className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              <option value="">Select Class</option>
+              <option value="">{classes.length === 0 ? 'No classes configured' : 'Select Class'}</option>
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}

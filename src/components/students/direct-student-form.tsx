@@ -41,19 +41,32 @@ export function DirectStudentForm({ sessions, classes }: Props) {
   useEffect(() => {
     let isMounted = true
     if (selectedClass) {
-      getSectionsByClass(selectedClass).then((res) => {
-        if (isMounted) {
-          setSectionsLoading(false)
-          if (res.success && res.data && res.data.length > 0) {
-            const list = res.data as SectionOption[]
-            setSections(list)
-            setSelectedSection(list[0].id)
-          } else {
+      setSectionsLoading(true)
+      getSectionsByClass(selectedClass)
+        .then((res) => {
+          if (isMounted) {
+            setSectionsLoading(false)
+            if (res.success && res.data && res.data.length > 0) {
+              const list = res.data as SectionOption[]
+              setSections(list)
+              setSelectedSection(list[0].id)
+            } else {
+              setSections([])
+              setSelectedSection('')
+            }
+          }
+        })
+        .catch((err) => {
+          if (isMounted) {
+            console.error('Failed to fetch sections:', err)
+            setSectionsLoading(false)
             setSections([])
             setSelectedSection('')
           }
-        }
-      })
+        })
+    } else {
+      setSections([])
+      setSelectedSection('')
     }
     return () => {
       isMounted = false
@@ -207,11 +220,15 @@ export function DirectStudentForm({ sessions, classes }: Props) {
               required
               className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              {sessions.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} {s.is_current ? '(Current)' : ''}
-                </option>
-              ))}
+              {sessions.length === 0 ? (
+                <option value="">No academic sessions configured</option>
+              ) : (
+                sessions.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} {s.is_current ? '(Current)' : ''}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
@@ -223,16 +240,19 @@ export function DirectStudentForm({ sessions, classes }: Props) {
               value={selectedClass}
               onChange={(e) => {
                 setSelectedClass(e.target.value)
-                setSectionsLoading(true)
               }}
               required
               className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
+              {classes.length === 0 ? (
+                <option value="">No classes configured</option>
+              ) : (
+                classes.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
@@ -247,11 +267,19 @@ export function DirectStudentForm({ sessions, classes }: Props) {
               disabled={sectionsLoading || sections.length === 0}
               className="w-full text-sm px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50"
             >
-              {sections.map((sec) => (
-                <option key={sec.id} value={sec.id}>
-                  Section {sec.name}
-                </option>
-              ))}
+              {sectionsLoading ? (
+                <option value="">Loading sections...</option>
+              ) : !selectedClass ? (
+                <option value="">Select class first</option>
+              ) : sections.length === 0 ? (
+                <option value="">No sections available for this class</option>
+              ) : (
+                sections.map((sec) => (
+                  <option key={sec.id} value={sec.id}>
+                    Section {sec.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 

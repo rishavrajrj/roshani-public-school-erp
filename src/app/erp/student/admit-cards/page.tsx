@@ -1,8 +1,8 @@
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getPublishedAdmitCardsForStudent, getStudentAdmitCard } from '@/lib/examinations/admit-card-queries'
 import { getExaminations } from '@/lib/examinations/queries'
-import { getStudentAdmitCard } from '@/lib/examinations/admit-card-queries'
 import { StudentAdmitCardView } from '@/components/examinations/admit-cards/student-admit-card-view'
 import { PageHeader } from '@/components/ui/page-header'
 
@@ -26,8 +26,18 @@ export default async function StudentAdmitCardsPage() {
   ])
 
   const student = studentRes.data
-  const latestExamId = examinations[0]?.id || ''
-  const admitCard = student && latestExamId ? await getStudentAdmitCard(student.id, latestExamId) : null
+  let publishedCards: any[] = []
+
+  if (student) {
+    publishedCards = await getPublishedAdmitCardsForStudent(student.id)
+    // Fallback check if student has card for latest exam
+    if (publishedCards.length === 0 && examinations.length > 0) {
+      const single = await getStudentAdmitCard(student.id, examinations[0].id)
+      if (single && single.status === 'published') {
+        publishedCards = [single]
+      }
+    }
+  }
 
   return (
     <div className="space-y-6 w-full">
@@ -40,7 +50,7 @@ export default async function StudentAdmitCardsPage() {
         ]}
       />
 
-      <StudentAdmitCardView admitCard={admitCard} />
+      <StudentAdmitCardView admitCards={publishedCards} admitCard={publishedCards[0] || null} />
     </div>
   )
 }

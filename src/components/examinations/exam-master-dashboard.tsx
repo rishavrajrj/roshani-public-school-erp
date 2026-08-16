@@ -358,9 +358,11 @@ export function ExamMasterDashboard({
                 <select
                   value={markingForm.examinationId}
                   onChange={(e) => setMarkingForm({ ...markingForm, examinationId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  disabled={examinations.length === 0}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg disabled:bg-slate-100 disabled:text-slate-500"
                   required
                 >
+                  <option value="">{examinations.length === 0 ? 'No examinations available' : 'Select Examination'}</option>
                   {examinations.map((e) => (
                     <option key={e.id} value={e.id}>{e.name} ({e.code})</option>
                   ))}
@@ -372,9 +374,11 @@ export function ExamMasterDashboard({
                 <select
                   value={markingForm.classId}
                   onChange={(e) => setMarkingForm({ ...markingForm, classId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  disabled={classes.length === 0}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg disabled:bg-slate-100 disabled:text-slate-500"
                   required
                 >
+                  <option value="">{classes.length === 0 ? 'No classes available' : 'Select Class'}</option>
                   {classes.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -386,9 +390,11 @@ export function ExamMasterDashboard({
                 <select
                   value={markingForm.subjectId}
                   onChange={(e) => setMarkingForm({ ...markingForm, subjectId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  disabled={subjects.length === 0}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg disabled:bg-slate-100 disabled:text-slate-500"
                   required
                 >
+                  <option value="">{subjects.length === 0 ? 'No subjects available' : 'Select Subject'}</option>
                   {subjects.map((s) => (
                     <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
                   ))}
@@ -467,9 +473,11 @@ export function ExamMasterDashboard({
                 <select
                   value={selectedExamForClasses}
                   onChange={(e) => setSelectedExamForClasses(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  disabled={examinations.length === 0}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg disabled:bg-slate-100 disabled:text-slate-500"
                   required
                 >
+                  <option value="">{examinations.length === 0 ? 'No examinations available' : 'Select Examination Master'}</option>
                   {examinations.map((e) => (
                     <option key={e.id} value={e.id}>{e.name} ({e.academicSessionName})</option>
                   ))}
@@ -571,6 +579,7 @@ export function ExamMasterDashboard({
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                     required
                   >
+                    <option value="">{academicSessions.length === 0 ? 'No academic sessions configured' : 'Select Academic Session'}</option>
                     {academicSessions.map((s) => (
                       <option key={s.id} value={s.id}>{s.name}</option>
                     ))}
@@ -584,6 +593,7 @@ export function ExamMasterDashboard({
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                     required
                   >
+                    <option value="">{examTypes.length === 0 ? 'No exam types configured' : 'Select Exam Type'}</option>
                     {examTypes.map((t) => (
                       <option key={t.id} value={t.id}>{t.name} ({t.code})</option>
                     ))}
@@ -609,7 +619,7 @@ export function ExamMasterDashboard({
                     type="text"
                     value={examForm.name}
                     onChange={(e) => setExamForm({ ...examForm, name: e.target.value })}
-                    placeholder="e.g. Half Yearly Examination 2026"
+                    placeholder="e.g. Half-Yearly Examination 2026"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                     required
                   />

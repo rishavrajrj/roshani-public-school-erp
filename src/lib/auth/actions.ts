@@ -7,12 +7,17 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { loginSchema, forgotPasswordSchema, resetPasswordSchema } from './schemas'
 import { ROLE_ROUTES } from './constants'
+import {
+  checkLoginRateLimit,
+  recordFailedAttempt,
+  recordSuccessfulAttempt,
+} from './rate-limiter'
 import type { AuthActionResult, RoleName } from '@/types/auth'
 
 /**
  * Login server action.
- * Validates input with Zod, authenticates via Supabase Auth,
- * resolves user context, and redirects directly to target portal.
+ * Validates input with Zod, enforces rate limiting, authenticates via Supabase Auth,
+ * logs security audit events, resolves user context, and redirects to portal.
  */
 export async function loginAction(formData: FormData): Promise<AuthActionResult> {
   const rawData = {
@@ -20,26 +25,66 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
     password: formData.get('password'),
   }
 
-  // Validate with Zod
+  // 1. Validate input structure with Zod
   const parsed = loginSchema.safeParse(rawData)
   if (!parsed.success) {
     const firstError = parsed.error.issues[0]?.message ?? 'Invalid input'
     return { success: false, error: firstError }
   }
 
+  // 2. Application-Level Rate Limiting & Throttling
+  const rateLimit = checkLoginRateLimit(parsed.data.email)
+  if (!rateLimit.allowed) {
+    return {
+      success: false,
+      error: rateLimit.message || 'Too many failed login attempts. Please wait before trying again.',
+    }
+  }
+
+  // Apply progressive delay if throttled
+  if (rateLimit.delayMs && rateLimit.delayMs > 0) {
+    await new Promise((resolve) => setTimeout(resolve, rateLimit.delayMs))
+  }
+
   const supabase = await createClient()
 
+  // 3. Supabase GoTrue Authentication
   const { data: authData, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   })
 
   if (error || !authData.user) {
-    console.error('[loginAction] Supabase auth error:', error?.message || error)
+    // Record failure in rate limiter
+    const failureStatus = recordFailedAttempt(parsed.data.email)
+
+    // Audit failed login (never logging passwords or sensitive tokens)
+    try {
+      await (supabase.from('audit_logs') as any).insert({
+        action: 'LOGIN_FAILURE',
+        entity_type: 'auth',
+        new_data: {
+          attempted_email: parsed.data.email,
+          reason: error?.message || 'Invalid credentials',
+          locked: failureStatus.locked,
+          timestamp: new Date().toISOString(),
+        },
+      })
+    } catch {
+      // Audit log failures do not block auth response
+    }
+
+    if (failureStatus.locked) {
+      return {
+        success: false,
+        error: `Too many failed login attempts. Account temporarily throttled for ${failureStatus.retryAfterSeconds} seconds.`,
+      }
+    }
+
     return { success: false, error: error?.message || 'Invalid email or password' }
   }
 
-  // 1. Resolve profile and roles in a single unified PostgREST query directly using authenticated user ID
+  // 4. Resolve profile and roles in a single unified PostgREST query using authenticated user ID
   const { data: profile } = await supabase
     .from('profiles')
     .select(`
@@ -64,7 +109,7 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
     return { success: true, redirectUrl: '/erp/unauthorized' }
   }
 
-  // 2. Extract roles directly from joined query
+  // 5. Extract roles directly from joined query
   const rawProfile = profile as Record<string, unknown>
   const roleRecords = rawProfile.user_roles as Array<{
     role_id: string
@@ -78,6 +123,26 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
         roles.push(record.roles.name)
       }
     }
+  }
+
+  // 6. Reset rate limit and log LOGIN_SUCCESS audit event
+  recordSuccessfulAttempt(parsed.data.email)
+
+  try {
+    await (supabase.from('audit_logs') as any).insert({
+      school_id: (profile as any).school_id,
+      actor_profile_id: (profile as any).id,
+      action: 'LOGIN_SUCCESS',
+      entity_type: 'auth',
+      entity_id: (profile as any).id,
+      new_data: {
+        email: parsed.data.email,
+        roles,
+        timestamp: new Date().toISOString(),
+      },
+    })
+  } catch {
+    // Non-blocking
   }
 
   if (roles.length === 0) {
@@ -94,17 +159,42 @@ export async function loginAction(formData: FormData): Promise<AuthActionResult>
 
 /**
  * Logout server action.
- * Signs out and redirects to login.
+ * Logs LOGOUT event, revokes session on Supabase GoTrue, clears cookies, and redirects.
  */
 export async function logoutAction(): Promise<void> {
   const supabase = await createClient()
+
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id, school_id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (profile) {
+        await (supabase.from('audit_logs') as any).insert({
+          school_id: (profile as any).school_id,
+          actor_profile_id: (profile as any).id,
+          action: 'LOGOUT',
+          entity_type: 'auth',
+          entity_id: (profile as any).id,
+          new_data: { timestamp: new Date().toISOString() },
+        })
+      }
+    }
+  } catch {
+    // Non-blocking
+  }
+
   await supabase.auth.signOut()
   redirect('/login')
 }
 
 /**
  * Forgot password server action.
- * Sends reset email via Supabase Auth.
+ * Sends reset email via Supabase Auth and logs security audit event.
  */
 export async function forgotPasswordAction(formData: FormData): Promise<AuthActionResult> {
   const rawData = {
@@ -124,6 +214,19 @@ export async function forgotPasswordAction(formData: FormData): Promise<AuthActi
 
   if (error) {
     return { success: false, error: error.message }
+  }
+
+  try {
+    await (supabase.from('audit_logs') as any).insert({
+      action: 'PASSWORD_RESET_REQUESTED',
+      entity_type: 'auth',
+      new_data: {
+        email: parsed.data.email,
+        timestamp: new Date().toISOString(),
+      },
+    })
+  } catch {
+    // Non-blocking
   }
 
   return { success: true }
@@ -154,5 +257,30 @@ export async function resetPasswordAction(formData: FormData): Promise<AuthActio
     return { success: false, error: error.message }
   }
 
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id, school_id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (profile) {
+        await (supabase.from('audit_logs') as any).insert({
+          school_id: (profile as any).school_id,
+          actor_profile_id: (profile as any).id,
+          action: 'PASSWORD_CHANGED',
+          entity_type: 'auth',
+          entity_id: (profile as any).id,
+          new_data: { timestamp: new Date().toISOString() },
+        })
+      }
+    }
+  } catch {
+    // Non-blocking
+  }
+
   redirect('/login')
 }
+

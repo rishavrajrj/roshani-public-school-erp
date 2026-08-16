@@ -175,34 +175,36 @@ export function LoginForm() {
           {statusMessage ? statusMessage : 'Sign In to Portal →'}
         </Button>
 
-        {/* Demo Quick-Fill Section */}
-        <div className="mt-4 pt-3 border-t border-slate-100">
-          <p className="text-[11px] font-semibold text-slate-500 mb-2 text-center">
-            ⚡ Quick Fill Demo Credentials:
-          </p>
-          <div className="grid grid-cols-3 gap-1.5">
-            {[
-              { label: 'Admin', email: 'admin@roshanischool.com' },
-              { label: 'Principal', email: 'principal@roshanischool.com' },
-              { label: 'Teacher', email: 'teacher@roshanischool.com' },
-              { label: 'Accountant', email: 'accountant@roshanischool.com' },
-              { label: 'Parent', email: 'parent@roshanischool.com' },
-              { label: 'Student', email: 'student@roshanischool.com' },
-            ].map((account) => (
-              <button
-                key={account.label}
-                type="button"
-                onClick={() => {
-                  setValue('email', account.email, { shouldValidate: true })
-                  setValue('password', 'TestPass123!', { shouldValidate: true })
-                }}
-                className="py-1 px-1.5 text-[11px] font-semibold rounded bg-slate-50 hover:bg-slate-100 hover:text-[#B91C5C] border border-slate-200 text-slate-700 transition text-center"
-              >
-                {account.label}
-              </button>
-            ))}
+        {/* Demo Quick-Fill Section — Development Only */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 pt-3 border-t border-slate-100" id="dev-quick-fill">
+            <p className="text-[11px] font-semibold text-slate-500 mb-2 text-center">
+              ⚡ Quick Fill Demo Credentials (Dev Only):
+            </p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                { label: 'Admin', email: 'admin@roshanischool.com' },
+                { label: 'Principal', email: 'principal@roshanischool.com' },
+                { label: 'Teacher', email: 'teacher@roshanischool.com' },
+                { label: 'Accountant', email: 'accountant@roshanischool.com' },
+                { label: 'Parent', email: 'parent@roshanischool.com' },
+                { label: 'Student', email: 'student@roshanischool.com' },
+              ].map((account) => (
+                <button
+                  key={account.label}
+                  type="button"
+                  onClick={() => {
+                    setValue('email', account.email, { shouldValidate: true })
+                    setValue('password', 'TestPass123!', { shouldValidate: true })
+                  }}
+                  className="py-1 px-1.5 text-[11px] font-semibold rounded bg-slate-50 hover:bg-slate-100 hover:text-[#B91C5C] border border-slate-200 text-slate-700 transition text-center"
+                >
+                  {account.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </form>
     </div>
   )

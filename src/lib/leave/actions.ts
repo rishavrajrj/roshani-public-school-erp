@@ -35,9 +35,11 @@ export async function createLeaveApplicationAction(input: CreateLeaveApplication
         .from('academic_sessions')
         .select('id')
         .eq('school_id', user.schoolId)
-        .eq('is_current', true)
-        .single()
-      sessionId = (currentSession as { id: string } | null)?.id
+        .order('is_current', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(1)
+      const sessionObj = Array.isArray(currentSession) ? currentSession[0] : currentSession
+      sessionId = sessionObj?.id
     }
 
     if (!sessionId) {

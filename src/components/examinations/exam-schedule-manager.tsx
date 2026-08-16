@@ -114,9 +114,11 @@ export function ExamScheduleManager({
               <select
                 value={form.examinationId}
                 onChange={(e) => setForm({ ...form, examinationId: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                disabled={examinations.length === 0}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg disabled:bg-slate-100 disabled:text-slate-500"
                 required
               >
+                <option value="">{examinations.length === 0 ? 'No examinations available' : 'Select Examination'}</option>
                 {examinations.map((e) => (
                   <option key={e.id} value={e.id}>{e.name} ({e.academicSessionName})</option>
                 ))}
@@ -129,9 +131,11 @@ export function ExamScheduleManager({
                 <select
                   value={form.classId}
                   onChange={(e) => setForm({ ...form, classId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  disabled={classes.length === 0}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg disabled:bg-slate-100 disabled:text-slate-500"
                   required
                 >
+                  <option value="">{classes.length === 0 ? 'No classes available' : 'Select Class'}</option>
                   {classes.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -143,9 +147,11 @@ export function ExamScheduleManager({
                 <select
                   value={form.subjectId}
                   onChange={(e) => setForm({ ...form, subjectId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  disabled={subjects.length === 0}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg disabled:bg-slate-100 disabled:text-slate-500"
                   required
                 >
+                  <option value="">{subjects.length === 0 ? 'No subjects available' : 'Select Subject'}</option>
                   {subjects.map((s) => (
                     <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
                   ))}
@@ -222,11 +228,16 @@ export function ExamScheduleManager({
                   const opts = Array.from(e.target.selectedOptions).map(o => o.value)
                   setForm({ ...form, invigilatorProfileIds: opts })
                 }}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs h-24"
+                disabled={invigilatorOptions.length === 0}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs h-24 disabled:bg-slate-100 disabled:text-slate-500"
               >
-                {invigilatorOptions.map((inv) => (
-                  <option key={inv.id} value={inv.id}>{inv.name} ({inv.email})</option>
-                ))}
+                {invigilatorOptions.length === 0 ? (
+                  <option value="" disabled>No staff available for invigilation</option>
+                ) : (
+                  invigilatorOptions.map((inv) => (
+                    <option key={inv.id} value={inv.id}>{inv.name} ({inv.email})</option>
+                  ))
+                )}
               </select>
               <span className="text-[10px] text-slate-400">Hold Ctrl / Cmd to select multiple invigilators</span>
             </div>

@@ -68,7 +68,7 @@ export default async function StudentPortalPage() {
     }
   }
 
-  const latestExamTitle = examinations[0]?.name || 'Semester Examination 2024–25'
+  const latestExamTitle = examinations[0]?.name || 'Half-Yearly Examination 2024–25'
   const studentFullName = studentObj
     ? `${studentObj.first_name} ${studentObj.last_name}`
     : user.fullName

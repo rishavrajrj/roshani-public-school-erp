@@ -29,13 +29,14 @@ export default async function AdminAttendancePage({ searchParams }: PageProps) {
   // Fetch current academic session if not specified
   let sessionId = params.sessionId
   if (!sessionId) {
-    const { data: sessionData } = await supabase
+    const { data: sessionData } = await (supabase as any)
       .from('academic_sessions')
       .select('id')
       .eq('school_id', user.schoolId)
-      .eq('is_current', true)
-      .single()
-    const session = sessionData as { id: string } | null
+      .order('is_current', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(1)
+    const session = Array.isArray(sessionData) && sessionData.length > 0 ? (sessionData[0] as any) : null
     sessionId = session?.id
   }
 

@@ -1955,13 +1955,13 @@ INSERT INTO public.exam_types (school_id, code, name, description)
 SELECT s.id, et.code, et.name, et.description
 FROM public.schools s
 CROSS JOIN (VALUES
-    ('UT',      'Unit Test',           'Periodic unit evaluation'),
-    ('PT',      'Periodic Test',       'Term periodic test'),
-    ('HY',      'Half Yearly',         'Mid-term examination'),
-    ('PA',      'Pre-Annual',          'Pre-board / pre-annual mock exam'),
-    ('ANNUAL',  'Annual Examination',  'Final annual examination'),
-    ('PRAC',    'Practical Exam',      'Laboratory and practical assessment'),
-    ('IA',      'Internal Assessment', 'Continuous internal assessment')
+    ('UT',      'Unit Test',               'Periodic unit evaluation'),
+    ('PT',      'Periodic Test',           'Term periodic test'),
+    ('HY',      'Half-Yearly Examination', 'Mid-term examination'),
+    ('PA',      'Pre-Annual Examination',  'Pre-board / pre-annual mock exam'),
+    ('ANNUAL',  'Annual Examination',      'Final annual examination'),
+    ('PRAC',    'Practical Examination',   'Laboratory and practical assessment'),
+    ('IA',      'Internal Assessment',     'Continuous internal assessment')
 ) AS et(code, name, description)
 ON CONFLICT (school_id, code) DO NOTHING;
 
@@ -3686,4 +3686,36 @@ GRANT SELECT ON public.document_verifications TO anon;
 
 -- 7. Auth Schema Hardening
 REVOKE ALL ON SCHEMA auth FROM anon, authenticated;
+
+-- ==============================================================================
+-- FILE: 20260816080000_admit_card_v2_versioning_and_snapshots.sql
+-- ==============================================================================
+-- Phase 6B V2: Admit Card Versioning, Snapshots & Crypto Tokens
+
+ALTER TABLE public.admit_cards
+    ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS document_fingerprint TEXT,
+    ADD COLUMN IF NOT EXISTS replacement_reason TEXT,
+    ADD COLUMN IF NOT EXISTS superseded_at TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS superseded_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    ADD COLUMN IF NOT EXISTS data_snapshot JSONB;
+
+-- Drop old check constraint on status and re-create with 'superseded'
+ALTER TABLE public.admit_cards DROP CONSTRAINT IF EXISTS admit_cards_status_check;
+
+ALTER TABLE public.admit_cards
+    ADD CONSTRAINT admit_cards_status_check
+    CHECK (status IN ('draft', 'eligible', 'blocked', 'override_released', 'published', 'revoked', 'superseded'));
+
+-- Update unique index so that neither 'revoked' nor 'superseded' prevent active new version issuance
+DROP INDEX IF EXISTS public.idx_admit_cards_active_unique;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_admit_cards_active_unique
+    ON public.admit_cards (school_id, academic_session_id, examination_id, student_id)
+    WHERE status NOT IN ('revoked', 'superseded');
+
+-- Additional indexes for fast verification and fingerprint lookup
+CREATE INDEX IF NOT EXISTS idx_admit_cards_fingerprint ON public.admit_cards(document_fingerprint);
+CREATE INDEX IF NOT EXISTS idx_admit_cards_version ON public.admit_cards(student_id, examination_id, version);
+
 

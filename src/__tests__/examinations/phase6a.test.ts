@@ -43,7 +43,7 @@ describe('Phase 6A — Examination Setup & Scheduling Test Suite', () => {
     const valid = createExaminationSchema.safeParse({
       academicSessionId: '123e4567-e89b-12d3-a456-426614174000',
       examTypeId: '123e4567-e89b-12d3-a456-426614174001',
-      name: 'Half Yearly 2026',
+      name: 'Half-Yearly Examination 2026',
       code: 'HY-2026',
       startDate: '2026-09-10',
       endDate: '2026-09-20',

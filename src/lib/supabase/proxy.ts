@@ -48,20 +48,27 @@ export async function updateSession(request: NextRequest) {
 
   // Refresh session — do not remove
   const { data: { user } } = await supabase.auth.getUser()
+  const pathname = request.nextUrl.pathname
 
-  const { pathname } = request.nextUrl
+  // Helper to ensure security headers are attached to all proxy responses
+  const applyHeaders = (res: NextResponse) => {
+    res.headers.set('X-Content-Type-Options', 'nosniff')
+    res.headers.set('X-Frame-Options', 'DENY')
+    res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+    return res
+  }
 
   // Unauthenticated users trying to access /erp/* → redirect to /login
   if (!user && pathname.startsWith('/erp')) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(loginUrl)
+    return applyHeaders(NextResponse.redirect(loginUrl))
   }
 
   // Authenticated users on /login → redirect to /erp
   if (user && pathname === '/login') {
-    return NextResponse.redirect(new URL('/erp', request.url))
+    return applyHeaders(NextResponse.redirect(new URL('/erp', request.url)))
   }
 
-  return supabaseResponse
+  return applyHeaders(supabaseResponse)
 }

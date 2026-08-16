@@ -1,5 +1,23 @@
-export type AdmitCardStatus = 'draft' | 'eligible' | 'blocked' | 'override_released' | 'published' | 'revoked'
+export type AdmitCardStatus =
+  | 'draft'
+  | 'eligible'
+  | 'blocked'
+  | 'override_released'
+  | 'published'
+  | 'revoked'
+  | 'superseded'
+
 export type CandidateEligibilityStatus = 'eligible' | 'ineligible'
+
+export type ReplacementReason =
+  | 'Exam Date Changed'
+  | 'Exam Room Changed'
+  | 'Subject Added'
+  | 'Subject Removed'
+  | 'Student Information Corrected'
+  | 'Photograph Updated'
+  | 'Administrative Correction'
+  | 'Other'
 
 export interface AdmitCard {
   id: string
@@ -16,9 +34,18 @@ export interface AdmitCard {
   className?: string
   sectionName?: string
   fatherName?: string
+  motherName?: string
+  dateOfBirth?: string | null
+  gender?: string | null
+  house?: string | null
+  examinationCenter?: string
+  examCenterRoom?: string
+  issueDate?: string
   photoUrl?: string | null
   studentAcademicHistoryId?: string | null
   admitCardNumber: string
+  version: number
+  documentFingerprint: string
   verificationToken: string
   status: AdmitCardStatus
   financialClearanceStatus: 'CLEAR' | 'PARTIAL' | 'OUTSTANDING' | 'WAIVED' | 'ON_HOLD'
@@ -36,20 +63,27 @@ export interface AdmitCard {
   revokedAt?: string | null
   revokedBy?: string | null
   revocationReason?: string | null
+  supersededAt?: string | null
+  supersededBy?: string | null
+  replacementReason?: string | null
   previousAdmitCardId?: string | null
+  dataSnapshot?: Record<string, any> | null
   createdAt: string
   updatedAt: string
   timetable?: Array<{
+    sNo?: number
     date: string
     day?: string
     subjectName: string
     subjectCode: string
+    subjectType?: string
     startTime: string
     endTime: string
     durationMinutes: number
     room?: string | null
     venue?: string | null
     maximumMarks: number
+    status?: string
   }>
 }
 
@@ -86,4 +120,10 @@ export interface BulkGenerationSummary {
 export interface AdmitCardOverridePayload {
   admitCardId: string
   reason: string
+}
+
+export interface ReissueAdmitCardPayload {
+  admitCardId: string
+  replacementReason: ReplacementReason
+  customReasonExplanation?: string
 }

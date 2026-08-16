@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { LogoutButton } from '@/components/auth/logout-button'
 import { ShieldAlert, ArrowLeft } from 'lucide-react'

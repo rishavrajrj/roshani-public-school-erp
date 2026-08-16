@@ -101,7 +101,9 @@ export function TeacherAssignmentManager({
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             >
-              <option value="">-- Choose Teacher --</option>
+              <option value="">
+                {teachers.length === 0 ? '-- No active teachers found --' : '-- Choose Teacher --'}
+              </option>
               {teachers.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.full_name}
@@ -123,7 +125,9 @@ export function TeacherAssignmentManager({
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             >
-              <option value="">-- Choose Class --</option>
+              <option value="">
+                {classes.length === 0 ? '-- No classes configured --' : '-- Choose Class --'}
+              </option>
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -139,11 +143,17 @@ export function TeacherAssignmentManager({
             <select
               value={sectionId}
               onChange={(e) => setSectionId(e.target.value)}
-              disabled={!classId}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
+              disabled={!classId || availableSections.length === 0}
+              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-500"
               required
             >
-              <option value="">-- Choose Section --</option>
+              <option value="">
+                {!classId
+                  ? '-- Select Class First --'
+                  : availableSections.length === 0
+                  ? '-- No sections available for selected class --'
+                  : '-- Choose Section --'}
+              </option>
               {availableSections.map((s) => (
                 <option key={s.id} value={s.id}>
                   Section {s.name}

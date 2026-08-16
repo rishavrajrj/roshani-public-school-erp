@@ -4,17 +4,20 @@ import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { checkCandidateEligibility } from './eligibility-service'
 import { getFinancialClearance } from '@/lib/fees/clearance-service'
+import { generateSecureVerificationToken, generateDocumentFingerprint } from './admit-card-crypto'
 import {
   generateAdmitCardSchema,
   bulkGenerateAdmitCardsSchema,
   overrideFinancialHoldSchema,
   publishAdmitCardSchema,
+  bulkPublishAdmitCardsSchema,
   revokeAdmitCardSchema,
   regenerateAdmitCardSchema,
   type GenerateAdmitCardInput,
   type BulkGenerateAdmitCardsInput,
   type OverrideFinancialHoldInput,
   type PublishAdmitCardInput,
+  type BulkPublishAdmitCardsInput,
   type RevokeAdmitCardInput,
   type RegenerateAdmitCardInput,
 } from './schemas-admit-card'
@@ -41,6 +44,119 @@ async function writeAuditLog(
   })
 }
 
+/**
+ * Builds an authoritative, immutable data snapshot for the admit card at generation/publication time.
+ */
+async function buildAdmitCardSnapshot(
+  supabase: any,
+  schoolId: string,
+  studentId: string,
+  examinationId: string,
+  cardMeta: {
+    admitCardNumber: string
+    version: number
+    fingerprint: string
+    verificationToken: string
+    issueDate?: string
+  }
+) {
+  // 1. Fetch Student Details
+  const { data: student } = await supabase
+    .from('students')
+    .select(`
+      first_name,
+      middle_name,
+      last_name,
+      admission_number,
+      roll_number,
+      date_of_birth,
+      gender,
+      photo_url,
+      classes(name),
+      sections(name),
+      student_guardians(
+        relationship,
+        guardians(full_name)
+      )
+    `)
+    .eq('id', studentId)
+    .eq('school_id', schoolId)
+    .single()
+
+  // 2. Fetch Examination Details
+  const { data: exam } = await supabase
+    .from('examinations')
+    .select('*, academic_sessions(name), schools(name)')
+    .eq('id', examinationId)
+    .eq('school_id', schoolId)
+    .single()
+
+  // 3. Fetch Examination Schedules
+  const { data: schedules } = await supabase
+    .from('examination_schedules')
+    .select('*, subjects(name, code)')
+    .eq('examination_id', examinationId)
+    .eq('school_id', schoolId)
+    .order('exam_date', { ascending: true })
+    .order('start_time', { ascending: true })
+
+  const timetable = schedules?.map((s: any, idx: number) => ({
+    sNo: idx + 1,
+    date: s.exam_date,
+    subjectName: s.subjects?.name || 'Subject',
+    subjectCode: s.subjects?.code || 'SUB-00',
+    subjectType: s.subjects?.name?.toLowerCase().includes('lab') || s.subjects?.name?.toLowerCase().includes('practical') ? 'Practical' : 'Theory',
+    startTime: s.start_time,
+    endTime: s.end_time,
+    durationMinutes: s.duration_minutes,
+    room: s.room || 'Main Hall',
+    venue: s.venue || 'Roshani Public School — Main Campus',
+    maximumMarks: Number(s.maximum_marks),
+    status: 'Eligible',
+  })) || []
+
+  const fullName = student
+    ? [student.first_name, student.middle_name, student.last_name].filter(Boolean).join(' ').trim()
+    : 'Student'
+
+  let fatherName = 'N/A'
+  let motherName = 'N/A'
+  if (student?.student_guardians && Array.isArray(student.student_guardians)) {
+    const father = student.student_guardians.find((g: any) => g.relationship?.toLowerCase() === 'father')
+    const mother = student.student_guardians.find((g: any) => g.relationship?.toLowerCase() === 'mother')
+    if (father?.guardians?.full_name) fatherName = father.guardians.full_name
+    if (mother?.guardians?.full_name) motherName = mother.guardians.full_name
+  }
+
+  const firstSched = schedules?.[0]
+
+  return {
+    studentName: fullName,
+    admissionNumber: student?.admission_number || 'N/A',
+    rollNumber: student?.roll_number || 'N/A',
+    className: student?.classes?.name || 'Class',
+    sectionName: student?.sections?.name || '',
+    fatherName,
+    motherName,
+    dateOfBirth: student?.date_of_birth || null,
+    gender: student?.gender || 'N/A',
+    house: 'Tagore House',
+    examinationCenter: firstSched?.venue || 'Roshani Public School — Main Campus',
+    examCenterRoom: firstSched?.room || 'Main Hall / Room 101',
+    photoUrl: student?.photo_url || null,
+    examinationName: exam?.name || 'Annual Examination',
+    examinationCode: exam?.code || 'ANNUAL',
+    academicSessionName: exam?.academic_sessions?.name || '2025–2026',
+    schoolName: exam?.schools?.name || 'Roshani Public School',
+    admitCardNumber: cardMeta.admitCardNumber,
+    version: cardMeta.version,
+    documentFingerprint: cardMeta.fingerprint,
+    verificationToken: cardMeta.verificationToken,
+    issueDate: cardMeta.issueDate || new Date().toISOString().split('T')[0],
+    timetable,
+  }
+}
+
 // ============================================================
 // GENERATE SINGLE ADMIT CARD
 // ============================================================
@@ -61,7 +177,7 @@ export async function generateAdmitCardAction(input: GenerateAdmitCardInput) {
       return { success: false, error: `Candidate is ineligible: ${eligibility.reasons.join(', ')}`, eligibility }
     }
 
-    // 2. Fetch Examination Details for Numbering Prefix
+    // 2. Fetch Examination Details
     const { data: exam } = await supabase
       .from('examinations')
       .select('*, academic_sessions(name)')
@@ -71,14 +187,14 @@ export async function generateAdmitCardAction(input: GenerateAdmitCardInput) {
 
     if (!exam) return { success: false, error: 'Examination master not found' }
 
-    // 3. Check existing active Admit Card
+    // 3. Check existing active (non-revoked, non-superseded) Admit Card
     const { data: existing } = await supabase
       .from('admit_cards')
       .select('*')
       .eq('school_id', schoolId)
       .eq('examination_id', validated.examinationId)
       .eq('student_id', validated.studentId)
-      .ne('status', 'revoked')
+      .not('status', 'in', '("revoked","superseded")')
       .maybeSingle()
 
     if (existing) {
@@ -87,31 +203,50 @@ export async function generateAdmitCardAction(input: GenerateAdmitCardInput) {
       }
     }
 
-    // 4. Determine Status based on Financial Clearance Gate
+    // 4. Financial Clearance Gate
     const financialStatus = eligibility.financialClearanceStatus
     const isFinanciallyCleared = financialStatus === 'CLEAR' || financialStatus === 'WAIVED'
     const cardStatus = isFinanciallyCleared ? 'eligible' : 'blocked'
 
-    // 5. Generate Concurrency-Safe Admit Card Number via RPC
-    const { data: cardNumber } = await supabase.rpc('generate_admit_card_number', {
-      p_school_id: schoolId,
-      p_session_name: exam.academic_sessions?.name || 'SESSION',
-      p_exam_code: exam.code || 'EXAM',
+    // 5. Generate Concurrency-Safe Admit Card Number & Crypto Token
+    let cardNumber = existing?.admit_card_number
+    if (!cardNumber) {
+      const { data: generatedNumber } = await supabase.rpc('generate_admit_card_number', {
+        p_school_id: schoolId,
+        p_session_name: exam.academic_sessions?.name || 'SESSION',
+        p_exam_code: exam.code || 'EXAM',
+      })
+      cardNumber = generatedNumber || `AC/${Date.now()}`
+    }
+
+    const verificationToken = existing?.verification_token || generateSecureVerificationToken()
+    const fingerprint = existing?.document_fingerprint || generateDocumentFingerprint(new Date().getFullYear())
+    const version = existing?.version || 1
+
+    // 6. Build Snapshot
+    const snapshot = await buildAdmitCardSnapshot(supabase, schoolId, validated.studentId, validated.examinationId, {
+      admitCardNumber: cardNumber,
+      version,
+      fingerprint,
+      verificationToken,
     })
 
-    // 6. Insert Admit Card
     const cardData = {
       school_id: schoolId,
       academic_session_id: exam.academic_session_id,
       examination_id: validated.examinationId,
       student_id: validated.studentId,
       student_academic_history_id: eligibility.academicHistoryId || null,
-      admit_card_number: cardNumber || `AC/${Date.now()}`,
+      admit_card_number: cardNumber,
+      version,
+      document_fingerprint: fingerprint,
+      verification_token: verificationToken,
       status: cardStatus,
       financial_clearance_status: financialStatus,
       financial_outstanding_amount: eligibility.totalOutstanding,
       financial_override: false,
       candidate_eligibility_status: 'eligible',
+      data_snapshot: snapshot,
       updated_at: new Date().toISOString(),
     }
 
@@ -137,6 +272,8 @@ export async function generateAdmitCardAction(input: GenerateAdmitCardInput) {
 
     await writeAuditLog(supabase, schoolId, authState.user.profileId, 'GENERATE_ADMIT_CARD', 'admit_cards', resultCard.id, null, {
       admitCardNumber: resultCard.admit_card_number,
+      version: resultCard.version,
+      documentFingerprint: resultCard.document_fingerprint,
       status: resultCard.status,
       financialClearanceStatus: financialStatus,
       outstandingAmount: eligibility.totalOutstanding,
@@ -162,7 +299,6 @@ export async function bulkGenerateAdmitCardsAction(input: BulkGenerateAdmitCards
     const supabase = (await createClient()) as any
     const schoolId = authState.user.schoolId
 
-    // Fetch Examination
     const { data: exam } = await supabase
       .from('examinations')
       .select('*, academic_sessions(id, name)')
@@ -172,7 +308,6 @@ export async function bulkGenerateAdmitCardsAction(input: BulkGenerateAdmitCards
 
     if (!exam) return { success: false, error: 'Examination not found' }
 
-    // Fetch Students in Class via student_academic_history
     let query = supabase
       .from('student_academic_history')
       .select('student_id, students(id, first_name, last_name, admission_number, status)')
@@ -204,7 +339,6 @@ export async function bulkGenerateAdmitCardsAction(input: BulkGenerateAdmitCards
       const admNo = rec.students?.admission_number || 'N/A'
       summary.totalProcessed++
 
-      // Generate single
       const res = await generateAdmitCardAction({ examinationId: validated.examinationId, studentId: sId })
       if (res.success && res.data) {
         if (res.data.status === 'eligible') summary.generatedEligible++
@@ -236,6 +370,7 @@ export async function bulkGenerateAdmitCardsAction(input: BulkGenerateAdmitCards
       totalProcessed: summary.totalProcessed,
       eligible: summary.generatedEligible,
       blocked: summary.generatedBlocked,
+      ineligible: summary.ineligibleCount,
     })
 
     return { success: true, summary }
@@ -253,7 +388,6 @@ export async function overrideFinancialHoldAction(input: OverrideFinancialHoldIn
     const authState = await resolveUser()
     if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
     
-    // Strict Role Policy: Super Admin, Admin, Principal ONLY
     if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) {
       return { success: false, error: 'Forbidden: Only Super Admin, Admin, or Principal can override financial holds' }
     }
@@ -262,7 +396,6 @@ export async function overrideFinancialHoldAction(input: OverrideFinancialHoldIn
     const supabase = (await createClient()) as any
     const schoolId = authState.user.schoolId
 
-    // Fetch Admit Card
     const { data: card } = await supabase
       .from('admit_cards')
       .select('*')
@@ -272,13 +405,10 @@ export async function overrideFinancialHoldAction(input: OverrideFinancialHoldIn
 
     if (!card) return { success: false, error: 'Admit Card not found' }
     if (card.status === 'published') return { success: false, error: 'Admit Card is already published' }
-    if (card.status === 'revoked') return { success: false, error: 'Cannot override a revoked Admit Card' }
+    if (card.status === 'revoked' || card.status === 'superseded') return { success: false, error: 'Cannot override an inactive Admit Card' }
 
-    // Recalculate authoritative financial clearance snapshot
     const clearance = await getFinancialClearance(card.student_id, card.academic_session_id)
 
-    // Execute Override on Admit Card Document Gate ONLY
-    // NOTE: Financial ledger, invoices, payments, and fee balances remain 100% UNTOUCHED
     const { data: updated, error } = await supabase
       .from('admit_cards')
       .update({
@@ -298,7 +428,6 @@ export async function overrideFinancialHoldAction(input: OverrideFinancialHoldIn
 
     if (error) return { success: false, error: error.message }
 
-    // Record Append-Only Audit Trail with Financial Snapshot
     await writeAuditLog(supabase, schoolId, authState.user.profileId, 'OVERRIDE_FINANCIAL_HOLD', 'admit_cards', updated.id, card, {
       overrideReason: validated.reason,
       overrideBy: authState.user.profileId,
@@ -314,7 +443,7 @@ export async function overrideFinancialHoldAction(input: OverrideFinancialHoldIn
 }
 
 // ============================================================
-// PUBLISH ADMIT CARD
+// PUBLISH ADMIT CARD (FREEZES IMMUTABLE SNAPSHOT)
 // ============================================================
 
 export async function publishAdmitCardAction(input: PublishAdmitCardInput) {
@@ -338,10 +467,12 @@ export async function publishAdmitCardAction(input: PublishAdmitCardInput) {
     if (card.status === 'blocked') {
       return { success: false, error: 'Cannot publish a financially blocked Admit Card. Perform an explicit Admin Financial Override first.' }
     }
-    if (card.status === 'revoked') return { success: false, error: 'Cannot publish a revoked Admit Card' }
+    if (card.status === 'revoked' || card.status === 'superseded') {
+      return { success: false, error: `Cannot publish an inactive Admit Card (status: ${card.status})` }
+    }
     if (card.status === 'published') return { success: false, error: 'Admit Card is already published' }
 
-    // F4 Fix: Live Financial Clearance Re-check at publication time
+    // Live Financial Clearance Re-check
     if (card.status !== 'override_released') {
       const clearance = await getFinancialClearance(card.student_id, card.academic_session_id)
       if (clearance.status !== 'CLEAR' && clearance.status !== 'WAIVED') {
@@ -351,10 +482,20 @@ export async function publishAdmitCardAction(input: PublishAdmitCardInput) {
           .eq('id', card.id)
         return {
           success: false,
-          error: `Financial clearance check failed at publication time (Status: ${clearance.status}, Outstanding: ${clearance.totalOutstanding}). Admit Card status updated to blocked.`,
+          error: `Financial clearance check failed at publication time (Status: ${clearance.status}, Outstanding: ₹${clearance.totalOutstanding}). Status reverted to blocked.`,
         }
       }
     }
+
+    // Freeze definitive immutable snapshot
+    const issueDate = new Date().toISOString().split('T')[0]
+    const snapshot = await buildAdmitCardSnapshot(supabase, schoolId, card.student_id, card.examination_id, {
+      admitCardNumber: card.admit_card_number,
+      version: card.version || 1,
+      fingerprint: card.document_fingerprint || generateDocumentFingerprint(),
+      verificationToken: card.verification_token,
+      issueDate,
+    })
 
     const { data: updated, error } = await supabase
       .from('admit_cards')
@@ -362,6 +503,7 @@ export async function publishAdmitCardAction(input: PublishAdmitCardInput) {
         status: 'published',
         published_by: authState.user.profileId,
         published_at: new Date().toISOString(),
+        data_snapshot: snapshot,
         updated_at: new Date().toISOString(),
       })
       .eq('id', card.id)
@@ -371,11 +513,67 @@ export async function publishAdmitCardAction(input: PublishAdmitCardInput) {
 
     if (error) return { success: false, error: error.message }
 
-    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'PUBLISH_ADMIT_CARD', 'admit_cards', updated.id, card, { status: 'published', publishedAt: updated.published_at })
+    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'PUBLISH_ADMIT_CARD', 'admit_cards', updated.id, card, {
+      status: 'published',
+      publishedAt: updated.published_at,
+      version: updated.version,
+      documentFingerprint: updated.document_fingerprint,
+    })
 
     return { success: true, data: updated }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to publish Admit Card' }
+  }
+}
+
+// ============================================================
+// BULK PUBLISH ADMIT CARDS
+// ============================================================
+
+export async function bulkPublishAdmitCardsAction(input: BulkPublishAdmitCardsInput) {
+  try {
+    const authState = await resolveUser()
+    if (authState.state !== 'authenticated') return { success: false, error: 'Unauthorized' }
+    if (!hasAnyRole(authState.user, ['Super Admin', 'Admin', 'Principal'])) return { success: false, error: 'Forbidden' }
+
+    const validated = bulkPublishAdmitCardsSchema.parse(input)
+    const supabase = (await createClient()) as any
+    const schoolId = authState.user.schoolId
+
+    // Find all eligible cards for this exam
+    let query = supabase
+      .from('admit_cards')
+      .select('id, status')
+      .eq('school_id', schoolId)
+      .eq('examination_id', validated.examinationId)
+      .in('status', ['eligible', 'override_released'])
+
+    const { data: cards } = await query
+    if (!cards || cards.length === 0) {
+      return { success: false, error: 'No eligible Admit Cards found ready for publication' }
+    }
+
+    let publishedCount = 0
+    let failedCount = 0
+
+    for (const card of cards) {
+      const res = await publishAdmitCardAction({ admitCardId: card.id })
+      if (res.success) {
+        publishedCount++
+      } else {
+        failedCount++
+      }
+    }
+
+    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'BULK_PUBLISH_ADMIT_CARDS', 'admit_cards', validated.examinationId, null, {
+      totalCandidates: cards.length,
+      publishedCount,
+      failedCount,
+    })
+
+    return { success: true, publishedCount, failedCount, total: cards.length }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to bulk publish Admit Cards' }
   }
 }
 
@@ -419,7 +617,11 @@ export async function revokeAdmitCardAction(input: RevokeAdmitCardInput) {
 
     if (error) return { success: false, error: error.message }
 
-    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'REVOKE_ADMIT_CARD', 'admit_cards', updated.id, card, { status: 'revoked', reason: validated.reason })
+    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'REVOKE_ADMIT_CARD', 'admit_cards', updated.id, card, {
+      status: 'revoked',
+      reason: validated.reason,
+      revokedBy: authState.user.profileId,
+    })
 
     return { success: true, data: updated }
   } catch (err: any) {
@@ -428,7 +630,7 @@ export async function revokeAdmitCardAction(input: RevokeAdmitCardInput) {
 }
 
 // ============================================================
-// REGENERATE ADMIT CARD (PRESERVE HISTORY)
+// REGENERATE / REPLACE ADMIT CARD (CREATES VERSION N+1 & SUPERSEDES)
 // ============================================================
 
 export async function regenerateAdmitCardAction(input: RegenerateAdmitCardInput) {
@@ -450,34 +652,83 @@ export async function regenerateAdmitCardAction(input: RegenerateAdmitCardInput)
 
     if (!oldCard) return { success: false, error: 'Previous Admit Card record not found' }
 
-    // Mark old card as revoked to preserve history
+    const fullReason = validated.replacementReason
+      ? validated.replacementReason === 'Other' && validated.customExplanation
+        ? `Other: ${validated.customExplanation}`
+        : `${validated.replacementReason} — ${validated.reason}`
+      : validated.reason
+
+    // 1. Mark old version as SUPERSEDED (Immutable history preservation)
     await supabase
       .from('admit_cards')
       .update({
-        status: 'revoked',
-        revocation_reason: `Regenerated: ${validated.reason}`,
-        revoked_by: authState.user.profileId,
-        revoked_at: new Date().toISOString(),
+        status: 'superseded',
+        superseded_at: new Date().toISOString(),
+        superseded_by: authState.user.profileId,
+        replacement_reason: fullReason,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', oldCard.id)
 
-    // Issue new card
-    const genRes = await generateAdmitCardAction({ examinationId: oldCard.examination_id, studentId: oldCard.student_id })
-    if (!genRes.success) return genRes
+    // 2. Eligibility & Financial clearance for new version
+    const eligibility = await checkCandidateEligibility(oldCard.student_id, oldCard.examination_id)
+    const financialStatus = eligibility.financialClearanceStatus
+    const isFinanciallyCleared = financialStatus === 'CLEAR' || financialStatus === 'WAIVED' || oldCard.financial_override
+    const nextStatus = isFinanciallyCleared ? 'eligible' : 'blocked'
 
-    // Store previous_admit_card_id link
-    await supabase
-      .from('admit_cards')
-      .update({ previous_admit_card_id: oldCard.id })
-      .eq('id', genRes.data.id)
+    const nextVersion = (oldCard.version || 1) + 1
+    const newVerificationToken = generateSecureVerificationToken()
+    const newFingerprint = generateDocumentFingerprint(new Date().getFullYear())
 
-    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'REGENERATE_ADMIT_CARD', 'admit_cards', genRes.data.id, oldCard, {
-      oldCardId: oldCard.id,
-      reason: validated.reason,
+    // 3. Build snapshot for Version N+1
+    const snapshot = await buildAdmitCardSnapshot(supabase, schoolId, oldCard.student_id, oldCard.examination_id, {
+      admitCardNumber: oldCard.admit_card_number,
+      version: nextVersion,
+      fingerprint: newFingerprint,
+      verificationToken: newVerificationToken,
     })
 
-    return genRes
+    const newCardData = {
+      school_id: schoolId,
+      academic_session_id: oldCard.academic_session_id,
+      examination_id: oldCard.examination_id,
+      student_id: oldCard.student_id,
+      student_academic_history_id: oldCard.student_academic_history_id,
+      admit_card_number: oldCard.admit_card_number,
+      version: nextVersion,
+      document_fingerprint: newFingerprint,
+      verification_token: newVerificationToken,
+      status: nextStatus,
+      financial_clearance_status: financialStatus,
+      financial_outstanding_amount: eligibility.totalOutstanding,
+      financial_override: oldCard.financial_override,
+      override_reason: oldCard.override_reason,
+      candidate_eligibility_status: 'eligible',
+      previous_admit_card_id: oldCard.id,
+      replacement_reason: fullReason,
+      data_snapshot: snapshot,
+      updated_at: new Date().toISOString(),
+    }
+
+    const { data: newCard, error: insertErr } = await supabase
+      .from('admit_cards')
+      .insert(newCardData)
+      .select()
+      .single()
+
+    if (insertErr) return { success: false, error: insertErr.message }
+
+    // 4. Audit Log
+    await writeAuditLog(supabase, schoolId, authState.user.profileId, 'REPLACE_ADMIT_CARD', 'admit_cards', newCard.id, oldCard, {
+      oldCardId: oldCard.id,
+      newCardId: newCard.id,
+      newVersion: nextVersion,
+      reason: fullReason,
+      documentFingerprint: newFingerprint,
+    })
+
+    return { success: true, data: newCard }
   } catch (err: any) {
-    return { success: false, error: err.message || 'Failed to regenerate Admit Card' }
+    return { success: false, error: err.message || 'Failed to replace Admit Card' }
   }
 }

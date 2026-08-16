@@ -39,13 +39,13 @@ INSERT INTO public.exam_types (school_id, code, name, description)
 SELECT s.id, et.code, et.name, et.description
 FROM public.schools s
 CROSS JOIN (VALUES
-    ('UT',      'Unit Test',           'Periodic unit evaluation'),
-    ('PT',      'Periodic Test',       'Term periodic test'),
-    ('HY',      'Half Yearly',         'Mid-term examination'),
-    ('PA',      'Pre-Annual',          'Pre-board / pre-annual mock exam'),
-    ('ANNUAL',  'Annual Examination',  'Final annual examination'),
-    ('PRAC',    'Practical Exam',      'Laboratory and practical assessment'),
-    ('IA',      'Internal Assessment', 'Continuous internal assessment')
+    ('UT',      'Unit Test',               'Periodic unit evaluation'),
+    ('PT',      'Periodic Test',           'Term periodic test'),
+    ('HY',      'Half-Yearly Examination', 'Mid-term examination'),
+    ('PA',      'Pre-Annual Examination',  'Pre-board / pre-annual mock exam'),
+    ('ANNUAL',  'Annual Examination',      'Final annual examination'),
+    ('PRAC',    'Practical Examination',   'Laboratory and practical assessment'),
+    ('IA',      'Internal Assessment',     'Continuous internal assessment')
 ) AS et(code, name, description)
 ON CONFLICT (school_id, code) DO NOTHING;
 

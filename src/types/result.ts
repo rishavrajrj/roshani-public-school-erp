@@ -111,3 +111,237 @@ export interface ResultCalculationSummary {
   blockedCount: number
   results: StudentResult[]
 }
+
+export interface StudentAcademicProfile {
+  id: string
+  firstName: string
+  lastName: string
+  fullName: string
+  admissionNumber: string
+  rollNumber?: string | null
+  className?: string | null
+  sectionName?: string | null
+  academicSessionName?: string | null
+  fatherName?: string | null
+  motherName?: string | null
+  dateOfBirth?: string | null
+  avatarUrl?: string | null
+  attendancePercentage?: number | null
+}
+
+export interface ExamSummaryRow {
+  index: number
+  resultId: string
+  examinationId: string
+  examinationName: string
+  examinationCode?: string
+  academicSessionName: string
+  className: string
+  sectionName?: string
+  formattedYearClassExam: string
+  percentage: number
+  sgpa: number
+  totalMarksObtained: number
+  maximumMarks: number
+  backPaperCount: number
+  backPapers: string[] // Subject names of failed subjects
+  resultStatus: ResultStatus
+  grade: string
+  publishedAt?: string | null
+}
+
+export interface SubjectPerformanceAnalysis {
+  subjectId: string
+  subjectName: string
+  subjectCode: string
+  obtainedMarks: number
+  maximumMarks: number
+  percentage: number
+  grade: string
+  gradePoint: number
+  isPass: boolean
+  attendanceStatus: MarkAttendanceStatus
+  theoryMarks: number
+  practicalMarks: number
+  internalMarks: number
+}
+
+export interface PerformanceTrendPoint {
+  examinationId: string
+  examinationName: string
+  academicSessionName: string
+  className: string
+  percentage: number
+  grade: string
+  sgpa: number
+  publishedAt?: string | null
+}
+
+export interface GradeDistributionItem {
+  grade: string
+  count: number
+  percentageOfTotal: number
+  subjects: string[]
+  gradePoint: number
+  description?: string | null
+}
+
+export interface StudentAcademicProgression {
+  classLevel: string // e.g. "Class 8", "Class 9", "Class 10"
+  academicSession: string
+  percentage: number
+  gpa: number
+  creditsRegistered?: number
+  creditsEarned?: number
+  resultStatus: string
+  isCurrent: boolean
+}
+
+export interface DynamicInsight {
+  id: string
+  type: 'positive' | 'improvement' | 'attention' | 'consistency'
+  title: string
+  description: string
+  icon?: string
+}
+
+export interface SubjectComparisonRow {
+  subjectName: string
+  subjectCode: string
+  examAMarks: number
+  examAMax: number
+  examAPercentage: number
+  examAGrade: string
+  examBMarks: number
+  examBMax: number
+  examBPercentage: number
+  examBGrade: string
+  changeMarks: number
+  changePercentage: number
+  trend: 'up' | 'down' | 'neutral'
+}
+
+export interface ExamComparisonResult {
+  examAId: string
+  examAName: string
+  examASession: string
+  examAClass: string
+  examAPercentage: number
+  examAGrade: string
+  examAGpa: number
+  examAResultStatus: ResultStatus
+  
+  examBId: string
+  examBName: string
+  examBSession: string
+  examBClass: string
+  examBPercentage: number
+  examBGrade: string
+  examBGpa: number
+  examBResultStatus: ResultStatus
+  
+  percentageDelta: number
+  gpaDelta: number
+  trendDirection: 'up' | 'down' | 'neutral'
+  trendStatusLabel: string
+  summaryNarrative: string
+  subjectComparisons: SubjectComparisonRow[]
+}
+
+export interface SubjectHistoricalPoint {
+  examinationId: string
+  examinationName: string
+  academicSessionName: string
+  className: string
+  marksObtained: number
+  maximumMarks: number
+  percentage: number
+  grade: string
+  gradePoint: number
+  isPass: boolean
+  publishedAt?: string | null
+}
+
+export interface SubjectPerformanceHistory {
+  subjectId: string
+  subjectName: string
+  subjectCode: string
+  currentMarks: number
+  maximumMarks: number
+  percentage: number
+  grade: string
+  gradePoint: number
+  previousMarks: number | null
+  previousPercentage: number | null
+  changeMarks: number | null
+  changePercentage: number | null
+  trend: 'up' | 'down' | 'neutral'
+  historicalPoints: SubjectHistoricalPoint[]
+  trendNarrative: string
+}
+
+export interface AcademicJourneyStep {
+  index: number
+  resultId: string
+  examinationId: string
+  examinationName: string
+  academicSession: string
+  classLevel: string
+  sectionName?: string
+  percentage: number
+  grade: string
+  sgpa: number
+  resultStatus: ResultStatus
+  isCurrent: boolean
+  publishedAt?: string | null
+}
+
+export interface AcademicPerformanceConfig {
+  strongSubjectThreshold: number // Default 80%
+  practiceSubjectThreshold: number // Default 70%
+  stableTrendThreshold: number // Default 0.5%
+  passingPercentage: number // Default 33%
+  enableGpaDisplay: boolean // Default true (for senior secondary/GPA enabled classes)
+  enableCgpaDisplay: boolean // Default true
+}
+
+export interface StudentPerformanceAnalytics {
+  overallPercentage: number
+  overallGrade: string
+  overallGpa: number
+  overallCgpa: number
+  totalMarksObtained: number
+  totalMaximumMarks: number
+  totalSubjectsCount: number
+  subjectsPassedCount: number
+  subjectsFailedCount: number
+  overallResultStatus: ResultStatus
+  
+  // Trend
+  hasTrend: boolean
+  trendPercentageDelta: number
+  trendDirection: 'up' | 'down' | 'neutral'
+  trendSummaryText: string
+  
+  // Comparison
+  currentPercentage: number
+  previousPercentage: number | null
+  improvementDelta: number | null
+  
+  // Subject Analysis
+  strongSubjects: SubjectPerformanceAnalysis[]
+  practiceSubjects: SubjectPerformanceAnalysis[]
+  allSubjectScores: SubjectPerformanceAnalysis[]
+  
+  // Progression & Distribution
+  trendPoints: PerformanceTrendPoint[]
+  gradeDistribution: GradeDistributionItem[]
+  academicProgression: StudentAcademicProgression[]
+  academicJourney: AcademicJourneyStep[]
+  dynamicInsights: DynamicInsight[]
+  examSummaries: ExamSummaryRow[]
+  config?: AcademicPerformanceConfig
+}
+
+
+

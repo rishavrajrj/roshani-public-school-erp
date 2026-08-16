@@ -229,8 +229,10 @@ export function AdminPromotionWorkspace({
           <select
             value={sourceSessionId}
             onChange={(e) => setSourceSessionId(e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+            disabled={sessions.length === 0}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm disabled:bg-slate-100 disabled:text-slate-500"
           >
+            <option value="">{sessions.length === 0 ? 'No sessions available' : 'Select Source Session'}</option>
             {sessions.map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
@@ -242,8 +244,10 @@ export function AdminPromotionWorkspace({
           <select
             value={targetSessionId}
             onChange={(e) => setTargetSessionId(e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+            disabled={sessions.length === 0}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm disabled:bg-slate-100 disabled:text-slate-500"
           >
+            <option value="">{sessions.length === 0 ? 'No sessions available' : 'Select Target Session'}</option>
             {sessions.map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
@@ -255,8 +259,10 @@ export function AdminPromotionWorkspace({
           <select
             value={selectedExamId}
             onChange={(e) => setSelectedExamId(e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+            disabled={examinations.length === 0}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm disabled:bg-slate-100 disabled:text-slate-500"
           >
+            <option value="">{examinations.length === 0 ? 'No examinations available' : 'Select Examination'}</option>
             {examinations.map((e) => (
               <option key={e.id} value={e.id}>{e.name}</option>
             ))}
@@ -268,8 +274,10 @@ export function AdminPromotionWorkspace({
           <select
             value={selectedClassId}
             onChange={(e) => setSelectedClassId(e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+            disabled={classes.length === 0}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm disabled:bg-slate-100 disabled:text-slate-500"
           >
+            <option value="">{classes.length === 0 ? 'No classes available' : 'Select Class'}</option>
             {classes.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}

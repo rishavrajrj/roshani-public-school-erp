@@ -1,8 +1,11 @@
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getExaminations } from '@/lib/examinations/queries'
-import { getStudentResult } from '@/lib/examinations/result-queries'
+import {
+  getStudentAllPublishedResults,
+  getGradingScales,
+  getStudentAcademicProfile,
+} from '@/lib/examinations/result-queries'
 import { ParentResultView } from '@/components/examinations/results/parent-result-view'
 import { PageHeader } from '@/components/ui/page-header'
 
@@ -16,34 +19,63 @@ export default async function ParentResultsPage() {
   }
 
   const supabase = (await createClient()) as any
-  const [psmRes, examinations] = await Promise.all([
-    supabase
-      .from('parent_student_map')
-      .select('student_id, students(first_name, last_name)')
-      .eq('parent_profile_id', authState.user.profileId)
-      .maybeSingle(),
-    getExaminations(),
-  ])
+  const { data: psm } = await supabase
+    .from('parent_student_map')
+    .select('student_id, students(first_name, last_name)')
+    .eq('parent_profile_id', authState.user.profileId)
+    .maybeSingle()
 
-  const psm = psmRes.data
   const studentId = psm?.student_id
-  const childName = psm?.students ? `${psm.students.first_name || ''} ${psm.students.last_name || ''}`.trim() : 'Ward'
+  const childName = psm?.students
+    ? `${psm.students.first_name || ''} ${psm.students.last_name || ''}`.trim()
+    : 'Ward'
 
-  const latestExamId = examinations[0]?.id || ''
-  const result = studentId && latestExamId ? await getStudentResult(studentId, latestExamId) : null
+  if (!studentId) {
+    return (
+      <div className="space-y-6 w-full">
+        <PageHeader
+          title="Student Academic Performance"
+          description="Official subject scores, grading distribution, aggregate percentage, and faculty remarks."
+          breadcrumbs={[
+            { label: 'Parent Portal', href: '/erp/parent' },
+            { label: 'Academic Results' },
+          ]}
+        />
+        <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center max-w-xl mx-auto shadow-sm space-y-3">
+          <div className="text-3xl">👨‍👧</div>
+          <h3 className="text-lg font-bold text-slate-900">No Student Profile Linked</h3>
+          <p className="text-xs text-slate-500">
+            No active student profile is linked to your parent account. Please contact the school office for student mapping.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const [allResults, gradingScales, studentProfile] = await Promise.all([
+    getStudentAllPublishedResults(studentId),
+    getGradingScales(),
+    getStudentAcademicProfile(studentId),
+  ])
 
   return (
     <div className="space-y-6 w-full">
       <PageHeader
-        title={`Academic Grade &amp; Report Card — ${childName}`}
-        description="Official subject scores, grading distribution, aggregate percentage, and faculty remarks."
+        title={`Academic Performance &amp; Grade Card — ${childName}`}
+        description="Official subject evaluations, grading scale distribution, GPA trends, and provisional marks statements."
         breadcrumbs={[
-          { label: 'Parent ERP Portal', href: '/erp/parent' },
-          { label: 'Report Card' },
+          { label: 'Parent Portal', href: '/erp/parent' },
+          { label: 'Academic Results' },
         ]}
       />
 
-      <ParentResultView result={result} childName={childName} />
+      <ParentResultView
+        allResults={allResults}
+        gradingScales={gradingScales}
+        studentProfile={studentProfile}
+        childName={childName}
+      />
     </div>
   )
 }
+

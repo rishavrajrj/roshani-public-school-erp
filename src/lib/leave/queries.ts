@@ -78,6 +78,17 @@ export const getUserLeaveApplications = cache(async function getUserLeaveApplica
     query = query.eq('applicant_profile_id', user.profileId)
   } else if (isParent) {
     if (studentId) {
+      // Verify parent has legitimate custody link to this studentId
+      const { data: linkRecord } = await (supabase as any)
+        .from('parent_student_map')
+        .select('student_id')
+        .eq('parent_profile_id', user.profileId)
+        .eq('student_id', studentId)
+        .maybeSingle()
+
+      if (!linkRecord) {
+        return []
+      }
       query = query.eq('student_id', studentId)
     } else {
       query = query.eq('applicant_profile_id', user.profileId)

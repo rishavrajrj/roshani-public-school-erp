@@ -43,7 +43,7 @@ const NOTICES: NoticeItem[] = [
   },
   {
     id: 'n-4',
-    title: 'Semester Examination Timetable',
+    title: 'Half-Yearly Examination Timetable',
     description: 'Detailed subject-wise date sheet and hall timings for upcoming term assessments.',
     date: '10 Jun 2025',
     category: 'exam',

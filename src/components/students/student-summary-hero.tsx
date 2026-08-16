@@ -20,7 +20,7 @@ interface StudentSummaryHeroProps {
 
 export function StudentSummaryHero({
   attendanceSummary,
-  examTitle = 'Semester Examination 2024–25',
+  examTitle = 'Half-Yearly Examination 2024–25',
   admitCardAvailable = true,
   academicPercentage = 85.6,
   academicGrade = 'A',

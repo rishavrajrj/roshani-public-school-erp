@@ -241,6 +241,32 @@ export async function getStudentCertificates(studentId: string): Promise<Certifi
   const supabase = (await createClient()) as any
   const schoolId = authState.user.schoolId
 
+  // Security check: If student role, ensure studentId matches own profile
+  if (hasAnyRole(authState.user, ['Student'])) {
+    const { data: ownStudent } = await supabase
+      .from('students')
+      .select('id')
+      .eq('profile_id', authState.user.profileId)
+      .eq('school_id', schoolId)
+      .maybeSingle()
+    if (!ownStudent || ownStudent.id !== studentId) {
+      return []
+    }
+  }
+
+  // Security check: If parent role, ensure studentId is linked in parent_student_map
+  if (hasAnyRole(authState.user, ['Parent'])) {
+    const { data: linkedStudent } = await supabase
+      .from('parent_student_map')
+      .select('student_id')
+      .eq('parent_profile_id', authState.user.profileId)
+      .eq('student_id', studentId)
+      .maybeSingle()
+    if (!linkedStudent) {
+      return []
+    }
+  }
+
   const { data } = await supabase
     .from('certificates')
     .select('*, students(first_name, last_name, admission_number, father_name, classes(name), sections(name)), certificate_types(code, name)')

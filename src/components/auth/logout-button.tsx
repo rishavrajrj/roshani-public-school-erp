@@ -1,7 +1,8 @@
-"use client";
+'use client'
 
 import { useState } from "react";
 import { logoutAction } from "@/lib/auth/actions";
+import { broadcastAuthLogout } from "./multi-tab-auth-sync";
 import { Button } from "@/components/ui/button";
 
 export function LogoutButton() {
@@ -10,6 +11,7 @@ export function LogoutButton() {
   const handleLogout = async () => {
     setIsPending(true);
     try {
+      broadcastAuthLogout();
       await logoutAction();
     } finally {
       setIsPending(false);

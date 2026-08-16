@@ -24,8 +24,9 @@ export default async function TeacherAssignmentsPage() {
       .from('academic_sessions')
       .select('id, name')
       .eq('school_id', user.schoolId)
-      .eq('is_current', true)
-      .single(),
+      .order('is_current', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(1),
     supabase
       .from('user_roles')
       .select(`
@@ -55,7 +56,7 @@ export default async function TeacherAssignmentsPage() {
     getTeacherAssignments(),
   ])
 
-  const session = sessionRes.data as { id: string; name: string } | null
+  const session = Array.isArray(sessionRes.data) ? (sessionRes.data[0] as { id: string; name: string } | undefined) : (sessionRes.data as { id: string; name: string } | null)
   const teacherRoles = teacherRolesRes.data || []
   const teachers = teacherRoles
     .map((tr: any) => tr.profiles)

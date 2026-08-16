@@ -30,9 +30,22 @@ export const revokeAdmitCardSchema = z.object({
   reason: z.string().trim().min(5, 'A minimum 5-character reason is required for revocation'),
 })
 
+export const replacementReasonEnum = z.enum([
+  'Exam Date Changed',
+  'Exam Room Changed',
+  'Subject Added',
+  'Subject Removed',
+  'Student Information Corrected',
+  'Photograph Updated',
+  'Administrative Correction',
+  'Other',
+])
+
 export const regenerateAdmitCardSchema = z.object({
   oldAdmitCardId: z.string().uuid('Valid Admit Card ID required'),
   reason: z.string().trim().min(3, 'A reason is required for Admit Card regeneration'),
+  replacementReason: replacementReasonEnum.optional(),
+  customExplanation: z.string().trim().optional(),
 })
 
 export type GenerateAdmitCardInput = z.infer<typeof generateAdmitCardSchema>

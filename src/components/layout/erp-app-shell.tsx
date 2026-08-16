@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { ERPSidebar } from './erp-sidebar'
 import { ERPHeader } from './erp-header'
+import { MultiTabAuthSync } from '@/components/auth/multi-tab-auth-sync'
 
 interface ERPAppShellProps {
   userRole: string
@@ -52,6 +53,9 @@ export function ERPAppShell({
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+      {/* Real-Time Multi-Tab Session Synchronization */}
+      <MultiTabAuthSync />
+
       {/* Sidebar */}
       <ERPSidebar
         userRole={userRole}

@@ -204,9 +204,11 @@ export function ParentLeaveClient({
                   id="leaveTypeSelectParent"
                   value={leaveTypeId}
                   onChange={(e) => setLeaveTypeId(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  disabled={leaveTypes.length === 0}
+                  className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-500"
                   required
                 >
+                  <option value="">{leaveTypes.length === 0 ? 'No leave types configured' : 'Select Leave Type'}</option>
                   {leaveTypes.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name}
