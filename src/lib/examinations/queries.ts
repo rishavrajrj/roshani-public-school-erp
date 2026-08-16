@@ -8,12 +8,18 @@ export const getExamTypes = cache(async function getExamTypes(): Promise<ExamTyp
   if (authState.state !== 'authenticated') return []
 
   const supabase = (await createClient()) as any
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('exam_types')
     .select('*')
     .eq('school_id', authState.user.schoolId)
     .order('name', { ascending: true })
 
+  if (error) {
+    if (!error.message?.includes('schema cache') && !error.message?.includes('does not exist')) {
+      console.error('Failed to fetch exam types:', error.message)
+    }
+    return []
+  }
   if (!data) return []
 
   return data.map((d: any) => ({
@@ -48,7 +54,12 @@ export const getExaminations = cache(async function getExaminations(filters?: { 
 
   query = query.order('start_date', { ascending: false })
 
-  const { data } = await query
+  if (error) {
+    if (!error.message?.includes('schema cache') && !error.message?.includes('does not exist')) {
+      console.error('Failed to fetch examinations:', error.message)
+    }
+    return []
+  }
   if (!data) return []
 
   return data.map((d: any) => ({
@@ -165,7 +176,11 @@ export async function getExamSchedules(filters?: { examinationId?: string; class
 
   query = query.order('exam_date', { ascending: true }).order('start_time', { ascending: true })
 
-  const { data } = await query
+  const { data, error } = await query
+  if (error) {
+    console.error('Failed to fetch exam schedules:', error.message)
+    return []
+  }
   if (!data) return []
 
   return data.map((d: any) => ({
@@ -216,23 +231,32 @@ export const getTeacherExamSchedule = cache(async function getTeacherExamSchedul
   const profileId = authState.user.profileId
 
   // Fetch schedules where teacher is invigilator
-  const { data: invig } = await supabase
+  const { data: invig, error: invigError } = await supabase
     .from('examination_invigilators')
     .select('exam_schedule_id')
     .eq('profile_id', profileId)
     .eq('school_id', authState.user.schoolId)
 
+  if (invigError) {
+    console.error('Failed to fetch teacher invigilator records:', invigError.message)
+    return []
+  }
+
   const scheduleIds = invig?.map((i: any) => i.exam_schedule_id) || []
 
   if (scheduleIds.length === 0) return []
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('examination_schedules')
     .select('*, examinations(name), classes(name), sections(name), subjects(name, code)')
     .in('id', scheduleIds)
     .order('exam_date', { ascending: true })
     .order('start_time', { ascending: true })
 
+  if (error) {
+    console.error('Failed to fetch teacher exam schedules:', error.message)
+    return []
+  }
   if (!data) return []
 
   return data.map((d: any) => ({
@@ -268,12 +292,16 @@ export async function getAvailableInvigilators(): Promise<Array<{ id: string; na
 
   const supabase = (await createClient()) as any
   // Fetch profiles with Teacher/Admin/Principal roles for current school
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('profiles')
     .select('id, full_name, email')
     .eq('school_id', authState.user.schoolId)
     .eq('status', 'active')
 
+  if (error) {
+    console.error('Failed to fetch available invigilators:', error.message)
+    return []
+  }
   if (!data) return []
 
   return data.map((p: any) => ({

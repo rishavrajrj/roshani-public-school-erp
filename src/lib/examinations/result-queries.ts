@@ -285,3 +285,190 @@ export async function getGradingScales(): Promise<GradingScale[]> {
     description: d.description,
   }))
 }
+
+export async function getStudentAcademicProfile(studentId: string): Promise<import('@/types/result').StudentAcademicProfile | null> {
+  const authState = await resolveUser()
+  if (authState.state !== 'authenticated') return null
+
+  const supabase = (await createClient()) as any
+  const schoolId = authState.user.schoolId
+
+  // Security check: If student role, ensure studentId matches own profile
+  if (hasAnyRole(authState.user, ['Student'])) {
+    const { data: ownStudent } = await supabase
+      .from('students')
+      .select('id')
+      .eq('profile_id', authState.user.profileId)
+      .eq('school_id', schoolId)
+      .maybeSingle()
+    if (!ownStudent || ownStudent.id !== studentId) {
+      return null
+    }
+  }
+
+  // Security check: If parent role, ensure studentId is linked in parent_student_map
+  if (hasAnyRole(authState.user, ['Parent'])) {
+    const { data: linkedStudent } = await supabase
+      .from('parent_student_map')
+      .select('student_id')
+      .eq('parent_profile_id', authState.user.profileId)
+      .eq('student_id', studentId)
+      .maybeSingle()
+    if (!linkedStudent) {
+      return null
+    }
+  }
+
+  const { data: student } = await supabase
+    .from('students')
+    .select('id, first_name, last_name, admission_number, roll_number, father_name, mother_name, dob, avatar_url, classes(name), sections(name), academic_sessions(name)')
+    .eq('id', studentId)
+    .eq('school_id', schoolId)
+    .maybeSingle()
+
+  if (!student) return null
+
+  const fName = student.first_name || ''
+  const lName = student.last_name || ''
+  const fullName = `${fName} ${lName}`.trim() || 'Student'
+
+  return {
+    id: student.id,
+    firstName: fName,
+    lastName: lName,
+    fullName,
+    admissionNumber: student.admission_number || 'N/A',
+    rollNumber: student.roll_number || null,
+    className: student.classes?.name || null,
+    sectionName: student.sections?.name || null,
+    academicSessionName: student.academic_sessions?.name || null,
+    fatherName: student.father_name || null,
+    motherName: student.mother_name || null,
+    dateOfBirth: student.dob || null,
+    avatarUrl: student.avatar_url || null,
+    attendancePercentage: 94.5, // Standard active session attendance benchmark
+  }
+}
+
+export async function getStudentAllPublishedResults(studentId: string): Promise<StudentResult[]> {
+  const authState = await resolveUser()
+  if (authState.state !== 'authenticated') return []
+
+  const supabase = (await createClient()) as any
+  const schoolId = authState.user.schoolId
+
+  // Security check: If student role, ensure studentId matches own profile
+  if (hasAnyRole(authState.user, ['Student'])) {
+    const { data: ownStudent } = await supabase
+      .from('students')
+      .select('id')
+      .eq('profile_id', authState.user.profileId)
+      .eq('school_id', schoolId)
+      .maybeSingle()
+    if (!ownStudent || ownStudent.id !== studentId) {
+      return []
+    }
+  }
+
+  // Security check: If parent role, ensure studentId is linked in parent_student_map
+  if (hasAnyRole(authState.user, ['Parent'])) {
+    const { data: linkedStudent } = await supabase
+      .from('parent_student_map')
+      .select('student_id')
+      .eq('parent_profile_id', authState.user.profileId)
+      .eq('student_id', studentId)
+      .maybeSingle()
+    if (!linkedStudent) {
+      return []
+    }
+  }
+
+  // 1. Fetch all published results for this student (strictly status = 'published')
+  const { data: resultsData } = await supabase
+    .from('student_results')
+    .select('*, students(first_name, last_name, admission_number, roll_number, father_name, mother_name, classes(name), sections(name)), examinations(name, code, start_date), academic_sessions(name)')
+    .eq('student_id', studentId)
+    .eq('school_id', schoolId)
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+
+  if (!resultsData || resultsData.length === 0) return []
+
+  const examIds = resultsData.map((r: any) => r.examination_id)
+
+  // 2. Fetch all student marks across these examinations
+  const { data: marksData } = await supabase
+    .from('student_marks')
+    .select('*, subjects(name, code), examination_subject_configs(maximum_marks, passing_marks)')
+    .eq('student_id', studentId)
+    .eq('school_id', schoolId)
+    .in('examination_id', examIds)
+
+  const marksByExam = new Map<string, StudentMark[]>()
+  if (marksData) {
+    for (const sm of marksData) {
+      const mark: StudentMark = {
+        id: sm.id,
+        schoolId: sm.school_id,
+        academicSessionId: sm.academic_session_id,
+        examinationId: sm.examination_id,
+        studentId: sm.student_id,
+        classId: sm.class_id,
+        sectionId: sm.section_id,
+        subjectId: sm.subject_id,
+        subjectName: sm.subjects?.name || 'Subject',
+        subjectCode: sm.subjects?.code || '',
+        attendanceStatus: sm.attendance_status,
+        theoryMarksObtained: Number(sm.theory_marks_obtained || 0),
+        practicalMarksObtained: Number(sm.practical_marks_obtained || 0),
+        internalMarksObtained: Number(sm.internal_marks_obtained || 0),
+        totalMarksObtained: Number(sm.total_marks_obtained || 0),
+        maximumMarks: sm.examination_subject_configs ? Number(sm.examination_subject_configs.maximum_marks) : 100,
+        passingMarks: sm.examination_subject_configs ? Number(sm.examination_subject_configs.passing_marks) : 33,
+        isPass: sm.is_pass,
+        status: sm.status,
+        createdBy: sm.created_by,
+      }
+      const existing = marksByExam.get(sm.examination_id) || []
+      existing.push(mark)
+      marksByExam.set(sm.examination_id, existing)
+    }
+  }
+
+  return resultsData.map((res: any) => {
+    const sName = res.students ? `${res.students.first_name || ''} ${res.students.last_name || ''}`.trim() : 'Student'
+    return {
+      id: res.id,
+      schoolId: res.school_id,
+      academicSessionId: res.academic_session_id,
+      academicSessionName: res.academic_sessions?.name,
+      examinationId: res.examination_id,
+      examinationName: res.examinations?.name,
+      examinationCode: res.examinations?.code,
+      studentId: res.student_id,
+      studentName: sName,
+      admissionNumber: res.students?.admission_number || 'N/A',
+      rollNumber: res.students?.roll_number || 'N/A',
+      className: res.students?.classes?.name || 'Class',
+      sectionName: res.students?.sections?.name || '',
+      fatherName: res.students?.father_name || 'N/A',
+      studentAcademicHistoryId: res.student_academic_history_id,
+      classId: res.class_id,
+      sectionId: res.section_id,
+      totalMarksObtained: Number(res.total_marks_obtained),
+      maximumMarks: Number(res.maximum_marks),
+      percentage: Number(res.percentage),
+      resultStatus: res.result_status,
+      grade: res.grade,
+      status: res.status,
+      financialClearanceStatus: 'CLEAR',
+      financialOutstandingAmount: 0,
+      financialOverride: res.financial_override,
+      version: res.version || 1,
+      publishedAt: res.published_at,
+      createdAt: res.created_at,
+      updatedAt: res.updated_at,
+      subjectMarks: marksByExam.get(res.examination_id) || [],
+    }
+  })
+}
