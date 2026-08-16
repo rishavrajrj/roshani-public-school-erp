@@ -28,13 +28,13 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div
-      className={`text-center py-12 px-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center ${className}`}
+      className={`text-center py-12 px-4 rounded-2xl border border-dashed border-slate-300 bg-white/60 flex flex-col items-center justify-center ${className}`}
     >
-      <div className="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 mb-4">
+      <div className="w-13 h-13 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 mb-4 shadow-2xs">
         <Icon className="w-6 h-6" />
       </div>
-      <h3 className="text-sm sm:text-base font-semibold text-slate-800">{title}</h3>
-      <p className="text-xs sm:text-sm text-slate-500 max-w-sm mt-1 mb-6 leading-relaxed">
+      <h3 className="text-sm sm:text-base font-extrabold text-slate-900">{title}</h3>
+      <p className="text-xs sm:text-sm text-slate-600 max-w-sm mt-1.5 mb-6 leading-relaxed font-medium">
         {description}
       </p>
 
@@ -43,7 +43,7 @@ export function EmptyState({
           {actionHref && actionLabel && (
             <Link
               href={actionHref}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm rounded-lg shadow-xs transition"
+              className="inline-flex items-center px-4 py-2 bg-[#1554C0] hover:bg-[#0F44A3] text-white font-bold text-xs sm:text-sm rounded-lg shadow-xs transition cursor-pointer"
             >
               {actionLabel}
             </Link>
@@ -52,7 +52,7 @@ export function EmptyState({
             <button
               type="button"
               onClick={onAction}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm rounded-lg shadow-xs transition"
+              className="inline-flex items-center px-4 py-2 bg-[#1554C0] hover:bg-[#0F44A3] text-white font-bold text-xs sm:text-sm rounded-lg shadow-xs transition cursor-pointer"
             >
               {actionLabel}
             </button>
@@ -61,7 +61,7 @@ export function EmptyState({
             <button
               type="button"
               onClick={onSecondaryAction}
-              className="inline-flex items-center px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm rounded-lg transition"
+              className="inline-flex items-center px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm rounded-lg shadow-2xs transition cursor-pointer"
             >
               {secondaryActionLabel}
             </button>

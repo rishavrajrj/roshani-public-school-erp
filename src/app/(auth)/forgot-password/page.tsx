@@ -45,10 +45,10 @@ export default function ForgotPasswordPage() {
             <SchoolLogo size="lg" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white font-serif">
               Reset Password
             </h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
               Roshani Public School ERP
             </p>
           </div>
@@ -60,14 +60,14 @@ export default function ForgotPasswordPage() {
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Check your email</h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Check your email</h2>
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-medium">
                 If an account exists for that email, we have sent instructions to reset your password.
               </p>
             </div>
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to login</span>
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {error && (
-              <div className="p-3.5 text-sm font-medium text-red-600 bg-red-50 dark:bg-red-950/40 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-900">
+              <div className="p-3.5 text-xs sm:text-sm font-semibold text-red-700 bg-red-50 dark:bg-red-950/40 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-900">
                 {error}
               </div>
             )}
@@ -90,14 +90,14 @@ export default function ForgotPasswordPage() {
               error={errors.email?.message}
             />
 
-            <Button type="submit" className="w-full h-11" isLoading={isSubmitting}>
+            <Button type="submit" className="w-full h-11 font-bold" isLoading={isSubmitting}>
               Send Reset Link
             </Button>
 
             <div className="text-center pt-2">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back to login</span>

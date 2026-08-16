@@ -8,7 +8,7 @@ import * as path from 'path'
 // Load environment variables if not present
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://eiuoztgypawepqlvdpvu.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_YkHiKr6__5GwfgBbg5XhOA_k7oQOwkU'
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'sb_secret_x7kBYcFkNlYCeMrU1uOfPQ_pUTt6FxG'
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
 const PORT = 3009
 const BASE_URL = `http://localhost:${PORT}`

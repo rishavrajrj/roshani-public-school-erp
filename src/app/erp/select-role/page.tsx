@@ -128,7 +128,7 @@ export default async function SelectRolePage() {
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
             Select Your Portal
           </h2>
-          <p className="text-slate-400 text-xs sm:text-sm max-w-lg mx-auto mt-2">
+          <p className="text-slate-200 font-medium text-xs sm:text-sm max-w-lg mx-auto mt-2">
             You have access to multiple operational roles. Choose the workspace you wish to launch.
           </p>
         </div>
@@ -158,7 +158,7 @@ export default async function SelectRolePage() {
                     >
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className="text-[11px] font-semibold text-slate-400 bg-slate-900/60 px-2.5 py-1 rounded-md border border-slate-700/60">
+                    <span className="text-[11px] font-bold text-slate-200 bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-700 font-mono">
                       {meta.badge}
                     </span>
                   </div>
@@ -166,7 +166,7 @@ export default async function SelectRolePage() {
                   <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-blue-300 transition-colors">
                     {role}
                   </h3>
-                  <p className="text-slate-400 text-xs sm:text-sm mt-1.5 leading-relaxed">
+                  <p className="text-slate-200 text-xs sm:text-sm mt-1.5 leading-relaxed font-medium">
                     {meta.description}
                   </p>
                 </div>

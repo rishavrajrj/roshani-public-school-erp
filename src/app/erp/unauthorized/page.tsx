@@ -36,7 +36,7 @@ export default function UnauthorizedPage() {
           </span>
 
           <h2 className="text-2xl font-black text-white mt-3 mb-2">Access Denied</h2>
-          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-8">
+          <p className="text-xs sm:text-sm text-slate-200 font-medium leading-relaxed mb-8">
             You do not possess the required security permissions or assigned role to view this portal.
             If you believe this is in error, please contact the School Administrator.
           </p>

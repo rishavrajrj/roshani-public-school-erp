@@ -170,8 +170,15 @@ export default async function PrincipalStudentsPage({ searchParams }: Props) {
                       st.student_academic_history[0]
                     : null
                   return (
-                    <tr key={st.id} className="hover:bg-slate-50/60 transition group">
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{st.admission_number}</td>
+                    <tr key={st.id} className="hover:bg-slate-50 transition">
+                      <td className="py-3.5 px-4">
+                        <div className="font-mono font-bold text-slate-900 text-xs">
+                          {st.admission_number}
+                        </div>
+                        <div className="font-mono text-[10px] text-blue-600 font-semibold">
+                          {st.admission_number?.startsWith('ADM-') ? st.admission_number.replace('ADM-', 'STU-') : `STU-${st.admission_number}`}
+                        </div>
+                      </td>
                       <td className="py-3.5 px-4 font-bold text-slate-900">
                         {st.first_name} {st.last_name}
                       </td>

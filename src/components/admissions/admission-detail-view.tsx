@@ -248,20 +248,20 @@ export function AdmissionDetailView({ application, userRoles }: Props) {
       {/* Details Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Applicant Details */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-2">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200/90 p-6 space-y-4">
+          <h3 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider border-b border-slate-200 pb-2 font-mono">
             Applicant Profile
           </h3>
-          <div className="space-y-3 text-sm">
+          <div className="space-y-3 text-xs sm:text-sm">
             <div>
-              <span className="text-slate-400 text-xs block">Full Name</span>
-              <span className="font-semibold text-slate-800">
+              <span className="text-slate-600 text-xs block font-semibold">Full Name</span>
+              <span className="font-bold text-slate-900">
                 {application.applicant_first_name} {application.applicant_middle_name || ''} {application.applicant_last_name}
               </span>
             </div>
             <div>
-              <span className="text-slate-400 text-xs block">Date of Birth</span>
-              <span className="font-medium text-slate-800">
+              <span className="text-slate-600 text-xs block font-semibold">Date of Birth</span>
+              <span className="font-bold text-slate-900">
                 {application.date_of_birth
                   ? new Date(application.date_of_birth).toLocaleDateString('en-IN', {
                       day: '2-digit',
@@ -272,41 +272,41 @@ export function AdmissionDetailView({ application, userRoles }: Props) {
               </span>
             </div>
             <div>
-              <span className="text-slate-400 text-xs block">Gender</span>
-              <span className="font-medium text-slate-800 capitalize">{application.gender || 'N/A'}</span>
+              <span className="text-slate-600 text-xs block font-semibold">Gender</span>
+              <span className="font-bold text-slate-900 capitalize">{application.gender || 'N/A'}</span>
             </div>
             <div>
-              <span className="text-slate-400 text-xs block">Applying Class</span>
-              <span className="font-medium text-slate-800">{application.classes?.name || 'N/A'}</span>
+              <span className="text-slate-600 text-xs block font-semibold">Applying Class</span>
+              <span className="font-bold text-slate-900">{application.classes?.name || 'N/A'}</span>
             </div>
             <div>
-              <span className="text-slate-400 text-xs block">Academic Session</span>
-              <span className="font-medium text-slate-800">{application.academic_sessions?.name || 'N/A'}</span>
+              <span className="text-slate-600 text-xs block font-semibold">Academic Session</span>
+              <span className="font-bold text-slate-900">{application.academic_sessions?.name || 'N/A'}</span>
             </div>
           </div>
         </div>
 
         {/* Guardian Details */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-2">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200/90 p-6 space-y-4">
+          <h3 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider border-b border-slate-200 pb-2 font-mono">
             Guardian & Address
           </h3>
-          <div className="space-y-3 text-sm">
+          <div className="space-y-3 text-xs sm:text-sm">
             <div>
-              <span className="text-slate-400 text-xs block">Guardian Name</span>
-              <span className="font-semibold text-slate-800">{application.guardian_name}</span>
+              <span className="text-slate-600 text-xs block font-semibold">Guardian Name</span>
+              <span className="font-bold text-slate-900">{application.guardian_name}</span>
             </div>
             <div>
-              <span className="text-slate-400 text-xs block">Contact Phone</span>
-              <span className="font-medium text-slate-800">{application.guardian_phone}</span>
+              <span className="text-slate-600 text-xs block font-semibold">Contact Phone</span>
+              <span className="font-bold text-slate-900 font-mono">{application.guardian_phone}</span>
             </div>
             <div>
-              <span className="text-slate-400 text-xs block">Contact Email</span>
-              <span className="font-medium text-slate-800">{application.guardian_email || 'N/A'}</span>
+              <span className="text-slate-600 text-xs block font-semibold">Contact Email</span>
+              <span className="font-bold text-slate-900">{application.guardian_email || 'N/A'}</span>
             </div>
             <div>
-              <span className="text-slate-400 text-xs block">Address</span>
-              <span className="font-medium text-slate-800">
+              <span className="text-slate-600 text-xs block font-semibold">Address</span>
+              <span className="font-bold text-slate-900">
                 {application.address || ''}
                 {application.city ? `, ${application.city}` : ''}
                 {application.state ? `, ${application.state}` : ''}
@@ -317,39 +317,39 @@ export function AdmissionDetailView({ application, userRoles }: Props) {
         </div>
 
         {/* Timeline & Audit Info */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-2">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200/90 p-6 space-y-4">
+          <h3 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider border-b border-slate-200 pb-2 font-mono">
             Workflow & Audit History
           </h3>
-          <div className="space-y-3 text-sm">
+          <div className="space-y-3 text-xs sm:text-sm">
             <div>
-              <span className="text-slate-400 text-xs block">Created Date</span>
-              <span className="font-medium text-slate-800">
+              <span className="text-slate-600 text-xs block font-semibold">Created Date</span>
+              <span className="font-bold text-slate-900">
                 {new Date(application.created_at).toLocaleString('en-IN')}
               </span>
             </div>
             <div>
-              <span className="text-slate-400 text-xs block">Source / Channel</span>
-              <span className="font-medium text-slate-800">{application.source || 'Direct Entry'}</span>
+              <span className="text-slate-600 text-xs block font-semibold">Source / Channel</span>
+              <span className="font-bold text-slate-900">{application.source || 'Direct Entry'}</span>
             </div>
             {application.reviewed_profile && (
               <div>
-                <span className="text-slate-400 text-xs block">Reviewed By</span>
-                <span className="font-medium text-slate-800">{application.reviewed_profile.full_name}</span>
+                <span className="text-slate-600 text-xs block font-semibold">Reviewed By</span>
+                <span className="font-bold text-slate-900">{application.reviewed_profile.full_name}</span>
               </div>
             )}
             {application.approved_at && (
               <div>
-                <span className="text-slate-400 text-xs block">Approved Timestamp</span>
-                <span className="font-medium text-emerald-700">
+                <span className="text-slate-600 text-xs block font-semibold">Approved Timestamp</span>
+                <span className="font-bold text-emerald-800">
                   {new Date(application.approved_at).toLocaleString('en-IN')}
                 </span>
               </div>
             )}
             {application.converted_at && (
               <div>
-                <span className="text-slate-400 text-xs block">Converted Timestamp</span>
-                <span className="font-medium text-indigo-700">
+                <span className="text-slate-600 text-xs block font-semibold">Converted Timestamp</span>
+                <span className="font-bold text-indigo-900">
                   {new Date(application.converted_at).toLocaleString('en-IN')}
                 </span>
               </div>
@@ -360,11 +360,11 @@ export function AdmissionDetailView({ application, userRoles }: Props) {
 
       {/* Notes Box */}
       {application.notes && (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-2 mb-3">
+        <div className="bg-white rounded-2xl shadow-xs border border-slate-200/90 p-6">
+          <h3 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider border-b border-slate-200 pb-2 mb-3 font-mono">
             Application Notes & Log
           </h3>
-          <p className="text-sm text-slate-700 whitespace-pre-wrap">{application.notes}</p>
+          <p className="text-xs sm:text-sm text-slate-800 font-medium whitespace-pre-wrap">{application.notes}</p>
         </div>
       )}
 

@@ -95,15 +95,15 @@ async function seed() {
   await safeUpsert('schools', [{
     id: SCHOOL_ID,
     name: 'Roshani Public School',
-    code: 'RPS-NOIDA',
-    address: 'Plot 12-15, Institutional Area, Knowledge Park III, Sector 62',
-    city: 'Noida',
-    state: 'Uttar Pradesh',
+    code: '10022702717',
+    address: 'Roshani Nagar, State Highway 54, Turkauliya',
+    city: 'Turkauliya',
+    state: 'Bihar',
     country: 'India',
-    phone: '+91 120 458 9200',
-    email: 'contact@roshanischool.com',
-    website: 'https://roshanischool.com',
-    logo_url: '/images/rps-logo.png',
+    phone: '+91 9472405097',
+    email: 'roshanipublicschoolturkauliya1@gmail.com',
+    website: 'https://roshani-public-school.vercel.app',
+    logo_url: '/assets/logo.webp',
   }], 'id')
 
   // -------------------------------------------------------------------------
@@ -207,7 +207,7 @@ async function seed() {
       phone: '+91 98101 23456',
       email: 'parent@roshanischool.com',
       occupation: 'Senior Software Architect',
-      address: 'Tower 4, Flat 1202, Express Green Apartments, Sector 44, Noida, UP 201301',
+      address: 'Roshani Nagar, SH-54, Turkauliya, East Champaran, Bihar 845437',
       status: 'active',
     },
     {
@@ -218,7 +218,7 @@ async function seed() {
       phone: '+91 98112 34567',
       email: 'vikram.sharma@example.com',
       occupation: 'Chartered Accountant',
-      address: 'B-142, Sector 50, Noida, UP 201301',
+      address: 'Station Road, Turkauliya, East Champaran, Bihar 845437',
       status: 'active',
     },
     {
@@ -229,7 +229,7 @@ async function seed() {
       phone: '+91 98123 45678',
       email: 'sunita.mehta@example.com',
       occupation: 'Associate Professor',
-      address: 'C-89, Sector 61, Noida, UP 201301',
+      address: 'Near Main Market, Turkauliya, East Champaran, Bihar 845437',
       status: 'active',
     },
     {
@@ -240,7 +240,7 @@ async function seed() {
       phone: '+91 98134 56789',
       email: 'harish.singh@example.com',
       occupation: 'Business Owner',
-      address: 'D-55, Sector 12, Noida, UP 201301',
+      address: 'Roshani Nagar West, Turkauliya, East Champaran, Bihar 845437',
       status: 'active',
     },
   ]
@@ -258,7 +258,7 @@ async function seed() {
       phone: `+91 98${String(10000000 + i * 137).slice(0, 8)}`,
       email: `${fName.toLowerCase()}.${lName.toLowerCase()}${i}@example.com`,
       occupation: ['Executive', 'Manager', 'Teacher', 'Engineer', 'Consultant', 'Doctor'][i % 6],
-      address: `House ${i * 7}, Sector ${20 + (i % 40)}, Noida, UP 201301`,
+      address: `Ward ${1 + (i % 15)}, Turkauliya, East Champaran, Bihar 845437`,
       status: 'active',
     })
   }
@@ -282,72 +282,72 @@ async function seed() {
       id: STUDENT_ARJUN_ID,
       school_id: SCHOOL_ID,
       profile_id: STUDENT_PROFILE_ID,
-      admission_number: 'RPS-2026-0101',
+      admission_number: 'ADM-10022702717-2026-000101',
       roll_number: '101',
       first_name: 'Arjun',
       last_name: 'Kumar',
       date_of_birth: '2010-08-15',
       gender: 'male',
       status: 'active',
-      address: 'Tower 4, Flat 1202, Express Green Apartments, Sector 44',
-      city: 'Noida',
-      state: 'Uttar Pradesh',
+      address: 'Roshani Nagar, SH-54, Turkauliya',
+      city: 'Turkauliya',
+      state: 'Bihar',
     },
     {
       id: STUDENT_AARAV_ID, // Sibling of Arjun Kumar
       school_id: SCHOOL_ID,
-      admission_number: 'RPS-2026-0205',
+      admission_number: 'ADM-10022702717-2026-000205',
       roll_number: '105',
       first_name: 'Aarav',
       last_name: 'Kumar',
       date_of_birth: '2014-11-20',
       gender: 'male',
       status: 'active',
-      address: 'Tower 4, Flat 1202, Express Green Apartments, Sector 44',
-      city: 'Noida',
-      state: 'Uttar Pradesh',
+      address: 'Roshani Nagar, SH-54, Turkauliya',
+      city: 'Turkauliya',
+      state: 'Bihar',
     },
     {
       id: STUDENT_ANANYA_ID,
       school_id: SCHOOL_ID,
-      admission_number: 'RPS-2026-0102',
+      admission_number: 'ADM-10022702717-2026-000102',
       roll_number: '102',
       first_name: 'Ananya',
       last_name: 'Sharma',
       date_of_birth: '2010-05-12',
       gender: 'female',
       status: 'active',
-      address: 'B-142, Sector 50',
-      city: 'Noida',
-      state: 'Uttar Pradesh',
+      address: 'Station Road, Turkauliya',
+      city: 'Turkauliya',
+      state: 'Bihar',
     },
     {
       id: STUDENT_ROHAN_ID,
       school_id: SCHOOL_ID,
-      admission_number: 'RPS-2026-0205B',
+      admission_number: 'ADM-10022702717-2026-000206',
       roll_number: '205',
       first_name: 'Rohan',
       last_name: 'Mehta',
       date_of_birth: '2011-09-24',
       gender: 'male',
       status: 'active',
-      address: 'C-89, Sector 61',
-      city: 'Noida',
-      state: 'Uttar Pradesh',
+      address: 'Near Main Market, Turkauliya',
+      city: 'Turkauliya',
+      state: 'Bihar',
     },
     {
       id: STUDENT_POOJA_ID,
       school_id: SCHOOL_ID,
-      admission_number: 'RPS-2026-0112',
+      admission_number: 'ADM-10022702717-2026-000112',
       roll_number: '112',
       first_name: 'Pooja',
       last_name: 'Singh',
       date_of_birth: '2012-03-18',
       gender: 'female',
       status: 'active',
-      address: 'D-55, Sector 12',
-      city: 'Noida',
-      state: 'Uttar Pradesh',
+      address: 'Roshani Nagar West, Turkauliya',
+      city: 'Turkauliya',
+      state: 'Bihar',
     },
   ]
 
@@ -371,7 +371,7 @@ async function seed() {
         const fName = isMale ? FIRST_NAMES_MALE[(studentCounter + sIdx) % FIRST_NAMES_MALE.length] : FIRST_NAMES_FEMALE[(studentCounter + sIdx) % FIRST_NAMES_FEMALE.length]
         const lName = LAST_NAMES[(studentCounter * 3 + sIdx) % LAST_NAMES.length]
         const stId = `00000000-0000-4000-d000-${String(studentCounter).padStart(12, '0')}`
-        const admNo = `RPS-2026-${String(studentCounter).padStart(4, '0')}`
+        const admNo = `ADM-10022702717-2026-${String(studentCounter).padStart(6, '0')}`
         const rollNo = String(sIdx + 10)
         const gIdx = (studentCounter % 55) + 5
         const gId = `00000000-0000-4000-b000-${String(gIdx).padStart(12, '0')}`
@@ -386,9 +386,9 @@ async function seed() {
           date_of_birth: `201${1 + (cIdx % 5)}-0${(sIdx % 9) + 1}-15`,
           gender: isMale ? 'male' : 'female',
           status: 'active',
-          address: `Sector ${20 + (sIdx % 40)}, House ${sIdx * 3}`,
-          city: 'Noida',
-          state: 'Uttar Pradesh',
+          address: `Ward ${1 + (sIdx % 15)}, House ${sIdx * 3}`,
+          city: 'Turkauliya',
+          state: 'Bihar',
         })
 
         studentGuardianRows.push({

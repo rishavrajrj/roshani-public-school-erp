@@ -14,7 +14,7 @@ interface Props {
 export function AdmitCardDocument({
   admitCard,
   schoolName = 'Roshani Public School',
-  affiliationText = 'Affiliated to CBSE, New Delhi • Senior Secondary Education',
+  affiliationText = 'Affiliated to CBSE, New Delhi (Affiliation No. 330943, School Code: 66664)',
 }: Props) {
   const [origin, setOrigin] = useState('')
 

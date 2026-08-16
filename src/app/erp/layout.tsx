@@ -29,14 +29,34 @@ export default async function ERPLayout({ children }: { children: React.ReactNod
   const userName = user ? user.fullName : 'School User'
   const roles = user ? user.roles : []
 
-  // Determine current active role from pathname or default to primary role
+  // Determine current active role from authenticated user's assigned roles
   let activeRole = roles[0] || 'User'
-  if (pathname.includes('/erp/admin')) activeRole = 'Admin'
-  else if (pathname.includes('/erp/principal')) activeRole = 'Principal'
-  else if (pathname.includes('/erp/teacher')) activeRole = 'Teacher'
-  else if (pathname.includes('/erp/accountant')) activeRole = 'Accountant'
-  else if (pathname.includes('/erp/student')) activeRole = 'Student'
-  else if (pathname.includes('/erp/parent')) activeRole = 'Parent'
+
+  if (pathname.startsWith('/erp/admin')) {
+    if (roles.includes('Super Admin')) activeRole = 'Super Admin'
+    else if (roles.includes('Admin')) activeRole = 'Admin'
+    else if (roles.length > 0) activeRole = roles[0]
+  } else if (pathname.startsWith('/erp/principal')) {
+    if (roles.includes('Principal')) activeRole = 'Principal'
+    else if (roles.includes('Vice Principal')) activeRole = 'Vice Principal'
+    else if (roles.length > 0) activeRole = roles[0]
+  } else if (pathname.startsWith('/erp/teacher')) {
+    if (roles.includes('Class Teacher')) activeRole = 'Class Teacher'
+    else if (roles.includes('Teacher')) activeRole = 'Teacher'
+    else if (roles.length > 0) activeRole = roles[0]
+  } else if (pathname.startsWith('/erp/accountant')) {
+    if (roles.includes('Accountant')) activeRole = 'Accountant'
+    else if (roles.length > 0) activeRole = roles[0]
+  } else if (pathname.startsWith('/erp/student')) {
+    if (roles.includes('Student')) activeRole = 'Student'
+    else if (roles.length > 0) activeRole = roles[0]
+  } else if (pathname.startsWith('/erp/parent')) {
+    if (roles.includes('Parent')) activeRole = 'Parent'
+    else if (roles.length > 0) activeRole = roles[0]
+  } else if (roles.length > 0) {
+    activeRole = roles[0]
+  }
+
 
   const { notifications, unreadCount } = isFullyAuthenticated
     ? await getUserNotifications()

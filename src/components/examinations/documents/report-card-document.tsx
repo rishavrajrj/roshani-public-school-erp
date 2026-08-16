@@ -13,8 +13,8 @@ export function ReportCardDocument({ reportCard, schoolName = 'Roshani Public Sc
       {/* School Branding Header */}
       <div className="text-center border-b-2 border-slate-900 pb-4 mb-6">
         <h1 className="text-3xl font-black uppercase tracking-widest text-slate-900">{schoolName}</h1>
-        <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest mt-1">Senior Secondary Education | Annual Academic Evaluation Cell</p>
-        <p className="text-[10px] text-slate-500 font-serif italic mt-0.5">Affiliated to CBSE / State Education Board</p>
+        <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest mt-1">Turkauliya, East Champaran, Bihar – 845437</p>
+        <p className="text-[10px] text-slate-500 font-serif italic mt-0.5">Affiliated to CBSE, New Delhi (Affiliation No. 330943, School Code: 66664)</p>
         <div className="inline-block bg-slate-900 text-white px-6 py-1.5 mt-3 rounded text-sm font-black uppercase tracking-widest">
           ANNUAL PROGRESS REPORT CARD — SESSION {reportCard.academicSessionName || '2026-27'}
         </div>

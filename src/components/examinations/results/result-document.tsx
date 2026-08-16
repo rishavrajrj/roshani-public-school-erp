@@ -14,8 +14,8 @@ export function ResultDocument({
   result,
   historicalResults = [],
   schoolName = 'ROSHANI PUBLIC SCHOOL',
-  schoolAddress = 'Station Road, Samastipur, Bihar - 848101',
-  affiliationNo = 'CBSE Affiliation No: 330892',
+  schoolAddress = 'Roshani Nagar, SH-54, Turkauliya, East Champaran, Bihar - 845437',
+  affiliationNo = 'CBSE Affiliation No: 330943 • School Code: 66664',
 }: Props) {
   const marks = result.subjectMarks || []
 

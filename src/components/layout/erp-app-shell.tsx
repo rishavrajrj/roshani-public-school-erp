@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { ERPSidebar } from './erp-sidebar'
 import { ERPHeader } from './erp-header'
 import { MultiTabAuthSync } from '@/components/auth/multi-tab-auth-sync'
@@ -39,7 +39,7 @@ export function ERPAppShell({
     }
   }, [])
 
-  function toggleCollapse() {
+  const toggleCollapse = useCallback(() => {
     setIsCollapsed((prev) => {
       const next = !prev
       try {
@@ -49,7 +49,15 @@ export function ERPAppShell({
       }
       return next
     })
-  }
+  }, [])
+
+  const handleOpenMobile = useCallback(() => {
+    setIsMobileOpen(true)
+  }, [])
+
+  const handleCloseMobile = useCallback(() => {
+    setIsMobileOpen(false)
+  }, [])
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
@@ -65,7 +73,7 @@ export function ERPAppShell({
         isCollapsed={isCollapsed}
         onToggleCollapse={toggleCollapse}
         isMobileOpen={isMobileOpen}
-        onCloseMobile={() => setIsMobileOpen(false)}
+        onCloseMobile={handleCloseMobile}
       />
 
       {/* Main Layout Area */}
@@ -81,7 +89,8 @@ export function ERPAppShell({
           activeRole={userRole}
           notifications={notifications}
           unreadCount={unreadCount}
-          onOpenMobileSidebar={() => setIsMobileOpen(true)}
+          isMobileOpen={isMobileOpen}
+          onOpenMobileSidebar={handleOpenMobile}
         />
 
         {/* Dynamic Page Content */}
@@ -92,3 +101,4 @@ export function ERPAppShell({
     </div>
   )
 }
+

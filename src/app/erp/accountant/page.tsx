@@ -67,6 +67,7 @@ export default async function AccountantPortalPage() {
     <div className="space-y-6">
       {/* Finance Header */}
       <PageHeader
+        eyebrow="ACCOUNTS & FINANCE COUNTER"
         title={`Finance Dashboard — ${user.fullName}`}
         description="Accounts Office & Fee Counter — track daily cash collection, monitor outstanding student dues, reconcile UPI/Cheque/Cash receipts, and generate invoices."
         breadcrumbs={[
@@ -76,7 +77,7 @@ export default async function AccountantPortalPage() {
         actions={
           <Link
             href="/erp/accountant/collections"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition shadow-amber-950/15"
           >
             <Receipt className="w-4 h-4" />
             + Collect Fee at Counter
@@ -123,37 +124,37 @@ export default async function AccountantPortalPage() {
       {/* Payment Modes & Reconciliation Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Channels Breakdown */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs p-5 flex flex-col justify-between">
+        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs p-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+            <div className="flex items-center justify-between mb-3 border-b border-slate-200 pb-3">
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
                 Payment Channel Breakdown
               </h3>
-              <span className="text-xs text-slate-400">Month-to-Date</span>
+              <span className="text-[11px] font-bold text-slate-600 font-mono">Month-to-Date</span>
             </div>
 
             <div className="space-y-3">
               {paymentModeReport.length === 0 ? (
-                <p className="text-xs text-slate-400 py-6 text-center">
+                <p className="text-xs sm:text-sm text-slate-500 py-8 text-center font-medium">
                   No payment collections logged this month yet.
                 </p>
               ) : (
                 paymentModeReport.map((pm: any) => (
                   <div
                     key={pm.mode}
-                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100"
+                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50/80 border border-slate-200 shadow-2xs"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                      <span className="font-bold text-xs uppercase tracking-wider text-slate-800">
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
+                      <span className="font-extrabold text-xs uppercase tracking-wider text-slate-900 font-mono">
                         {pm.mode}
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-sm font-extrabold text-slate-900">
+                      <span className="text-sm font-extrabold text-slate-900 font-sans">
                         ₹{Number(pm.totalAmount || 0).toLocaleString('en-IN')}
                       </span>
-                      <span className="text-[11px] text-slate-400 block font-mono">
+                      <span className="text-[11px] text-slate-600 block font-mono font-medium">
                         {pm.count} transaction(s)
                       </span>
                     </div>
@@ -163,11 +164,11 @@ export default async function AccountantPortalPage() {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="text-slate-500 font-medium">Reconcile Daily Register</span>
+          <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs sm:text-sm">
+            <span className="text-slate-600 font-medium">Reconcile Daily Register</span>
             <Link
               href="/erp/accountant/collections"
-              className="text-amber-700 hover:text-amber-800 font-bold flex items-center gap-1"
+              className="text-amber-800 hover:text-amber-900 font-bold flex items-center gap-1"
             >
               Open Reconciliation <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -175,15 +176,15 @@ export default async function AccountantPortalPage() {
         </div>
 
         {/* Recent Transactions List */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs p-5 flex flex-col justify-between">
+        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs p-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+            <div className="flex items-center justify-between mb-3 border-b border-slate-200 pb-3">
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
                 Recent Counter Receipts
               </h3>
               <Link
                 href="/erp/accountant/collections"
-                className="text-xs font-semibold text-amber-700 hover:text-amber-800 flex items-center gap-1"
+                className="text-xs sm:text-sm font-bold text-amber-800 hover:text-amber-900 flex items-center gap-1"
               >
                 Full Register <ArrowRight className="w-3.5 h-3.5" />
               </Link>
@@ -191,25 +192,25 @@ export default async function AccountantPortalPage() {
 
             <div className="divide-y divide-slate-100">
               {recentPayments.length === 0 ? (
-                <p className="text-xs text-slate-400 py-6 text-center">
+                <p className="text-xs sm:text-sm text-slate-500 py-8 text-center font-medium">
                   No payment transactions found.
                 </p>
               ) : (
                 recentPayments.slice(0, 4).map((p: any) => (
                   <div
                     key={p.id}
-                    className="py-3 flex items-center justify-between gap-3 text-xs"
+                    className="py-3 flex items-center justify-between gap-3 text-xs sm:text-sm"
                   >
                     <div>
                       <span className="font-mono font-bold text-slate-900 block">
                         {p.receiptNumber || 'Receipt'}
                       </span>
-                      <span className="text-slate-500">
+                      <span className="text-slate-600 text-xs font-medium">
                         {p.studentName || 'Student'} • {p.paymentMode}
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="font-extrabold text-slate-900 text-sm block">
+                      <span className="font-extrabold text-slate-900 text-sm block font-sans">
                         ₹{Number(p.amount || 0).toLocaleString('en-IN')}
                       </span>
                       <StatusBadge status={p.status || 'paid'} size="sm" />
@@ -220,10 +221,10 @@ export default async function AccountantPortalPage() {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100">
+          <div className="mt-4 pt-3 border-t border-slate-200">
             <Link
               href="/erp/accountant/collections"
-              className="w-full inline-flex items-center justify-center gap-2 py-2 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm rounded-xl transition"
+              className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-xs cursor-pointer"
             >
               <Receipt className="w-4 h-4" />
               Fee Collection Workspace

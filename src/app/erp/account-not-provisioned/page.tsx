@@ -34,16 +34,16 @@ export default function AccountNotProvisionedPage() {
           </span>
 
           <h2 className="text-2xl font-black text-white mt-3 mb-2">Account Not Provisioned</h2>
-          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-6">
+          <p className="text-xs sm:text-sm text-slate-200 font-medium leading-relaxed mb-6">
             Your login identity has been verified, but your user profile has not yet been assigned an active ERP role (Teacher, Student, Parent, Administrator).
           </p>
 
-          <div className="bg-slate-900/60 border border-slate-700/60 rounded-xl p-4 text-left mb-6 text-xs text-slate-300 space-y-2">
-            <div className="flex items-center gap-2 font-semibold text-white">
+          <div className="bg-slate-900/60 border border-slate-700/60 rounded-xl p-4 text-left mb-6 text-xs text-slate-200 space-y-2 font-medium">
+            <div className="flex items-center gap-2 font-bold text-white">
               <HelpCircle className="w-4 h-4 text-blue-400 shrink-0" />
               <span>Next Steps:</span>
             </div>
-            <p className="text-slate-400">
+            <p className="text-slate-200">
               Please contact your school IT administrator or academic office to associate your email with your official school records.
             </p>
           </div>

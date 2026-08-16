@@ -51,7 +51,7 @@ describe('Admissions Zod Schemas Validation', () => {
     const result = convertApplicationSchema.safeParse({
       section_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
       roll_number: '12',
-      admission_number: 'RPS-2026-099',
+      admission_number: 'ADM-RPS-NOIDA-2026-000099',
     })
 
     expect(result.success).toBe(true)

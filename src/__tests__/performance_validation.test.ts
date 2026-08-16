@@ -80,7 +80,7 @@ describe('Performance Audit — Step 20: Mathematical & Financial Accuracy', () 
   it('verifies that column pruning in student list maintains required UI fields without payload bloat', () => {
     const fullStudentPayload = {
       id: 'st-01',
-      admission_number: 'RPS-2026-001',
+      admission_number: 'ADM-RPS-NOIDA-2026-000001',
       first_name: 'Arjun',
       middle_name: 'Kumar',
       last_name: 'Sharma',

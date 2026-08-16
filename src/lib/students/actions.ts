@@ -2,6 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { resolveUser, hasAnyRole } from '@/lib/auth/resolve-user'
+import { getSchoolFieldConfigs } from '@/lib/features/services'
+import { validateDynamicSchoolFields } from '@/lib/features/field-validator'
 import {
   createDirectStudentSchema,
   updateStudentSchema,
@@ -94,8 +96,11 @@ export async function getStudents(params: {
   }
 
   if (params.search) {
-    const s = `%${params.search}%`
-    query = query.or(`admission_number.ilike.${s},first_name.ilike.${s},last_name.ilike.${s}`)
+    const term = params.search.trim()
+    const altTerm = term.startsWith('STU-') ? term.replace('STU-', 'ADM-') : term
+    const s = `%${term}%`
+    const sAlt = `%${altTerm}%`
+    query = query.or(`admission_number.ilike.${s},admission_number.ilike.${sAlt},first_name.ilike.${s},last_name.ilike.${s}`)
   }
 
   const { data, error, count } = await query
@@ -187,6 +192,14 @@ export async function createDirectStudent(
   }
 
   const validated = parseResult.data
+
+  // Enforce dynamic school-configured required fields
+  const fieldConfigs = await getSchoolFieldConfigs('student')
+  const fieldCheck = validateDynamicSchoolFields('student', input as Record<string, unknown>, fieldConfigs)
+  if (!fieldCheck.valid && fieldCheck.errors.length > 0) {
+    return { success: false, error: fieldCheck.errors[0].message }
+  }
+
   const supabase = await createClient()
 
   // Validate section belongs to class & school
@@ -344,6 +357,14 @@ export async function updateStudent(
   }
 
   const validated = parseResult.data
+
+  // Enforce dynamic school-configured required fields
+  const fieldConfigs = await getSchoolFieldConfigs('student')
+  const fieldCheck = validateDynamicSchoolFields('student', input as Record<string, unknown>, fieldConfigs)
+  if (!fieldCheck.valid && fieldCheck.errors.length > 0) {
+    return { success: false, error: fieldCheck.errors[0].message }
+  }
+
   const supabase = await createClient()
 
   const { error } = await (supabase

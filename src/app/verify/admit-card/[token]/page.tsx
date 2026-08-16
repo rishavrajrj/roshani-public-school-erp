@@ -65,49 +65,49 @@ export default async function VerifyAdmitCardPage({ params }: Props) {
               </div>
 
               <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-2.5 text-xs">
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Status</span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Status</span>
+                  <span className="px-2.5 py-0.5 rounded text-[10.5px] font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs font-mono">
                     VALID (ACTIVE)
                   </span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Admit Card No.</span>
-                  <span className="font-mono font-bold text-blue-800">{String(result.admitCardNumber)}</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Admit Card No.</span>
+                  <span className="font-mono font-extrabold text-blue-900">{String(result.admitCardNumber)}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Document Fingerprint</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Document Fingerprint</span>
                   <span className="font-mono font-bold text-slate-900">{String(result.documentFingerprint || 'N/A')}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Candidate Name</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Candidate Name</span>
                   <span className="font-extrabold text-slate-950">{String(result.studentName)}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Admission No.</span>
-                  <span className="font-mono font-semibold text-slate-900">{String(result.admissionNumber)}</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Admission No.</span>
+                  <span className="font-mono font-bold text-slate-900">{String(result.admissionNumber)}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Roll Number</span>
-                  <span className="font-mono font-semibold text-slate-900">{String(result.rollNumber || 'N/A')}</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Roll Number</span>
+                  <span className="font-mono font-bold text-slate-900">{String(result.rollNumber || 'N/A')}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Class / Section</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Class / Section</span>
                   <span className="font-bold text-slate-900">
                     {String(result.className)} {result.sectionName ? `(${result.sectionName})` : ''}
                   </span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Examination</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Examination</span>
                   <span className="font-bold text-slate-900">{String(result.examinationName)}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                  <span className="text-slate-500 font-semibold">Academic Session</span>
-                  <span className="font-semibold text-slate-800">{String(result.academicSession)}</span>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="text-slate-700 font-bold">Academic Session</span>
+                  <span className="font-bold text-slate-900">{String(result.academicSession)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-semibold">Issue Date</span>
-                  <span className="font-semibold text-slate-800">{String(result.publishedAt)}</span>
+                  <span className="text-slate-700 font-bold">Issue Date</span>
+                  <span className="font-bold text-slate-900">{String(result.publishedAt)}</span>
                 </div>
               </div>
             </div>

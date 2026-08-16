@@ -200,8 +200,13 @@ export default async function StudentsListPage({ searchParams }: Props) {
 
                   return (
                     <tr key={st.id} className="hover:bg-slate-50/60 transition group">
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
-                        {st.admission_number}
+                      <td className="py-3.5 px-4">
+                        <div className="font-mono font-bold text-slate-900 text-xs">
+                          {st.admission_number}
+                        </div>
+                        <div className="font-mono text-[10px] text-blue-600 font-semibold">
+                          {st.admission_number?.startsWith('ADM-') ? st.admission_number.replace('ADM-', 'STU-') : `STU-${st.admission_number}`}
+                        </div>
                       </td>
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2.5">
@@ -223,14 +228,14 @@ export default async function StudentsListPage({ searchParams }: Props) {
                       <td className="py-3.5 px-4 text-slate-600 font-mono">
                         {activeHistory?.roll_number || '—'}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-600">
+                      <td className="py-3.5 px-4 text-slate-700">
                         {primaryGuardian ? (
                           <div>
-                            <div className="font-semibold text-slate-900">{primaryGuardian.full_name}</div>
-                            <div className="text-[11px] text-slate-400 font-mono">{primaryGuardian.phone}</div>
+                            <div className="font-bold text-slate-900">{primaryGuardian.full_name}</div>
+                            <div className="text-[11px] text-slate-600 font-mono font-medium">{primaryGuardian.phone}</div>
                           </div>
                         ) : (
-                          <span className="text-slate-400 italic">None</span>
+                          <span className="text-slate-500 italic font-medium">None</span>
                         )}
                       </td>
                       <td className="py-3.5 px-4">

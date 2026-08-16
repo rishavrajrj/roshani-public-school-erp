@@ -18,8 +18,8 @@ export function CertificateDocument({ certificate, schoolName = 'Roshani Public 
           RPS
         </div>
         <h1 className="text-3xl font-black uppercase tracking-widest text-slate-900">{schoolName}</h1>
-        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Recognised Senior Secondary Educational Institution</p>
-        <p className="text-[10px] text-slate-500 font-serif italic">Affiliated to Central Board of Secondary Education (CBSE)</p>
+        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Turkauliya, East Champaran, Bihar – 845437</p>
+        <p className="text-[10px] text-slate-500 font-serif italic">Affiliated to CBSE, New Delhi (Affiliation No. 330943, School Code: 66664)</p>
       </div>
 
       {/* Certificate Number & Date Bar */}

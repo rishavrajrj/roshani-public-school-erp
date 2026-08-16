@@ -26,6 +26,9 @@
 *.pem
 .temp/
 supabase/.temp/
+scripts/*dump*.json
+scripts/*export*.json
+scripts/*overview*.json
 
 # debug
 npm-debug.log*

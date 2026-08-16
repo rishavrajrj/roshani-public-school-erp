@@ -46,10 +46,10 @@ export default function ResetPasswordPage() {
             <SchoolLogo size="lg" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white font-serif">
               Set New Password
             </h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
               Roshani Public School ERP
             </p>
           </div>
@@ -61,19 +61,19 @@ export default function ResetPasswordPage() {
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Password Updated</h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Password Updated</h2>
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-medium">
                 Your password has been successfully updated.
               </p>
             </div>
             <Link href="/login" className="block">
-              <Button className="w-full">Sign In Now</Button>
+              <Button className="w-full font-bold">Sign In Now</Button>
             </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {error && (
-              <div className="p-3.5 text-sm font-medium text-red-600 bg-red-50 dark:bg-red-950/40 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-900">
+              <div className="p-3.5 text-xs sm:text-sm font-semibold text-red-700 bg-red-50 dark:bg-red-950/40 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-900">
                 {error}
               </div>
             )}
@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
               error={errors.confirmPassword?.message}
             />
 
-            <Button type="submit" className="w-full h-11" isLoading={isSubmitting}>
+            <Button type="submit" className="w-full h-11 font-bold" isLoading={isSubmitting}>
               Update Password
             </Button>
           </form>

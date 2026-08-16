@@ -1,38 +1,120 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Institutional Brand Palette */
+  --brand-navy-dark: #031b3a;
+  --brand-navy-surface: #0f2440;
+  --brand-navy-border: #1e3a60;
+  --brand-blue-primary: #1554c0;
+  --brand-blue-hover: #0f44a3;
+  --brand-blue-light: #eff6ff;
+  --brand-berry-accent: #b91c5c;
+  --brand-berry-hover: #9e144c;
+  --brand-gold-accent: #f4c542;
+  --brand-gold-hover: #e0b030;
+
+  /* Surfaces & Neutrals */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --surface-page: #f8fafc;
+  --surface-card: #ffffff;
+  --surface-muted: #f1f5f9;
+  --surface-elevated: #ffffff;
+
+  /* Text Hierarchy */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-disabled: #94a3b8;
+  --text-on-dark: #ffffff;
+  --text-on-dark-secondary: #e2e8f0;
+  --text-on-dark-muted: #94a3b8;
+
+  /* Borders */
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-focus: #1554c0;
+
+  /* Status Colors */
+  --status-success-bg: #ecfdf5;
+  --status-success-text: #047857;
+  --status-success-border: #a7f3d0;
+  --status-warning-bg: #fffbeb;
+  --status-warning-text: #b45309;
+  --status-warning-border: #fde68a;
+  --status-danger-bg: #fff1f2;
+  --status-danger-text: #be123c;
+  --status-danger-border: #fecdd3;
+  --status-info-bg: #eff6ff;
+  --status-info-text: #1d4ed8;
+  --status-info-border: #bfdbfe;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* Layout Constants */
+  --sidebar-width: 270px;
+  --sidebar-collapsed-width: 80px;
+  --header-height: 68px;
+  --max-content-width: 1280px;
+
+  /* Elevation Shadows */
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-card-hover: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-elevated: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans, Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  --font-mono: var(--font-geist-mono, JetBrains Mono, "SFMono-Regular", Consolas, monospace);
+  --color-navy-dark: var(--brand-navy-dark);
+  --color-navy-surface: var(--brand-navy-surface);
+  --color-blue-primary: var(--brand-blue-primary);
+  --color-blue-hover: var(--brand-blue-hover);
+  --color-berry: var(--brand-berry-accent);
+  --color-gold: var(--brand-gold-accent);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b1120;
+    --foreground: #f8fafc;
+    --surface-page: #0b1120;
+    --surface-card: #131c2e;
+    --surface-muted: #1e293b;
+    --border-subtle: #1e293b;
+    --border-strong: #334155;
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: 
+    radial-gradient(at 90% 10%, rgba(21, 84, 192, 0.03) 0px, transparent 45%),
+    radial-gradient(at 10% 90%, rgba(15, 36, 64, 0.02) 0px, transparent 45%);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 input, select, textarea {
   color: #0f172a;
 }
 
-/* Custom sleek scrollbar styles */
+/* Custom sleek scrollbars */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+  scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -45,24 +127,19 @@ input, select, textarea {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 9999px;
   transition: background-color 0.2s ease;
 }
 
 .custom-scrollbar:hover::-webkit-scrollbar-thumb,
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.45);
+  background: rgba(148, 163, 184, 0.6);
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:active {
-  background: rgba(148, 163, 184, 0.65);
-}
-
-/* Custom scrollbar for light surfaces */
 .custom-scrollbar-light {
   scrollbar-width: thin;
-  scrollbar-color: rgba(100, 116, 139, 0.2) transparent;
+  scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
 }
 
 .custom-scrollbar-light::-webkit-scrollbar {
@@ -75,12 +152,23 @@ input, select, textarea {
 }
 
 .custom-scrollbar-light::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.2);
+  background: rgba(100, 116, 139, 0.3);
   border-radius: 9999px;
   transition: background-color 0.2s ease;
 }
 
-.custom-scrollbar-light:hover::-webkit-scrollbar-thumb,
-.custom-scrollbar-light::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.4);
+.custom-scrollbar-light:hover::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.55);
+}
+
+/* Print Isolation Standard */
+@media print {
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
 }

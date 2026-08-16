@@ -13,6 +13,7 @@ import {
   TrendingUp,
   FileText,
   ClipboardList,
+  Settings,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -30,105 +31,19 @@ export interface NavSection {
   items: NavItem[]
 }
 
-export interface RoleBranding {
-  role: string
-  badge: string
-  portalTitle: string
-  portalLabel: string
-  accentColor: string
-  pillClass: string
-  activeNavClass: string
-  indicatorClass: string
-  badgeColorClass: string
-  breadcrumbPrefix: string
-}
+import {
+  ROLE_PORTAL_MAP,
+  type RolePortalMeta,
+  getRoleBranding,
+  normalizeRoleName,
+  getPortalName,
+  getRoleBadge,
+} from '@/lib/auth/portal-mapping'
 
-export const ROLE_BRANDING_MAP: Record<string, RoleBranding> = {
-  Student: {
-    role: 'Student',
-    badge: 'STUDENT',
-    portalTitle: 'Roshani Public School',
-    portalLabel: 'Student Portal',
-    accentColor: 'emerald',
-    pillClass: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-    activeNavClass: 'bg-blue-600 text-white font-semibold shadow-xs shadow-blue-900/30',
-    indicatorClass: 'bg-emerald-400',
-    badgeColorClass: 'text-emerald-400',
-    breadcrumbPrefix: 'Student Portal',
-  },
-  Parent: {
-    role: 'Parent',
-    badge: 'PARENT',
-    portalTitle: 'Roshani Public School',
-    portalLabel: 'Parent Portal',
-    accentColor: 'indigo',
-    pillClass: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
-    activeNavClass: 'bg-indigo-600 text-white font-semibold shadow-xs shadow-indigo-900/30',
-    indicatorClass: 'bg-indigo-400',
-    badgeColorClass: 'text-indigo-400',
-    breadcrumbPrefix: 'Parent Portal',
-  },
-  Teacher: {
-    role: 'Teacher',
-    badge: 'TEACHER',
-    portalTitle: 'Roshani Public School',
-    portalLabel: 'Teacher Portal',
-    accentColor: 'sky',
-    pillClass: 'bg-sky-500/15 text-sky-400 border-sky-500/30',
-    activeNavClass: 'bg-sky-600 text-white font-semibold shadow-xs shadow-sky-900/30',
-    indicatorClass: 'bg-sky-400',
-    badgeColorClass: 'text-sky-400',
-    breadcrumbPrefix: 'Teacher Portal',
-  },
-  Accountant: {
-    role: 'Accountant',
-    badge: 'ACCOUNTS',
-    portalTitle: 'Roshani Public School',
-    portalLabel: 'Finance & Accounts',
-    accentColor: 'amber',
-    pillClass: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-    activeNavClass: 'bg-amber-600 text-white font-semibold shadow-xs shadow-amber-900/30',
-    indicatorClass: 'bg-amber-400',
-    badgeColorClass: 'text-amber-400',
-    breadcrumbPrefix: 'Finance & Accounts',
-  },
-  Principal: {
-    role: 'Principal',
-    badge: 'PRINCIPAL',
-    portalTitle: 'Roshani Public School',
-    portalLabel: 'Principal Portal',
-    accentColor: 'purple',
-    pillClass: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
-    activeNavClass: 'bg-purple-600 text-white font-semibold shadow-xs shadow-purple-900/30',
-    indicatorClass: 'bg-purple-400',
-    badgeColorClass: 'text-purple-400',
-    breadcrumbPrefix: 'Principal Portal',
-  },
-  Admin: {
-    role: 'Admin',
-    badge: 'ADMIN',
-    portalTitle: 'Roshani Public School',
-    portalLabel: 'Admin Console',
-    accentColor: 'cyan',
-    pillClass: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
-    activeNavClass: 'bg-blue-600 text-white font-semibold shadow-xs shadow-blue-900/30',
-    indicatorClass: 'bg-cyan-400',
-    badgeColorClass: 'text-cyan-400',
-    breadcrumbPrefix: 'Admin Console',
-  },
-  'Super Admin': {
-    role: 'Super Admin',
-    badge: 'SUPER ADMIN',
-    portalTitle: 'Roshani Public School',
-    portalLabel: 'Master Console',
-    accentColor: 'rose',
-    pillClass: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
-    activeNavClass: 'bg-rose-600 text-white font-semibold shadow-xs shadow-rose-900/30',
-    indicatorClass: 'bg-rose-400',
-    badgeColorClass: 'text-rose-400',
-    breadcrumbPrefix: 'Master Console',
-  },
-}
+export type RoleBranding = RolePortalMeta
+export const ROLE_BRANDING_MAP = ROLE_PORTAL_MAP
+export { getRoleBranding, normalizeRoleName, getPortalName, getRoleBadge }
+
 
 export const ROLE_SECTION_NAV_CONFIG: Record<string, NavSection[]> = {
   Student: [
@@ -309,6 +224,12 @@ export const ROLE_SECTION_NAV_CONFIG: Record<string, NavSection[]> = {
         { name: 'Documents', href: '/erp/admin/documents', icon: FileText, description: 'TC, Character, Bonafide' },
       ],
     },
+    {
+      sectionTitle: 'SETTINGS & GOVERNANCE',
+      items: [
+        { name: 'School Settings', href: '/erp/admin/settings', icon: Settings, description: 'UDISE, Modules, Fields' },
+      ],
+    },
   ],
   'Super Admin': [
     {
@@ -347,6 +268,12 @@ export const ROLE_SECTION_NAV_CONFIG: Record<string, NavSection[]> = {
         { name: 'Teacher Assign', href: '/erp/admin/teacher-assignments', icon: UserCheck },
         { name: 'Leave & Approvals', href: '/erp/admin/leave', icon: CalendarOff },
         { name: 'Documents', href: '/erp/admin/documents', icon: FileText },
+      ],
+    },
+    {
+      sectionTitle: 'SETTINGS & GOVERNANCE',
+      items: [
+        { name: 'School Settings', href: '/erp/admin/settings', icon: Settings },
       ],
     },
   ],

@@ -86,9 +86,9 @@ export function EditStudentForm({ student }: Props) {
             reason="Official institutional admission record key"
           />
           <LockedField
-            label="Internal Database UUID"
-            value={student.id}
-            reason="Primary database reference identifier"
+            label="Student Business ID"
+            value={student.admission_number?.startsWith('ADM-') ? student.admission_number.replace('ADM-', 'STU-') : `STU-${student.admission_number}`}
+            reason="Platform-wide permanent human-readable identifier"
           />
           <LockedField
             label="Security Profile"

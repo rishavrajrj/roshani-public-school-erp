@@ -194,10 +194,10 @@ export function MarksEntryTable({
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Subject Marks Entry Spreadsheet</h2>
-          <p className="text-slate-500 text-sm mt-0.5">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-sans">Subject Marks Entry Spreadsheet</h2>
+          <p className="text-slate-600 text-xs sm:text-sm mt-0.5 font-medium">
             Input, verify, and submit subject component marks (Theory, Practical, Internal)
           </p>
         </div>
@@ -209,7 +209,7 @@ export function MarksEntryTable({
             🚀 Submit Class Marks
           </Button>
           {isAdminOrPrincipal && (
-            <Button variant="secondary" className="bg-slate-800 text-white hover:bg-slate-900" onClick={handleLockMarks} isLoading={loading}>
+            <Button variant="secondary" className="bg-slate-900 text-white hover:bg-slate-800" onClick={handleLockMarks} isLoading={loading}>
               🔒 Lock Marks
             </Button>
           )}
@@ -218,20 +218,20 @@ export function MarksEntryTable({
 
       {/* Alert Message */}
       {message && (
-        <div className={['p-4 rounded-lg text-sm font-medium border', message.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'].join(' ')}>
+        <div className={['p-4 rounded-xl text-xs sm:text-sm font-semibold border shadow-2xs', message.type === 'success' ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 'bg-rose-50 border-rose-300 text-rose-800'].join(' ')}>
           {message.text}
         </div>
       )}
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Examination</label>
+          <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">Examination</label>
           <select
             value={selectedExamId}
             onChange={(e) => setSelectedExamId(e.target.value)}
             disabled={examinations.length === 0}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm disabled:bg-slate-100 disabled:text-slate-500"
+            className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg text-xs sm:text-sm font-medium focus:border-[#1554C0] focus:ring-2 focus:ring-blue-600/15 disabled:bg-slate-100 disabled:text-slate-500 shadow-2xs"
           >
             <option value="">{examinations.length === 0 ? 'No examinations available' : 'Select Examination'}</option>
             {examinations.map((e) => (
@@ -241,12 +241,12 @@ export function MarksEntryTable({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Class</label>
+          <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">Class</label>
           <select
             value={selectedClassId}
             onChange={(e) => setSelectedClassId(e.target.value)}
             disabled={classes.length === 0}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm disabled:bg-slate-100 disabled:text-slate-500"
+            className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg text-xs sm:text-sm font-medium focus:border-[#1554C0] focus:ring-2 focus:ring-blue-600/15 disabled:bg-slate-100 disabled:text-slate-500 shadow-2xs"
           >
             <option value="">{classes.length === 0 ? 'No classes available' : 'Select Class'}</option>
             {classes.map((c) => (
@@ -256,12 +256,12 @@ export function MarksEntryTable({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Subject</label>
+          <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">Subject</label>
           <select
             value={selectedSubjectId}
             onChange={(e) => setSelectedSubjectId(e.target.value)}
             disabled={subjects.length === 0}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm disabled:bg-slate-100 disabled:text-slate-500"
+            className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-900 rounded-lg text-xs sm:text-sm font-medium focus:border-[#1554C0] focus:ring-2 focus:ring-blue-600/15 disabled:bg-slate-100 disabled:text-slate-500 shadow-2xs"
           >
             <option value="">{subjects.length === 0 ? 'No subjects available' : 'Select Subject'}</option>
             {subjects.map((s) => (
@@ -272,31 +272,31 @@ export function MarksEntryTable({
       </div>
 
       {/* Spreadsheet Grid Table */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+      <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
+        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/80 flex justify-between items-center">
           <h3 className="text-sm font-bold text-slate-900">Class Student Roster Marks</h3>
-          <span className="text-xs font-semibold text-slate-500">{marksState.length} Students</span>
+          <span className="text-xs font-bold text-slate-600 font-mono">{marksState.length} Students</span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-sm">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse text-xs sm:text-sm">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase">
-                <th className="py-3 px-4">Student</th>
-                <th className="py-3 px-4">Adm No</th>
-                <th className="py-3 px-4">Attendance</th>
-                <th className="py-3 px-4 text-center">Theory</th>
-                <th className="py-3 px-4 text-center">Practical</th>
-                <th className="py-3 px-4 text-center">Internal</th>
-                <th className="py-3 px-4 text-center font-bold">Total</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+              <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider font-mono">
+                <th className="py-3.5 px-4">Student</th>
+                <th className="py-3.5 px-4">Adm No</th>
+                <th className="py-3.5 px-4">Attendance</th>
+                <th className="py-3.5 px-4 text-center">Theory</th>
+                <th className="py-3.5 px-4 text-center">Practical</th>
+                <th className="py-3.5 px-4 text-center">Internal</th>
+                <th className="py-3.5 px-4 text-center font-extrabold">Total</th>
+                <th className="py-3.5 px-4 text-center">Status</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
+            <tbody className="divide-y divide-slate-100 text-slate-900 font-medium">
               {marksState.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-8 text-center text-slate-500">
+                  <td colSpan={9} className="py-8 text-center text-slate-500 font-medium">
                     No students enrolled in this class session.
                   </td>
                 </tr>
@@ -305,15 +305,15 @@ export function MarksEntryTable({
                   const isLocked = m.status === 'locked'
                   const isSubmitted = m.status === 'submitted' || m.status === 'verified' || isLocked
                   return (
-                    <tr key={m.studentId} className="hover:bg-slate-50">
+                    <tr key={m.studentId} className="hover:bg-slate-50/80 transition-colors">
                       <td className="py-3 px-4 font-bold text-slate-900">{m.studentName}</td>
-                      <td className="py-3 px-4 font-mono text-xs text-slate-600">{m.admissionNumber}</td>
+                      <td className="py-3 px-4 font-mono font-bold text-slate-700">{m.admissionNumber}</td>
                       <td className="py-3 px-4">
                         <select
                           value={m.attendanceStatus}
                           disabled={isSubmitted}
                           onChange={(e) => handleMarkChange(m.studentId, 'attendanceStatus', e.target.value)}
-                          className="px-2 py-1 border border-slate-300 rounded text-xs"
+                          className="px-2 py-1 border border-slate-300 bg-white text-slate-900 rounded text-xs font-semibold shadow-2xs"
                         >
                           <option value="present">Present</option>
                           <option value="absent">Absent</option>
@@ -328,7 +328,7 @@ export function MarksEntryTable({
                           value={m.theoryMarksObtained}
                           disabled={isSubmitted || m.attendanceStatus !== 'present'}
                           onChange={(e) => handleMarkChange(m.studentId, 'theoryMarksObtained', Number(e.target.value))}
-                          className="w-16 px-2 py-1 border border-slate-300 rounded text-center text-xs font-mono font-bold"
+                          className="w-16 px-2 py-1 border border-slate-300 bg-white text-slate-900 rounded text-center text-xs font-mono font-bold shadow-2xs"
                           min={0}
                         />
                       </td>
@@ -339,7 +339,7 @@ export function MarksEntryTable({
                           value={m.practicalMarksObtained}
                           disabled={isSubmitted || m.attendanceStatus !== 'present'}
                           onChange={(e) => handleMarkChange(m.studentId, 'practicalMarksObtained', Number(e.target.value))}
-                          className="w-16 px-2 py-1 border border-slate-300 rounded text-center text-xs font-mono font-bold"
+                          className="w-16 px-2 py-1 border border-slate-300 bg-white text-slate-900 rounded text-center text-xs font-mono font-bold shadow-2xs"
                           min={0}
                         />
                       </td>
@@ -350,17 +350,17 @@ export function MarksEntryTable({
                           value={m.internalMarksObtained}
                           disabled={isSubmitted || m.attendanceStatus !== 'present'}
                           onChange={(e) => handleMarkChange(m.studentId, 'internalMarksObtained', Number(e.target.value))}
-                          className="w-16 px-2 py-1 border border-slate-300 rounded text-center text-xs font-mono font-bold"
+                          className="w-16 px-2 py-1 border border-slate-300 bg-white text-slate-900 rounded text-center text-xs font-mono font-bold shadow-2xs"
                           min={0}
                         />
                       </td>
 
-                      <td className="py-3 px-4 text-center font-mono font-bold text-indigo-700">
+                      <td className="py-3 px-4 text-center font-mono font-extrabold text-indigo-900 text-sm">
                         {m.totalMarksObtained} / {m.maximumMarks || 100}
                       </td>
 
                       <td className="py-3 px-4 text-center">
-                        <span className={['px-2 py-0.5 rounded text-[10px] font-bold uppercase', m.status === 'locked' ? 'bg-purple-100 text-purple-800' : m.status === 'submitted' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'].join(' ')}>
+                        <span className={['px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase font-mono shadow-2xs border', m.status === 'locked' ? 'bg-purple-100 text-purple-900 border-purple-300' : m.status === 'submitted' ? 'bg-blue-100 text-blue-900 border-blue-300' : 'bg-amber-100 text-amber-900 border-amber-300'].join(' ')}>
                           {m.status}
                         </span>
                       </td>

@@ -1003,6 +1003,7 @@ async function allocatePaymentToInvoice(
     .from('invoices')
     .select('*')
     .eq('id', invoiceId)
+    .eq('school_id', schoolId)
     .single()
 
   if (!invoice) return

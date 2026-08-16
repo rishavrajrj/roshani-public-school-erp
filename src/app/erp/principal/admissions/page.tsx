@@ -174,9 +174,9 @@ export default async function PrincipalAdmissionsPage({ searchParams }: Props) {
                     <td className="py-3.5 px-4 text-slate-700 font-medium">
                       {(app.classes as { name?: string })?.name}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600">
-                      <div className="font-semibold text-slate-900">{app.guardian_name}</div>
-                      <div className="text-[11px] text-slate-400 font-mono">{app.guardian_phone}</div>
+                    <td className="py-3.5 px-4 text-slate-700">
+                      <div className="font-bold text-slate-900">{app.guardian_name}</div>
+                      <div className="text-[11px] text-slate-600 font-mono font-medium">{app.guardian_phone}</div>
                     </td>
                     <td className="py-3.5 px-4">
                       <StatusBadge status={app.status} size="sm" />

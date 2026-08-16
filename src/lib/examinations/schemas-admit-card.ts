@@ -42,7 +42,8 @@ export const replacementReasonEnum = z.enum([
 ])
 
 export const regenerateAdmitCardSchema = z.object({
-  oldAdmitCardId: z.string().uuid('Valid Admit Card ID required'),
+  oldAdmitCardId: z.string().uuid('Valid Admit Card ID required').optional(),
+  admitCardId: z.string().uuid('Valid Admit Card ID required').optional(),
   reason: z.string().trim().min(3, 'A reason is required for Admit Card regeneration'),
   replacementReason: replacementReasonEnum.optional(),
   customExplanation: z.string().trim().optional(),

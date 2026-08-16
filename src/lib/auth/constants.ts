@@ -26,6 +26,7 @@ export const ROLE_ROUTES: Record<RoleName, string> = {
  */
 export const ROUTE_ALLOWED_ROLES: Record<string, RoleName[]> = {
   '/erp/admin': ['Super Admin', 'Admin'],
+  '/erp/admin/settings': ['Super Admin', 'Admin'],
   '/erp/admin/admissions': ['Super Admin', 'Admin'],
   '/erp/admin/admissions/new': ['Super Admin', 'Admin'],
   '/erp/admin/students': ['Super Admin', 'Admin'],

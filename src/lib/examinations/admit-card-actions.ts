@@ -643,10 +643,13 @@ export async function regenerateAdmitCardAction(input: RegenerateAdmitCardInput)
     const supabase = (await createClient()) as any
     const schoolId = authState.user.schoolId
 
+    const targetId = validated.oldAdmitCardId || validated.admitCardId
+    if (!targetId) return { success: false, error: 'Valid Admit Card ID required' }
+
     const { data: oldCard } = await supabase
       .from('admit_cards')
       .select('*')
-      .eq('id', validated.oldAdmitCardId)
+      .eq('id', targetId)
       .eq('school_id', schoolId)
       .single()
 
