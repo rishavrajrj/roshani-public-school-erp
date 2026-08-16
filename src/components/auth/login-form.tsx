@@ -175,7 +175,37 @@ export function LoginForm() {
           {statusMessage ? statusMessage : 'Sign In to Portal →'}
         </Button>
 
-
+        {/* Quick Fill Demo Credentials */}
+        <div className="mt-4 pt-3.5 border-t border-slate-100" id="demo-quick-fill">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold tracking-tight text-slate-500 uppercase">
+              ⚡ Quick Demo Logins
+            </span>
+            <span className="text-[10px] font-medium text-slate-400">1-Click Fill</span>
+          </div>
+          <div className="grid grid-cols-3 gap-1.5">
+            {[
+              { label: 'Admin', email: 'admin@roshanischool.com', badge: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200' },
+              { label: 'Principal', email: 'principal@roshanischool.com', badge: 'bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200' },
+              { label: 'Teacher', email: 'teacher@roshanischool.com', badge: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200' },
+              { label: 'Accountant', email: 'accountant@roshanischool.com', badge: 'bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-200' },
+              { label: 'Parent', email: 'parent@roshanischool.com', badge: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200' },
+              { label: 'Student', email: 'student@roshanischool.com', badge: 'bg-rose-50 text-rose-700 hover:bg-rose-100 border-rose-200' },
+            ].map((account) => (
+              <button
+                key={account.label}
+                type="button"
+                onClick={() => {
+                  setValue('email', account.email, { shouldValidate: true })
+                  setValue('password', 'TestPass123!', { shouldValidate: true })
+                }}
+                className={`py-1.5 px-2 text-[11px] font-semibold rounded-md border transition-all active:scale-95 text-center ${account.badge}`}
+              >
+                {account.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </form>
     </div>
   )
